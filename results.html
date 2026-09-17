@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Your score — Life Score</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Space+Mono:wght@400;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ink: #0E1A1C;
+    --surface: #16292B;
+    --line: #ffffff14;
+    --line-soft: #ffffff0a;
+    --teal: #5FAFA4;
+    --teal-dim: #5FAFA422;
+    --blue: #7DA3D6;
+    --blue-dim: #7DA3D622;
+    --rust: #C98368;
+    --rust-dim: #C9836822;
+    --gray: #7C8B88;
+    --text: #EEF3F1;
+    --text-mute: #93A6A2;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { -webkit-font-smoothing: antialiased; }
+
+  body {
+    background: var(--ink);
+    color: var(--text);
+    font-family: 'Inter', sans-serif;
+    line-height: 1.5;
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .reveal { animation: rise 0.7s cubic-bezier(.16,1,.3,1) both; }
+    .reveal-2 { animation-delay: 0.2s; }
+    .reveal-3 { animation-delay: 0.4s; }
+    @keyframes rise {
+      from { opacity: 0; transform: translateY(12px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+  }
+
+  .hidden { display: none; }
+
+  header {
+    border-bottom: 1px solid var(--line);
+    padding: 1.1rem 1.5rem;
+  }
+
+  .header-inner {
+    max-width: 640px;
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .brand { font-family: 'Fraunces', serif; font-weight: 500; font-size: 1.05rem; text-decoration: none; color: var(--text); }
+
+  .date-tag {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.8rem;
+    color: var(--text-mute);
+  }
+
+  .wrap {
+    max-width: 640px;
+    margin: 0 auto;
+    padding: 4rem 1.5rem 5rem;
+  }
+
+  .empty-state { text-align: center; color: var(--text-mute); padding: 3rem 0; }
+  .empty-state a { color: var(--teal); }
+
+  .result-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+    margin-bottom: 2.5rem;
+  }
+
+  .result-card {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 16px;
+    padding: 1.75rem 1.5rem;
+    text-align: center;
+  }
+
+  .result-num {
+    font-family: 'Space Mono', monospace;
+    font-size: clamp(2.6rem, 9vw, 3.6rem);
+    font-weight: 700;
+    color: var(--teal);
+    line-height: 1;
+    margin-bottom: 0.5rem;
+  }
+
+  .result-label { font-size: 0.85rem; color: var(--text-mute); }
+
+  .bottleneck-box {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 16px;
+    padding: 1.75rem;
+    margin-bottom: 3rem;
+  }
+
+  .bottleneck-box p.label {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.75rem;
+    color: var(--rust);
+    margin-bottom: 0.6rem;
+  }
+
+  .bottleneck-box p.sentence {
+    font-family: 'Fraunces', serif;
+    font-weight: 500;
+    font-size: 1.2rem;
+  }
+
+  /* ---------- Signup / login box ---------- */
+
+  .auth-box {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 16px;
+    padding: 2rem;
+  }
+
+  .auth-box h2 {
+    font-family: 'Fraunces', serif;
+    font-weight: 500;
+    font-size: 1.35rem;
+    margin-bottom: 0.75rem;
+  }
+
+  .auth-box > p, #pitchView > p {
+    color: var(--text-mute);
+    font-size: 0.95rem;
+    margin-bottom: 1.5rem;
+    max-width: 50ch;
+  }
+
+  .anon-note {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.6rem;
+    background: var(--teal-dim);
+    border: 1px solid var(--teal);
+    border-radius: 10px;
+    padding: 0.85rem 1rem;
+    font-size: 0.85rem;
+    color: var(--teal);
+    margin-bottom: 1.5rem;
+  }
+
+  .auth-form {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+
+  .auth-form input {
+    background: var(--ink);
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    color: var(--text);
+    font-family: 'Inter', sans-serif;
+    font-size: 0.95rem;
+    padding: 0.85rem 1.1rem;
+  }
+
+  .auth-form input:focus-visible { outline: 2px solid var(--teal); outline-offset: 2px; }
+
+  .auth-actions {
+    display: flex;
+    gap: 0.75rem;
+    align-items: center;
+    margin-top: 0.25rem;
+  }
+
+  .btn {
+    font-family: 'Inter', sans-serif;
+    font-weight: 600;
+    font-size: 0.95rem;
+    padding: 0.85rem 1.5rem;
+    border-radius: 999px;
+    border: none;
+    cursor: pointer;
+    background: var(--teal);
+    color: #082220;
+    transition: transform 0.2s ease;
+    text-decoration: none;
+    display: inline-block;
+  }
+
+  .btn:hover { transform: translateY(-1px); }
+
+  .btn-ghost {
+    background: transparent;
+    border: 1px solid var(--line);
+    color: var(--text-mute);
+  }
+
+  .auth-msg {
+    font-size: 0.85rem;
+    margin-top: 0.75rem;
+  }
+
+  .auth-msg.error { color: var(--rust); }
+  .auth-msg.success { color: var(--teal); }
+
+  .saved-view { display: none; }
+  .saved-view.show { display: block; }
+  .saved-view .nickname { color: var(--text); font-weight: 600; }
+
+  @media (max-width: 480px) {
+    .result-grid { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+  <header>
+    <div class="header-inner">
+      <a class="brand" href="index.html">Life Score</a>
+      <span class="date-tag" id="todayDate"></span>
+    </div>
+  </header>
+
+  <div class="wrap">
+
+    <div id="emptyState" class="empty-state hidden">
+      <p>No habits were selected. <a href="habits.html">Go back and choose a few.</a></p>
+    </div>
+
+    <div id="resultBlock">
+      <div class="result-grid reveal">
+        <div class="result-card">
+          <div class="result-num" id="scoreNum">–</div>
+          <div class="result-label">Life Score / 100</div>
+        </div>
+        <div class="result-card">
+          <div class="result-num" id="daysNum">–</div>
+          <div class="result-label">days from your goal</div>
+        </div>
+      </div>
+
+      <div class="bottleneck-box reveal reveal-2">
+        <p class="label">What's holding you back</p>
+        <p class="sentence" id="bottleneckSentence"></p>
+      </div>
+
+      <div class="auth-box reveal reveal-3">
+        <div id="pitchView">
+          <h2>Save this and get sharper over time</h2>
+          <p>Create a free account and this result is saved with today's date. Come back in a few days or weeks, check in again, and we'll compare your new results against this one — the more you check in, the more accurate and scientific your analysis gets.</p>
+          <div class="anon-note">
+            <span>🔒</span>
+            <span>Anonymous by design — no name or email needed. Just a nickname and a password so you can find your reports again.</span>
+          </div>
+          <div class="auth-form">
+            <input type="text" id="nickname" placeholder="Choose a nickname" autocomplete="off">
+            <input type="password" id="password" placeholder="Choose a password">
+            <div class="auth-actions">
+              <button class="btn" onclick="saveReport()">Save my results</button>
+              <button class="btn btn-ghost" onclick="skipSave()">Not now</button>
+            </div>
+            <p class="auth-msg" id="authMsg"></p>
+          </div>
+        </div>
+
+        <div id="savedView" class="saved-view">
+          <h2>Saved ✓</h2>
+          <p>This report is saved under <span class="nickname" id="savedNickname"></span>. Come back anytime and log in with the same nickname and password to see how things have changed.</p>
+          <a class="btn" href="history.html">View my reports</a>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="config.js"></script>
+<script src="lifescore.js"></script>
+<script>
+  document.getElementById('todayDate').textContent = new Date().toLocaleDateString('en-US', {
+    year: 'numeric', month: 'short', day: 'numeric'
+  });
+
+  const raw = sessionStorage.getItem('lifeScoreHabits');
+  const selections = raw ? JSON.parse(raw) : {};
+  const habitNames = Object.keys(selections).filter(name => selections[name] !== 'na');
+  const habits = habitNames.map(name => ({ name, choice: selections[name] }));
+
+  const result = instantAnalysis(habits);
+
+  if (result.score === null) {
+    document.getElementById('emptyState').classList.remove('hidden');
+    document.getElementById('resultBlock').style.display = 'none';
+  } else {
+    document.getElementById('scoreNum').textContent = result.score;
+    document.getElementById('daysNum').textContent = result.bottleneck.daysRemaining;
+
+    const verb = { keep: 'staying consistent with', start: 'getting going on', quit: 'letting go of' };
+    document.getElementById('bottleneckSentence').textContent =
+      `Right now, ${verb[result.bottleneck.choice]} "${result.bottleneck.name}" is what's putting the most distance between you and your goal.`;
+  }
+
+  // ---------- Real accounts via Supabase Auth ----------
+
+  async function saveReport() {
+    const nickname = document.getElementById('nickname').value.trim();
+    const password = document.getElementById('password').value;
+    const msgEl = document.getElementById('authMsg');
+    const saveBtn = document.querySelector('.auth-actions .btn');
+
+    if (!nickname || !password) {
+      msgEl.textContent = 'Enter a nickname and a password.';
+      msgEl.className = 'auth-msg error';
+      return;
+    }
+    if (password.length < 6) {
+      msgEl.textContent = 'Password needs to be at least 6 characters.';
+      msgEl.className = 'auth-msg error';
+      return;
+    }
+
+    saveBtn.disabled = true;
+    msgEl.textContent = 'Saving...';
+    msgEl.className = 'auth-msg';
+
+    try {
+      if (typeof supabase === 'undefined' || !supabaseClient) {
+        throw new Error('Supabase library did not load — check your internet connection and reload the page.');
+      }
+
+      const email = nicknameToEmail(nickname);
+
+      // Try logging in first (returning user).
+      let { data: signInData, error: signInError } = await supabaseClient.auth.signInWithPassword({ email, password });
+      let user = signInData?.user;
+
+      if (signInError) {
+        // Not an existing match — try creating a new account with this nickname.
+        const { data: signUpData, error: signUpError } = await supabaseClient.auth.signUp({ email, password });
+
+        if (signUpError) {
+          if (signUpError.message.toLowerCase().includes('already')) {
+            throw new Error('That nickname is taken with a different password.');
+          }
+          throw new Error(signUpError.message);
+        }
+        user = signUpData.user;
+      }
+
+      if (!user) {
+        throw new Error('Something went wrong creating your account — try again.');
+      }
+
+      const { error: insertError } = await supabaseClient.from('reports').insert({
+        user_id: user.id,
+        score: result.score,
+        days_remaining: result.bottleneck ? result.bottleneck.daysRemaining : null,
+        bottleneck_habit: result.bottleneck ? result.bottleneck.name : null,
+        habits: habits
+      });
+
+      if (insertError) throw new Error(insertError.message);
+
+      sessionStorage.setItem('lifeScoreNickname', nickname);
+      document.getElementById('pitchView').style.display = 'none';
+      document.getElementById('savedView').classList.add('show');
+      document.getElementById('savedNickname').textContent = nickname;
+
+    } catch (err) {
+      msgEl.textContent = err.message;
+      msgEl.className = 'auth-msg error';
+      saveBtn.disabled = false;
+    }
+  }
+
+  function skipSave() {
+    document.querySelector('.auth-box').innerHTML =
+      '<h2>No problem</h2><p style="margin-bottom:0;">Nothing is saved — this result exists only for this visit. You can always come back and check in again from scratch.</p>';
+  }
+</script>
+
+</body>
+</html>

@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>My reports — Life Score</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Space+Mono:wght@400;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ink: #0E1A1C;
+    --surface: #16292B;
+    --line: #ffffff14;
+    --teal: #5FAFA4;
+    --teal-dim: #5FAFA422;
+    --rust: #C98368;
+    --text: #EEF3F1;
+    --text-mute: #93A6A2;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { -webkit-font-smoothing: antialiased; }
+
+  body {
+    background: var(--ink);
+    color: var(--text);
+    font-family: 'Inter', sans-serif;
+    line-height: 1.5;
+  }
+
+  .hidden { display: none; }
+
+  header { border-bottom: 1px solid var(--line); padding: 1.1rem 1.5rem; }
+  .header-inner { max-width: 640px; margin: 0 auto; display: flex; align-items: center; justify-content: space-between; }
+  .brand { font-family: 'Fraunces', serif; font-weight: 500; font-size: 1.05rem; text-decoration: none; color: var(--text); }
+
+  .wrap { max-width: 640px; margin: 0 auto; padding: 4rem 1.5rem 5rem; }
+
+  h1 {
+    font-family: 'Fraunces', serif;
+    font-weight: 500;
+    font-size: clamp(1.6rem, 4vw, 2.1rem);
+    margin-bottom: 0.5rem;
+  }
+
+  .sub { color: var(--text-mute); margin-bottom: 2.5rem; }
+  .sub .nickname { color: var(--text); font-weight: 600; }
+
+  /* ---------- Login form ---------- */
+
+  .login-box {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 16px;
+    padding: 2rem;
+  }
+
+  .login-box p { color: var(--text-mute); margin-bottom: 1.5rem; }
+
+  .login-form { display: flex; flex-direction: column; gap: 0.75rem; }
+
+  .login-form input {
+    background: var(--ink);
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    color: var(--text);
+    font-family: 'Inter', sans-serif;
+    font-size: 0.95rem;
+    padding: 0.85rem 1.1rem;
+  }
+
+  .btn {
+    font-family: 'Inter', sans-serif;
+    font-weight: 600;
+    font-size: 0.95rem;
+    padding: 0.85rem 1.5rem;
+    border-radius: 999px;
+    border: none;
+    cursor: pointer;
+    background: var(--teal);
+    color: #082220;
+    align-self: flex-start;
+    transition: transform 0.2s ease;
+  }
+
+  .btn:hover { transform: translateY(-1px); }
+
+  .auth-msg { font-size: 0.85rem; color: var(--rust); }
+
+  /* ---------- Report list ---------- */
+
+  .report-card {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 16px;
+    padding: 1.5rem;
+    margin-bottom: 1rem;
+  }
+
+  .report-top {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    margin-bottom: 1rem;
+  }
+
+  .report-date { font-family: 'Space Mono', monospace; font-size: 0.85rem; color: var(--text-mute); }
+
+  .report-nums { display: flex; gap: 2rem; margin-bottom: 0.75rem; }
+
+  .report-nums .num { font-family: 'Space Mono', monospace; font-size: 1.6rem; font-weight: 700; color: var(--teal); }
+  .report-nums .lbl { font-size: 0.75rem; color: var(--text-mute); }
+
+  .report-bottleneck { font-size: 0.9rem; color: var(--text-mute); }
+  .report-bottleneck b { color: var(--text); font-weight: 500; }
+</style>
+</head>
+<body>
+
+  <header>
+    <div class="header-inner">
+      <a class="brand" href="index.html">Life Score</a>
+    </div>
+  </header>
+
+  <div class="wrap">
+
+    <div id="loginView">
+      <h1>Log in to see your reports</h1>
+      <p class="sub">Enter the nickname and password you used when you saved a result.</p>
+      <div class="login-box">
+        <div class="login-form">
+          <input type="text" id="nickname" placeholder="Nickname">
+          <input type="password" id="password" placeholder="Password">
+          <button class="btn" onclick="doLogin()">Log in</button>
+          <p class="auth-msg" id="loginMsg"></p>
+        </div>
+      </div>
+    </div>
+
+    <div id="reportsView" class="hidden">
+      <h1>Your reports</h1>
+      <p class="sub">Logged in as <span class="nickname" id="loggedInName"></span></p>
+      <div id="reportList"></div>
+    </div>
+
+  </div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="config.js"></script>
+<script>
+  async function doLogin() {
+    const nickname = document.getElementById('nickname').value.trim();
+    const password = document.getElementById('password').value;
+    const msgEl = document.getElementById('loginMsg');
+    const loginBtn = document.querySelector('.login-form .btn');
+
+    if (!nickname || !password) {
+      msgEl.textContent = 'Enter your nickname and password.';
+      return;
+    }
+
+    loginBtn.disabled = true;
+    msgEl.textContent = 'Logging in...';
+
+    try {
+      if (typeof supabase === 'undefined' || !supabaseClient) {
+        throw new Error('Supabase library did not load — check your internet connection and reload the page.');
+      }
+
+      const email = nicknameToEmail(nickname);
+      const { data, error } = await supabaseClient.auth.signInWithPassword({ email, password });
+
+      if (error) throw new Error("That nickname and password don't match an account.");
+
+      await loadAndShowReports(nickname, data.user.id);
+    } catch (err) {
+      msgEl.textContent = err.message;
+      loginBtn.disabled = false;
+    }
+  }
+
+  async function loadAndShowReports(nickname, userId) {
+    const { data: reports, error } = await supabaseClient
+      .from('reports')
+      .select('*')
+      .eq('user_id', userId)
+      .order('created_at', { ascending: false });
+
+    if (error) {
+      document.getElementById('loginMsg').textContent = 'Could not load reports: ' + error.message;
+      return;
+    }
+
+    showReports(nickname, reports);
+  }
+
+  function showReports(nickname, reports) {
+    document.getElementById('loginView').classList.add('hidden');
+    document.getElementById('reportsView').classList.remove('hidden');
+    document.getElementById('loggedInName').textContent = nickname;
+
+    const listEl = document.getElementById('reportList');
+    listEl.innerHTML = '';
+
+    if (reports.length === 0) {
+      listEl.innerHTML = '<p style="color:var(--text-mute);">No reports saved yet.</p>';
+      return;
+    }
+
+    reports.forEach(r => {
+      const card = document.createElement('div');
+      card.className = 'report-card';
+      const dateStr = new Date(r.created_at).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' });
+      card.innerHTML = `
+        <div class="report-top">
+          <span class="report-date">${dateStr}</span>
+        </div>
+        <div class="report-nums">
+          <div><div class="num">${r.score}</div><div class="lbl">Life Score</div></div>
+          <div><div class="num">${r.days_remaining ?? '—'}</div><div class="lbl">days to goal</div></div>
+        </div>
+        <div class="report-bottleneck">Bottleneck: <b>${r.bottleneck_habit ?? '—'}</b></div>
+      `;
+      listEl.appendChild(card);
+    });
+  }
+
+  // If a session already exists (e.g. just came from saving a report), skip straight to it.
+  (async () => {
+    const remembered = sessionStorage.getItem('lifeScoreNickname');
+    if (!remembered) return;
+    const { data } = await supabaseClient.auth.getSession();
+    if (data.session) {
+      await loadAndShowReports(remembered, data.session.user.id);
+    }
+  })();
+</script>
+
+</body>
+</html>
