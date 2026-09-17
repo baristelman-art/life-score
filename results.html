@@ -339,7 +339,7 @@ src="https://www.facebook.com/tr?id=1119044180571388&ev=PageView&noscript=1"
       `Right now, ${verb[result.bottleneck.choice]} "${result.bottleneck.name}" is what's putting the most distance between you and your goal.`;
 
     if (typeof fbq !== 'undefined') fbq('track', 'ViewContent', { content_name: 'life_score_result', value: result.score });
-    if (typeof ttq !== 'undefined') ttq.track('ViewContent', { content_name: 'life_score_result', value: result.score });
+    if (typeof ttq !== 'undefined') ttq.track('ViewContent', { content_id: 'life_score_result', content_name: 'life_score_result', value: result.score, currency: 'USD' });
   }
 
   // ---------- Real accounts via Supabase Auth ----------
