@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Choose your habits — Life Score</title>
+<title>What's holding you back — Life Score</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600&family=Space+Mono:wght@400;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
@@ -43,12 +43,9 @@ src="https://www.facebook.com/tr?id=1119044180571388&ev=PageView&noscript=1"
     --line-soft: #ffffff0a;
     --teal: #5FAFA4;
     --teal-dim: #5FAFA422;
-    --blue: #7DA3D6;
-    --blue-dim: #7DA3D622;
-    --rust: #C98368;
-    --rust-dim: #C9836822;
-    --gray: #7C8B88;
-    --gray-dim: #7C8B8822;
+    --quit: #FF6452;
+    --quit-dim: #FF645222;
+    --quit-glow: #FF645244;
     --text: #EEF3F1;
     --text-mute: #93A6A2;
     --text-faint: #93A6A266;
@@ -65,8 +62,6 @@ src="https://www.facebook.com/tr?id=1119044180571388&ev=PageView&noscript=1"
     padding-bottom: 7rem;
   }
 
-  /* ---------- Header ---------- */
-
   header {
     position: sticky;
     top: 0;
@@ -78,7 +73,7 @@ src="https://www.facebook.com/tr?id=1119044180571388&ev=PageView&noscript=1"
   }
 
   .header-inner {
-    max-width: 760px;
+    max-width: 700px;
     margin: 0 auto;
     display: flex;
     align-items: center;
@@ -90,6 +85,8 @@ src="https://www.facebook.com/tr?id=1119044180571388&ev=PageView&noscript=1"
     font-family: 'Fraunces', serif;
     font-weight: 500;
     font-size: 1.05rem;
+    text-decoration: none;
+    color: var(--text);
   }
 
   .progress-pill {
@@ -103,47 +100,27 @@ src="https://www.facebook.com/tr?id=1119044180571388&ev=PageView&noscript=1"
     white-space: nowrap;
   }
 
-  .progress-pill b { color: var(--teal); font-weight: 400; }
-
-  /* ---------- Intro ---------- */
+  .progress-pill b { color: var(--quit); font-weight: 400; }
 
   .intro {
     max-width: 700px;
     margin: 0 auto;
-    padding: 3rem 1.5rem 2rem;
+    padding: 3rem 1.5rem 1rem;
   }
 
   .intro h1 {
     font-family: 'Fraunces', serif;
     font-weight: 500;
     font-size: clamp(1.7rem, 4vw, 2.3rem);
-    max-width: 20ch;
+    max-width: 22ch;
     margin-bottom: 0.85rem;
   }
 
   .intro p {
     color: var(--text-mute);
-    max-width: 52ch;
+    max-width: 54ch;
     font-size: 1rem;
   }
-
-  .legend {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 1.25rem;
-    margin-top: 1.5rem;
-    font-size: 0.85rem;
-    color: var(--text-mute);
-  }
-
-  .legend-item { display: flex; align-items: center; gap: 0.5rem; }
-  .legend-dot { width: 0.6rem; height: 0.6rem; border-radius: 50%; }
-  .dot-keep { background: var(--teal); }
-  .dot-start { background: var(--blue); }
-  .dot-quit { background: var(--rust); }
-  .dot-na { background: var(--gray); }
-
-  /* ---------- Habit list ---------- */
 
   .habit-section {
     max-width: 700px;
@@ -152,16 +129,19 @@ src="https://www.facebook.com/tr?id=1119044180571388&ev=PageView&noscript=1"
   }
 
   .category {
-    margin-top: 2.75rem;
+    margin-top: 2.5rem;
   }
 
   .category-title {
-    font-size: 0.95rem;
+    font-size: 1rem;
     font-weight: 600;
     color: var(--text);
     margin-bottom: 0.25rem;
     padding-bottom: 0.75rem;
     border-bottom: 1px solid var(--line);
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
   }
 
   .habit-row {
@@ -174,42 +154,38 @@ src="https://www.facebook.com/tr?id=1119044180571388&ev=PageView&noscript=1"
   }
 
   .habit-name {
-    font-size: 0.98rem;
+    font-size: 1rem;
     color: var(--text);
     flex: 1;
     min-width: 0;
   }
 
-  .habit-controls {
-    display: flex;
-    gap: 0.4rem;
-    flex-shrink: 0;
-  }
-
-  .habit-btn.na-btn { color: var(--text-faint); }
-
-  .habit-btn {
+  .quit-btn {
     font-family: 'Inter', sans-serif;
-    font-size: 0.8rem;
-    font-weight: 500;
-    padding: 0.5rem 0.8rem;
-    border-radius: 8px;
-    border: 1px solid var(--line);
+    font-size: 0.85rem;
+    font-weight: 600;
+    padding: 0.65rem 1.1rem;
+    border-radius: 999px;
+    border: 1.5px solid var(--line);
     background: transparent;
     color: var(--text-faint);
     cursor: pointer;
-    transition: all 0.15s ease;
+    transition: all 0.18s ease;
     white-space: nowrap;
+    flex-shrink: 0;
   }
 
-  .habit-btn:hover { border-color: var(--text-mute); color: var(--text-mute); }
+  .quit-btn:hover {
+    border-color: var(--quit);
+    color: var(--quit);
+  }
 
-  .habit-btn.active-keep { background: var(--teal-dim); border-color: var(--teal); color: var(--teal); }
-  .habit-btn.active-start { background: var(--blue-dim); border-color: var(--blue); color: var(--blue); }
-  .habit-btn.active-quit { background: var(--rust-dim); border-color: var(--rust); color: var(--rust); }
-  .habit-btn.active-na { background: var(--gray-dim); border-color: var(--gray); color: var(--gray); }
-
-  /* ---------- Sticky footer CTA ---------- */
+  .quit-btn.active {
+    background: var(--quit);
+    border-color: var(--quit);
+    color: #2B0A05;
+    box-shadow: 0 4px 18px -4px var(--quit-glow);
+  }
 
   .footer-bar {
     position: fixed;
@@ -224,7 +200,7 @@ src="https://www.facebook.com/tr?id=1119044180571388&ev=PageView&noscript=1"
   }
 
   .footer-inner {
-    max-width: 760px;
+    max-width: 700px;
     margin: 0 auto;
     display: flex;
     align-items: center;
@@ -250,27 +226,16 @@ src="https://www.facebook.com/tr?id=1119044180571388&ev=PageView&noscript=1"
     border: none;
     cursor: pointer;
     white-space: nowrap;
-    transition: transform 0.2s ease, opacity 0.2s ease;
-  }
-
-  .continue-btn:disabled {
-    opacity: 0.35;
-    cursor: not-allowed;
+    transition: transform 0.2s ease;
   }
 
   .continue-btn:not(:disabled):hover { transform: translateY(-2px); }
 
   button:focus-visible { outline: 2px solid var(--teal); outline-offset: 2px; }
 
-  @media (max-width: 520px) {
-    .habit-row { flex-direction: column; align-items: flex-start; gap: 0.7rem; }
-    .habit-controls {
-      width: 100%;
-      display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: 0.5rem;
-    }
-    .habit-btn { text-align: center; padding: 0.6rem 0.5rem; }
+  @media (max-width: 480px) {
+    .habit-row { gap: 0.75rem; }
+    .quit-btn { font-size: 0.78rem; padding: 0.6rem 0.85rem; }
     .footer-note { display: none; }
   }
 </style>
@@ -279,60 +244,58 @@ src="https://www.facebook.com/tr?id=1119044180571388&ev=PageView&noscript=1"
 
   <header>
     <div class="header-inner">
-      <span class="brand">Life Score</span>
-      <span class="progress-pill"><b id="selCount">0</b> / 23 marked</span>
+      <a class="brand" href="index.html">Life Score</a>
+      <span class="progress-pill"><b id="selCount">0</b> / 15 today</span>
     </div>
   </header>
 
   <section class="intro">
-    <h1>Which habits are part of your life?</h1>
-    <p>Mark each one as something you're keeping up, starting fresh, or ready to quit — or as not for you. There's no wrong answer.</p>
-    <div class="legend">
-      <span class="legend-item"><span class="legend-dot dot-keep"></span>Keep doing</span>
-      <span class="legend-item"><span class="legend-dot dot-start"></span>Start new</span>
-      <span class="legend-item"><span class="legend-dot dot-quit"></span>Quit</span>
-      <span class="legend-item"><span class="legend-dot dot-na"></span>Not for me</span>
-    </div>
+    <h1>What happened in the last 24 hours?</h1>
+    <p>Mark anything below that showed up for you today. Come back tomorrow — or in a few days, or next week — and check in again to see how it's changing.</p>
   </section>
 
   <section class="habit-section" id="habitSection"></section>
 
   <div class="footer-bar">
     <div class="footer-inner">
-      <span class="footer-note"><b id="selCount2">0</b> habits marked</span>
-      <button class="continue-btn" id="continueBtn" onclick="continueFlow()">Continue</button>
+      <span class="footer-note"><b id="selCount2">0</b> things marked</span>
+      <button class="continue-btn" id="continueBtn" onclick="continueFlow()">See today's score</button>
     </div>
   </div>
 
 <script>
   const categories = [
     {
-      name: "Sleep & rest",
-      habits: ["Sleep 7+ hours a night", "Keep a consistent bedtime", "No phone in bed before sleep"]
+      name: "Mental Obsessions",
+      emoji: "🧠",
+      habits: [
+        "Overthinking",
+        "Obsessing Over Others",
+        "Attachment to Possessions",
+        "Dwelling on the Past",
+        "Worrying About the Future",
+        "Negative Feelings"
+      ]
     },
     {
-      name: "Movement",
-      habits: ["Take a daily walk", "Strength training", "Stretching or mobility work", "Regular cardio workout"]
-    },
-    {
-      name: "Nutrition",
-      habits: ["Drink enough water", "Eat vegetables daily", "Limit added sugar", "Plan meals ahead", "Limit alcohol"]
-    },
-    {
-      name: "Mind & focus",
-      habits: ["Meditate or breathe intentionally", "Journal regularly", "Read for pleasure or growth", "Protect deep-focus work blocks", "Limit social media scrolling"]
-    },
-    {
-      name: "Money",
-      habits: ["Track your spending", "Save part of every paycheck", "Avoid impulse purchases"]
-    },
-    {
-      name: "Connection",
-      habits: ["Call family or close friends", "Spend time outdoors", "Give a partner or friend real, undistracted time"]
+      name: "Uncontrolled Behaviors",
+      emoji: "🔴",
+      habits: [
+        "Impulsive Behavior",
+        "Laziness & Procrastination",
+        "Overeating",
+        "Unhealthy Eating & Drinking",
+        "Alcohol, Smoking & Drugs",
+        "Pornography",
+        "Social Media & Gaming Addiction",
+        "Gambling",
+        "Unnecessary Spending"
+      ]
     }
   ];
 
-  const state = {}; // habitName -> 'keep' | 'start' | 'quit'
+  const TOTAL_HABITS = categories.reduce((sum, c) => sum + c.habits.length, 0);
+  const state = new Set(); // habit names marked "I have this and want to quit"
   const section = document.getElementById('habitSection');
 
   categories.forEach(cat => {
@@ -340,7 +303,7 @@ src="https://www.facebook.com/tr?id=1119044180571388&ev=PageView&noscript=1"
     catDiv.className = 'category';
     const title = document.createElement('p');
     title.className = 'category-title';
-    title.textContent = cat.name;
+    title.innerHTML = `<span>${cat.emoji}</span><span>${cat.name}</span>`;
     catDiv.appendChild(title);
 
     cat.habits.forEach(habit => {
@@ -351,62 +314,42 @@ src="https://www.facebook.com/tr?id=1119044180571388&ev=PageView&noscript=1"
       nameEl.className = 'habit-name';
       nameEl.textContent = habit;
 
-      const controls = document.createElement('div');
-      controls.className = 'habit-controls';
-
-      const options = [
-        { key: 'keep', label: 'Keep' },
-        { key: 'start', label: 'Start' },
-        { key: 'quit', label: 'Quit' },
-        { key: 'na', label: 'Not for me' }
-      ];
-
-      options.forEach(opt => {
-        const btn = document.createElement('button');
-        btn.className = 'habit-btn' + (opt.key === 'na' ? ' na-btn' : '');
-        btn.textContent = opt.label;
-        btn.setAttribute('data-habit', habit);
-        btn.setAttribute('data-choice', opt.key);
-        btn.onclick = () => toggleChoice(habit, opt.key, controls);
-        controls.appendChild(btn);
-      });
+      const btn = document.createElement('button');
+      btn.className = 'quit-btn';
+      btn.textContent = 'Yes, in the last 24h';
+      btn.onclick = () => toggleHabit(habit, btn);
 
       row.appendChild(nameEl);
-      row.appendChild(controls);
+      row.appendChild(btn);
       catDiv.appendChild(row);
     });
 
     section.appendChild(catDiv);
   });
 
-  function toggleChoice(habit, choice, controlsEl) {
-    const current = state[habit];
-    if (current === choice) {
-      delete state[habit]; // deselect if clicking the same one again
+  function toggleHabit(habit, btnEl) {
+    if (state.has(habit)) {
+      state.delete(habit);
+      btnEl.classList.remove('active');
     } else {
-      state[habit] = choice;
+      state.add(habit);
+      btnEl.classList.add('active');
     }
-
-    [...controlsEl.children].forEach(btn => {
-      btn.classList.remove('active-keep', 'active-start', 'active-quit', 'active-na');
-      const c = btn.getAttribute('data-choice');
-      if (state[habit] === c) btn.classList.add('active-' + c);
-    });
-
     updateCount();
   }
 
   function updateCount() {
-    const count = Object.keys(state).length;
-    document.getElementById('selCount').textContent = count;
-    document.getElementById('selCount2').textContent = count;
-    document.getElementById('continueBtn').disabled = count === 0;
+    document.getElementById('selCount').textContent = state.size;
+    document.getElementById('selCount2').textContent = state.size;
   }
 
   function continueFlow() {
-    sessionStorage.setItem('lifeScoreHabits', JSON.stringify(state));
-    if (typeof fbq !== 'undefined') fbq('trackCustom', 'HabitsSelected', { count: Object.keys(state).length });
-    if (typeof ttq !== 'undefined') ttq.track('HabitsSelected', { count: Object.keys(state).length });
+    const selections = {};
+    state.forEach(name => { selections[name] = 'quit'; });
+    sessionStorage.setItem('lifeScoreHabits', JSON.stringify(selections));
+    sessionStorage.setItem('lifeScoreTotalHabits', String(TOTAL_HABITS));
+    if (typeof fbq !== 'undefined') fbq('trackCustom', 'HabitsSelected', { count: state.size });
+    if (typeof ttq !== 'undefined') ttq.track('HabitsSelected', { count: state.size });
     window.location.href = 'results.html';
   }
 </script>

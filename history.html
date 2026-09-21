@@ -141,6 +141,50 @@ src="https://www.facebook.com/tr?id=1119044180571388&ev=PageView&noscript=1"
 
   .report-bottleneck { font-size: 0.9rem; color: var(--text-mute); }
   .report-bottleneck b { color: var(--text); font-weight: 500; }
+
+  .trend-box {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 16px;
+    padding: 1.75rem;
+    margin-bottom: 2rem;
+  }
+
+  .trend-headline {
+    font-family: 'Fraunces', serif;
+    font-weight: 500;
+    font-size: 1.2rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .trend-sub { color: var(--text-mute); font-size: 0.9rem; margin-bottom: 1.25rem; }
+
+  .trend-cols {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.5rem;
+  }
+
+  .trend-col-title {
+    font-size: 0.78rem;
+    font-family: 'Space Mono', monospace;
+    margin-bottom: 0.6rem;
+  }
+
+  .trend-col-title.up { color: var(--teal); }
+  .trend-col-title.down { color: #C98368; }
+
+  .trend-item {
+    font-size: 0.88rem;
+    color: var(--text);
+    padding: 0.35rem 0;
+  }
+
+  .trend-empty { font-size: 0.85rem; color: var(--text-mute); }
+
+  @media (max-width: 480px) {
+    .trend-cols { grid-template-columns: 1fr; }
+  }
 </style>
 </head>
 <body>
@@ -167,8 +211,10 @@ src="https://www.facebook.com/tr?id=1119044180571388&ev=PageView&noscript=1"
     </div>
 
     <div id="reportsView" class="hidden">
-      <h1>Your reports</h1>
+      <h1>Your trend</h1>
       <p class="sub">Logged in as <span class="nickname" id="loggedInName"></span></p>
+      <a class="btn" href="habits.html" style="display:inline-block; text-decoration:none; margin-bottom:2rem;">+ New check-in</a>
+      <div id="trendBox"></div>
       <div id="reportList"></div>
     </div>
 
@@ -228,15 +274,69 @@ src="https://www.facebook.com/tr?id=1119044180571388&ev=PageView&noscript=1"
     document.getElementById('reportsView').classList.remove('hidden');
     document.getElementById('loggedInName').textContent = nickname;
 
-    const listEl = document.getElementById('reportList');
-    listEl.innerHTML = '';
+    const sorted = [...reports].sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
+    renderTrend(sorted);
+    renderList(sorted);
+  }
 
-    if (reports.length === 0) {
-      listEl.innerHTML = '<p style="color:var(--text-mute);">No reports saved yet.</p>';
+  function habitNamesOf(report) {
+    return new Set((report.habits || []).map(h => h.name));
+  }
+
+  function renderTrend(sorted) {
+    const box = document.getElementById('trendBox');
+
+    if (sorted.length < 2) {
+      box.innerHTML = `
+        <div class="trend-box">
+          <p class="trend-headline">Check in again to see your trend</p>
+          <p class="trend-sub" style="margin-bottom:0;">Once you have a second check-in, we'll show you exactly what changed since the last one.</p>
+        </div>`;
       return;
     }
 
-    reports.forEach(r => {
+    const [latest, prev] = sorted;
+    const delta = latest.score - prev.score;
+    const latestSet = habitNamesOf(latest);
+    const prevSet = habitNamesOf(prev);
+
+    const newlyShowedUp = [...latestSet].filter(n => !prevSet.has(n));
+    const noLongerThere = [...prevSet].filter(n => !latestSet.has(n));
+
+    const deltaText = delta > 0 ? `up ${delta} points` : delta < 0 ? `down ${Math.abs(delta)} points` : 'unchanged';
+    const deltaColor = delta > 0 ? 'var(--teal)' : delta < 0 ? '#C98368' : 'var(--text-mute)';
+
+    box.innerHTML = `
+      <div class="trend-box">
+        <p class="trend-headline">Since your last check-in: <span style="color:${deltaColor}">${deltaText}</span></p>
+        <p class="trend-sub">Comparing today's check-in to ${new Date(prev.created_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}.</p>
+        <div class="trend-cols">
+          <div>
+            <p class="trend-col-title down">Showed up new</p>
+            ${newlyShowedUp.length
+              ? newlyShowedUp.map(n => `<div class="trend-item">${n}</div>`).join('')
+              : '<p class="trend-empty">Nothing new</p>'}
+          </div>
+          <div>
+            <p class="trend-col-title up">Not there anymore</p>
+            ${noLongerThere.length
+              ? noLongerThere.map(n => `<div class="trend-item">${n}</div>`).join('')
+              : '<p class="trend-empty">Nothing cleared yet</p>'}
+          </div>
+        </div>
+      </div>`;
+  }
+
+  function renderList(sorted) {
+    const listEl = document.getElementById('reportList');
+    listEl.innerHTML = '';
+
+    if (sorted.length === 0) {
+      listEl.innerHTML = '<p style="color:var(--text-mute);">No check-ins saved yet.</p>';
+      return;
+    }
+
+    sorted.forEach(r => {
       const card = document.createElement('div');
       card.className = 'report-card';
       const dateStr = new Date(r.created_at).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' });
@@ -248,7 +348,7 @@ src="https://www.facebook.com/tr?id=1119044180571388&ev=PageView&noscript=1"
           <div><div class="num">${r.score}</div><div class="lbl">Life Score</div></div>
           <div><div class="num">${r.days_remaining ?? '—'}</div><div class="lbl">days to goal</div></div>
         </div>
-        <div class="report-bottleneck">Bottleneck: <b>${r.bottleneck_habit ?? '—'}</b></div>
+        <div class="report-bottleneck">Most showed up: <b>${r.bottleneck_habit ?? '—'}</b></div>
       `;
       listEl.appendChild(card);
     });

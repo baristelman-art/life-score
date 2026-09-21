@@ -284,18 +284,24 @@ src="https://www.facebook.com/tr?id=1119044180571388&ev=PageView&noscript=1"
       </div>
 
       <div class="auth-box reveal reveal-3">
+        <div id="autoSavedView" class="hidden">
+          <h2>Today's check-in saved ✓</h2>
+          <p>Logged in as <span class="nickname" id="autoSavedNickname"></span>. Come back tomorrow — or whenever — and check in again to see your trend.</p>
+          <a class="btn" href="history.html">See my trend</a>
+        </div>
+
         <div id="pitchView">
-          <h2>Save this and get sharper over time</h2>
-          <p>Create a free account and this result is saved with today's date. Come back in a few days or weeks, check in again, and we'll compare your new results against this one — the more you check in, the more accurate and scientific your analysis gets.</p>
+          <h2>Save today's check-in</h2>
+          <p>Create a free account and today's result is saved with today's date. Come back tomorrow, in a few days, or next week, check in again, and we'll show you exactly what's changed since last time.</p>
           <div class="anon-note">
             <span>🔒</span>
-            <span>Anonymous by design — no name or email needed. Just a nickname and a password so you can find your reports again.</span>
+            <span>Anonymous by design — no name or email needed. Just a nickname and a password so you can find your check-ins again.</span>
           </div>
           <div class="auth-form">
             <input type="text" id="nickname" placeholder="Choose a nickname" autocomplete="off">
             <input type="password" id="password" placeholder="Choose a password">
             <div class="auth-actions">
-              <button class="btn" onclick="saveReport()">Save my results</button>
+              <button class="btn" onclick="saveReport()">Save today's check-in</button>
               <button class="btn btn-ghost" onclick="skipSave()">Not now</button>
             </div>
             <p class="auth-msg" id="authMsg"></p>
@@ -304,8 +310,8 @@ src="https://www.facebook.com/tr?id=1119044180571388&ev=PageView&noscript=1"
 
         <div id="savedView" class="saved-view">
           <h2>Saved ✓</h2>
-          <p>This report is saved under <span class="nickname" id="savedNickname"></span>. Come back anytime and log in with the same nickname and password to see how things have changed.</p>
-          <a class="btn" href="history.html">View my reports</a>
+          <p>This check-in is saved under <span class="nickname" id="savedNickname"></span>. Come back anytime, log in with the same nickname and password, and check in again to see your trend.</p>
+          <a class="btn" href="history.html">View my trend</a>
         </div>
       </div>
     </div>
@@ -324,25 +330,62 @@ src="https://www.facebook.com/tr?id=1119044180571388&ev=PageView&noscript=1"
   const selections = raw ? JSON.parse(raw) : {};
   const habitNames = Object.keys(selections).filter(name => selections[name] !== 'na');
   const habits = habitNames.map(name => ({ name, choice: selections[name] }));
+  const totalHabits = parseInt(sessionStorage.getItem('lifeScoreTotalHabits') || '0', 10);
 
-  const result = instantAnalysis(habits);
+  const result = instantAnalysis(habits, totalHabits);
 
-  if (result.score === null) {
+  if (!totalHabits) {
     document.getElementById('emptyState').classList.remove('hidden');
     document.getElementById('resultBlock').style.display = 'none';
   } else {
     document.getElementById('scoreNum').textContent = result.score;
-    document.getElementById('daysNum').textContent = result.bottleneck.daysRemaining;
+    document.getElementById('daysNum').textContent = result.bottleneck ? result.bottleneck.daysRemaining : 0;
 
-    const verb = { keep: 'staying consistent with', start: 'getting going on', quit: 'letting go of' };
-    document.getElementById('bottleneckSentence').textContent =
-      `Right now, ${verb[result.bottleneck.choice]} "${result.bottleneck.name}" is what's putting the most distance between you and your goal.`;
+    if (result.bottleneck) {
+      document.getElementById('bottleneckSentence').textContent =
+        `In the last 24 hours, "${result.bottleneck.name}" is what showed up the most.`;
+    } else {
+      document.getElementById('bottleneckSentence').textContent =
+        "Nothing marked for the last 24 hours — that's a good place to be.";
+    }
 
     if (typeof fbq !== 'undefined') fbq('track', 'ViewContent', { content_name: 'life_score_result', value: result.score });
     if (typeof ttq !== 'undefined') ttq.track('ViewContent', { content_id: 'life_score_result', content_name: 'life_score_result', value: result.score, currency: 'USD' });
   }
 
-  // ---------- Real accounts via Supabase Auth ----------
+  function saveReportForUser(userId, nickname) {
+    return supabaseClient.from('reports').insert({
+      user_id: userId,
+      score: result.score,
+      days_remaining: result.bottleneck ? result.bottleneck.daysRemaining : null,
+      bottleneck_habit: result.bottleneck ? result.bottleneck.name : null,
+      habits: habits
+    });
+  }
+
+  // If this browser already has a logged-in session (a returning check-in),
+  // save automatically — no need to ask for nickname/password again.
+  (async function autoSaveIfLoggedIn() {
+    if (!totalHabits) return; // nothing to save if they didn't go through the list
+    if (typeof supabase === 'undefined' || !supabaseClient) return;
+
+    try {
+      const { data } = await supabaseClient.auth.getSession();
+      if (!data.session) return;
+
+      const nickname = sessionStorage.getItem('lifeScoreNickname') || 'you';
+      const { error } = await saveReportForUser(data.session.user.id, nickname);
+      if (error) return; // fall back to the manual pitch silently
+
+      document.querySelector('.auth-box').querySelectorAll('#pitchView, #savedView').forEach(el => el.style.display = 'none');
+      document.getElementById('autoSavedView').classList.remove('hidden');
+      document.getElementById('autoSavedNickname').textContent = nickname;
+    } catch (e) {
+      // no session / network issue — the manual pitch below still works
+    }
+  })();
+
+  // ---------- Real accounts via Supabase Auth (first-time save) ----------
 
   async function saveReport() {
     const nickname = document.getElementById('nickname').value.trim();
