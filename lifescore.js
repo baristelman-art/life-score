@@ -7,38 +7,17 @@ function clamp01(n) {
   return Math.max(0, Math.min(1, n));
 }
 
-/* ---------- Instant analysis (no day-count question at all) ----------
-   Shown immediately after the habit list is marked. There's no behavior
-   history yet, so we start from an honest baseline assumption:
-   - "keep" habits: assumed on track (fit = 1) — benefit of the doubt,
-     since the person says they're already doing it.
-   - "start" habits: not yet begun (fit = 0) — true by definition of "new".
-   - "quit" habits: not yet let go of (fit = 0) — true until proven otherwise.
-   This baseline is what later check-ins (once someone has an account and
-   returns) will refine with real repeated data.
+/* ---------- Stage 1: instant score (no day data needed) ----------
+   Shown right after the list is marked. This list is made entirely of
+   things people want to let go of, so there's no "already doing it
+   well" baseline to lean on. Instead: the fewer of these someone
+   carries, the higher the starting score. Each marked item costs an
+   equal share of the total 100 points.
 */
-function instantAnalysis(habits) {
-  const scorable = habits.filter(h => h.choice !== 'na');
-  if (scorable.length === 0) return { score: null, bottleneck: null, perHabit: [] };
-
-  const perHabit = scorable.map(h => {
-    const fit = h.choice === 'keep' ? 1 : 0;
-    return {
-      name: h.name,
-      choice: h.choice,
-      fit,
-      daysRemaining: daysRemaining(h.choice, fit)
-    };
-  });
-
-  const avgFit = perHabit.reduce((sum, h) => sum + h.fit, 0) / perHabit.length;
-  const score = Math.round(100 * clamp01(avgFit));
-
-  const bottleneck = perHabit.reduce((worst, h) =>
-    (!worst || h.daysRemaining > worst.daysRemaining) ? h : worst
-  , null);
-
-  return { score, bottleneck, perHabit };
+function quickScore(selectedCount, totalCount) {
+  if (!totalCount) return null;
+  const fraction = clamp01(selectedCount / totalCount);
+  return Math.round(100 * (1 - fraction));
 }
 
 // Typical days-to-automatic for each kind of change, used to translate
@@ -54,4 +33,32 @@ const TYPICAL_DAYS = {
 
 function daysRemaining(choice, fit) {
   return Math.round(TYPICAL_DAYS[choice] * (1 - fit));
+}
+
+/*
+  selectedHabits: array of { name } — items the person marked as
+  "I have this and want to quit". totalCount: size of the full list
+  they chose from (used to scale the score).
+  Returns: {
+    score: 0-100 or null,
+    bottleneck: { name, choice, daysRemaining } or null,
+    perHabit: [{ name, choice, daysRemaining }]
+  }
+*/
+function instantAnalysis(selectedHabits, totalCount) {
+  if (selectedHabits.length === 0) return { score: 100, bottleneck: null, perHabit: [] };
+
+  const perHabit = selectedHabits.map(h => ({
+    name: h.name,
+    choice: 'quit',
+    daysRemaining: daysRemaining('quit', 0)
+  }));
+
+  const score = quickScore(selectedHabits.length, totalCount);
+
+  // With no behavior data yet, every selected item starts at the same
+  // distance — pick the first one named as the one to call out.
+  const bottleneck = perHabit[0];
+
+  return { score, bottleneck, perHabit };
 }

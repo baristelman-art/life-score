@@ -69,13 +69,13 @@ src="https://www.facebook.com/tr?id=1119044180571388&ev=PageView&noscript=1"
   }
 
   .hero {
-    min-height: 100svh;
+    min-height: 70svh;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
     text-align: center;
-    padding: 6rem 1.5rem 4rem;
+    padding: 6rem 1.5rem 3rem;
     position: relative;
   }
 
@@ -171,6 +171,50 @@ src="https://www.facebook.com/tr?id=1119044180571388&ev=PageView&noscript=1"
     color: var(--text-mute);
   }
 
+  .list-preview {
+    max-width: 760px;
+    margin: 0 auto;
+    padding: 0 1.5rem 5rem;
+    text-align: center;
+  }
+
+  .list-preview-label {
+    font-family: 'Fraunces', serif;
+    font-weight: 500;
+    font-size: clamp(1.3rem, 3vw, 1.7rem);
+    color: var(--text);
+    margin-bottom: 2rem;
+  }
+
+  .preview-category { margin-bottom: 2rem; }
+
+  .preview-category-title {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    font-weight: 600;
+    font-size: 0.95rem;
+    color: var(--text-mute);
+    margin-bottom: 1rem;
+  }
+
+  .preview-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.6rem;
+    justify-content: center;
+  }
+
+  .preview-tag {
+    font-size: 0.85rem;
+    color: var(--text-mute);
+    background: var(--surface);
+    border: 1px solid var(--line);
+    padding: 0.5rem 0.9rem;
+    border-radius: 999px;
+  }
+
   .steps {
     max-width: 780px;
     margin: 0 auto;
@@ -261,8 +305,37 @@ src="https://www.facebook.com/tr?id=1119044180571388&ev=PageView&noscript=1"
 
     <h1 class="reveal reveal-3">If your life were a video game, what score would you get?</h1>
     <p class="hero-sub reveal reveal-3">A 2-minute look at how close you are to your goals. No judgment, no pressure — just a clearer view of yourself.</p>
+  </section>
 
-    <a class="cta reveal reveal-4" href="habits.html">Get your score</a>
+  <section class="list-preview">
+    <p class="list-preview-label">Get your score</p>
+    <div class="preview-category">
+      <p class="preview-category-title"><span>🧠</span><span>Mental Obsessions</span></p>
+      <div class="preview-tags">
+        <span class="preview-tag">Overthinking</span>
+        <span class="preview-tag">Obsessing Over Others</span>
+        <span class="preview-tag">Attachment to Possessions</span>
+        <span class="preview-tag">Dwelling on the Past</span>
+        <span class="preview-tag">Worrying About the Future</span>
+        <span class="preview-tag">Negative Feelings</span>
+      </div>
+    </div>
+    <div class="preview-category">
+      <p class="preview-category-title"><span>🔴</span><span>Uncontrolled Behaviors</span></p>
+      <div class="preview-tags">
+        <span class="preview-tag">Impulsive Behavior</span>
+        <span class="preview-tag">Laziness & Procrastination</span>
+        <span class="preview-tag">Overeating</span>
+        <span class="preview-tag">Unhealthy Eating & Drinking</span>
+        <span class="preview-tag">Alcohol, Smoking & Drugs</span>
+        <span class="preview-tag">Pornography</span>
+        <span class="preview-tag">Social Media & Gaming Addiction</span>
+        <span class="preview-tag">Gambling</span>
+        <span class="preview-tag">Unnecessary Spending</span>
+      </div>
+    </div>
+
+    <a class="cta reveal reveal-4" href="habits.html" style="margin-top: 2.5rem;">Get your score</a>
     <p class="cta-note reveal reveal-4">Free · No sign-up to start · <a href="history.html" style="color:var(--text-mute);">Already have reports? Log in</a></p>
   </section>
 
@@ -272,22 +345,22 @@ src="https://www.facebook.com/tr?id=1119044180571388&ev=PageView&noscript=1"
       <div class="step">
         <span class="step-index">01</span>
         <div>
-          <p class="step-title">Choose your habits</p>
-          <p class="step-desc">Pick from what you're keeping up, starting fresh, or ready to quit.</p>
+          <p class="step-title">Mark what's holding you back</p>
+          <p class="step-desc">Go through a list of mental obsessions and uncontrolled behaviors, and mark the ones you have and want to let go of.</p>
         </div>
       </div>
       <div class="step">
         <span class="step-index">02</span>
         <div>
-          <p class="step-title">Tell us about your recent days</p>
-          <p class="step-desc">Mark what you actually did in the last 24 hours and the last week — be honest, no one's judging.</p>
+          <p class="step-title">See your score instantly</p>
+          <p class="step-desc">No waiting, no quiz — your score and how many days you are from your goal show up right away.</p>
         </div>
       </div>
       <div class="step">
         <span class="step-index">03</span>
         <div>
-          <p class="step-title">See your score and your distance</p>
-          <p class="step-desc">AI compares what you want with what you've actually been doing, and shows how many days you are from your goal.</p>
+          <p class="step-title">Save it and track your progress</p>
+          <p class="step-desc">Create a free account to keep this result and see how it changes the next time you check in.</p>
         </div>
       </div>
     </div>
