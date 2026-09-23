@@ -166,10 +166,10 @@ src="https://www.facebook.com/tr?id=1119044180571388&ev=PageView&noscript=1"
 
   .report-date { font-family: 'Space Mono', monospace; font-size: 0.85rem; color: var(--text-mute); }
 
-  .report-nums { display: flex; gap: 2rem; margin-bottom: 0.75rem; }
+  .report-nums { display: flex; flex-wrap: wrap; gap: 1.25rem; margin-bottom: 0.75rem; }
 
-  .report-nums .num { font-family: 'Space Mono', monospace; font-size: 1.6rem; font-weight: 700; color: var(--teal); }
-  .report-nums .lbl { font-size: 0.75rem; color: var(--text-mute); }
+  .report-nums .num { font-family: 'Space Mono', monospace; font-size: 1.3rem; font-weight: 700; color: var(--teal); }
+  .report-nums .lbl { font-size: 0.72rem; color: var(--text-mute); }
 
   .report-bottleneck { font-size: 0.9rem; color: var(--text-mute); }
   .report-bottleneck b { color: var(--text); font-weight: 500; }
@@ -479,6 +479,12 @@ src="https://www.facebook.com/tr?id=1119044180571388&ev=PageView&noscript=1"
     return (report.habits || []).map(h => h.name);
   }
 
+  function totalDaysOf(r) {
+    const vals = [r.mental_days, r.physical_days, r.financial_days, r.temporal_days];
+    if (vals.some(v => v === null || v === undefined)) return null;
+    return vals.reduce((a, b) => a + b, 0);
+  }
+
   function renderTrend(sorted) {
     const box = document.getElementById('trendBox');
 
@@ -493,8 +499,10 @@ src="https://www.facebook.com/tr?id=1119044180571388&ev=PageView&noscript=1"
 
     const latest = sorted[0];
     const prev = sorted[1];
-    const delta = latest.score - prev.score;
-    const deltaText = delta > 0 ? `up ${delta} points` : delta < 0 ? `down ${Math.abs(delta)} points` : 'unchanged';
+    const latestTotal = totalDaysOf(latest);
+    const prevTotal = totalDaysOf(prev);
+    const delta = (latestTotal !== null && prevTotal !== null) ? prevTotal - latestTotal : null;
+    const deltaText = delta === null ? 'not enough data yet' : delta > 0 ? `${delta} days closer to freedom` : delta < 0 ? `${Math.abs(delta)} days further away` : 'unchanged';
     const deltaColor = delta > 0 ? 'var(--teal)' : delta < 0 ? '#C98368' : 'var(--text-mute)';
 
     box.innerHTML = `
@@ -519,23 +527,27 @@ src="https://www.facebook.com/tr?id=1119044180571388&ev=PageView&noscript=1"
 
   function renderBarChart(containerEl, data, detailEl, dateLabelFn) {
     containerEl.innerHTML = '';
-    const maxScore = 100;
+    const maxTotal = 360; // 4 freedoms × 90 days max
 
     data.forEach((r, i) => {
+      const total = totalDaysOf(r);
       const col = document.createElement('div');
       col.className = 'bar-col' + (i === data.length - 1 ? ' active' : '');
 
       const tooltip = document.createElement('div');
       tooltip.className = 'bar-tooltip';
-      tooltip.innerHTML = `${dateLabelFn(r)}<br><b>${r.score}</b> / 100`;
+      tooltip.innerHTML = total === null
+        ? `${dateLabelFn(r)}<br>no freedom data`
+        : `${dateLabelFn(r)}<br><b>${total}</b> days total`;
 
       const value = document.createElement('span');
       value.className = 'bar-value';
-      value.textContent = r.score;
+      value.textContent = total === null ? '—' : total;
 
       const bar = document.createElement('div');
       bar.className = 'bar-fill';
-      bar.style.height = Math.max(6, Math.round((r.score / maxScore) * 100)) + '%';
+      const heightPct = total === null ? 6 : Math.max(6, 100 - Math.round((total / maxTotal) * 100));
+      bar.style.height = heightPct + '%';
 
       const dayLbl = document.createElement('span');
       dayLbl.className = 'bar-day';
@@ -567,8 +579,8 @@ src="https://www.facebook.com/tr?id=1119044180571388&ev=PageView&noscript=1"
       ? `<div class="day-detail-items">${items.map(name => `<span class="day-detail-tag">${name}</span>`).join('')}</div>`
       : `<p class="day-detail-empty">Nothing marked that day.</p>`;
 
-    const hasFreedomData = r.mental_days !== null && r.mental_days !== undefined;
-    const freedomHtml = hasFreedomData ? `
+    const total = totalDaysOf(r);
+    const freedomHtml = total !== null ? `
       <div class="day-detail-freedoms">
         <span>🧠 ${r.mental_days}d</span>
         <span>💪 ${r.physical_days}d</span>
@@ -578,7 +590,7 @@ src="https://www.facebook.com/tr?id=1119044180571388&ev=PageView&noscript=1"
 
     detailEl.innerHTML = `
       <p class="day-detail-date">${dateLabel}</p>
-      <p class="day-detail-score">Score: <b>${r.score}</b> / 100</p>
+      <p class="day-detail-score">Total distance to freedom: <b>${total === null ? '—' : total}</b> days</p>
       ${freedomHtml}
       ${itemsHtml}
     `;
@@ -598,15 +610,18 @@ src="https://www.facebook.com/tr?id=1119044180571388&ev=PageView&noscript=1"
       const card = document.createElement('div');
       card.className = 'report-card';
       const dateStr = new Date(r.created_at).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' });
+      const total = totalDaysOf(r);
       card.innerHTML = `
         <div class="report-top">
           <span class="report-date">${dateStr}</span>
         </div>
         <div class="report-nums">
-          <div><div class="num">${r.score}</div><div class="lbl">Life Score</div></div>
-          <div><div class="num">${r.days_remaining ?? '—'}</div><div class="lbl">days to goal</div></div>
+          <div><div class="num">${r.mental_days ?? '—'}</div><div class="lbl">🧠 mental</div></div>
+          <div><div class="num">${r.physical_days ?? '—'}</div><div class="lbl">💪 physical</div></div>
+          <div><div class="num">${r.financial_days ?? '—'}</div><div class="lbl">💰 financial</div></div>
+          <div><div class="num">${r.temporal_days ?? '—'}</div><div class="lbl">⏳ time</div></div>
         </div>
-        <div class="report-bottleneck">Most showed up: <b>${r.bottleneck_habit ?? '—'}</b></div>
+        <div class="report-bottleneck">Total distance to freedom: <b>${total === null ? '—' : total + ' days'}</b></div>
       `;
       listEl.appendChild(card);
     });

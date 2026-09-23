@@ -38,15 +38,20 @@ src="https://www.facebook.com/tr?id=1119044180571388&ev=PageView&noscript=1"
   :root {
     --ink: #0E1A1C;
     --surface: #16292B;
+    --surface-2: #1C3134;
     --line: #ffffff14;
+    --line-soft: #ffffff0a;
     --teal: #5FAFA4;
     --teal-dim: #5FAFA433;
+    --rust: #C98368;
+    --rust-dim: #C9836822;
     --text: #EEF3F1;
     --text-mute: #93A6A2;
   }
 
   * { box-sizing: border-box; margin: 0; padding: 0; }
   html { -webkit-font-smoothing: antialiased; }
+  .hidden { display: none; }
 
   body {
     background: var(--ink);
@@ -146,27 +151,30 @@ src="https://www.facebook.com/tr?id=1119044180571388&ev=PageView&noscript=1"
     margin-bottom: 1.75rem;
   }
 
-  .score-readout {
-    position: relative;
+  .teaser-slots {
     display: flex;
-    align-items: flex-end;
-    gap: 0.5rem;
-    font-family: 'Space Mono', monospace;
-    line-height: 1;
-    margin-bottom: 0.5rem;
+    gap: 0.6rem;
+    margin-bottom: 1.5rem;
   }
 
-  .score-num {
-    font-size: clamp(6rem, 22vw, 11rem);
+  .teaser-reel {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    padding: 0.9rem 1rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.4rem;
+    font-size: 1.3rem;
+    min-width: 62px;
+  }
+
+  .teaser-num {
+    font-family: 'Space Mono', monospace;
+    font-size: 1.15rem;
     font-weight: 700;
     color: var(--teal);
-    letter-spacing: -0.02em;
-  }
-
-  .score-max {
-    font-size: clamp(1.5rem, 4vw, 2.25rem);
-    color: var(--text-mute);
-    padding-bottom: clamp(0.9rem, 3vw, 1.6rem);
   }
 
   .score-caption {
@@ -398,6 +406,377 @@ src="https://www.facebook.com/tr?id=1119044180571388&ev=PageView&noscript=1"
   footer { text-align: center; padding: 2rem 1.5rem 3rem; color: var(--text-mute); font-size: 0.8rem; }
 
   button:focus-visible, a:focus-visible { outline: 2px solid var(--teal); outline-offset: 3px; }
+  .reveal-cta {
+    text-align: center;
+    margin-bottom: 2.5rem;
+  }
+
+  .reveal-headline {
+    font-family: 'Fraunces', serif;
+    font-weight: 500;
+    font-size: clamp(1.4rem, 3.4vw, 1.8rem);
+    margin-bottom: 0.5rem;
+  }
+
+  .reveal-sub {
+    color: var(--text-mute);
+    font-size: 0.95rem;
+    max-width: 42ch;
+    margin: 0 auto 1.75rem;
+  }
+
+  .spin-btn {
+    font-family: 'Inter', sans-serif;
+    font-weight: 700;
+    font-size: 1.05rem;
+    padding: 1rem 2.1rem;
+    border-radius: 999px;
+    border: none;
+    cursor: pointer;
+    background: var(--teal);
+    color: #082220;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    box-shadow: 0 0 0 0 var(--teal-dim);
+  }
+
+  .spin-btn:hover {
+    transform: translateY(-2px) scale(1.03);
+    box-shadow: 0 10px 30px -8px var(--teal-dim);
+  }
+
+  .slot-machine {
+    display: flex;
+    gap: 0.85rem;
+    justify-content: center;
+    flex-wrap: wrap;
+    margin-bottom: 2.5rem;
+  }
+
+  .reel {
+    --cat-color: var(--teal);
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 16px;
+    padding: 1.5rem 0.75rem;
+    width: 130px;
+    text-align: center;
+    transition: transform 0.3s cubic-bezier(.34,1.56,.64,1), border-color 0.3s ease, box-shadow 0.3s ease;
+  }
+
+  .reel.landed {
+    border-color: var(--cat-color);
+    box-shadow: 0 0 34px -6px var(--cat-color);
+    transform: scale(1.05);
+  }
+
+  .reel-emoji { font-size: 1.6rem; margin-bottom: 0.5rem; }
+
+  .reel-label {
+    font-size: 0.68rem;
+    color: var(--text-mute);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    margin-bottom: 0.75rem;
+  }
+
+  .reel-value {
+    font-family: 'Space Mono', monospace;
+    font-size: 2.1rem;
+    font-weight: 700;
+    color: var(--text-mute);
+    line-height: 1;
+    transition: color 0.2s ease;
+  }
+
+  .reel.landed .reel-value {
+    color: var(--cat-color);
+    text-shadow: 0 0 18px var(--cat-color);
+  }
+
+  .reel-sub { font-size: 0.68rem; color: var(--text-mute); margin-top: 0.4rem; }
+
+  @media (max-width: 480px) {
+    .slot-machine { gap: 0.6rem; }
+    .reel { width: 44%; padding: 1.25rem 0.5rem; }
+  }
+
+  .sample-table {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 16px;
+    padding: 1.75rem;
+    margin-bottom: 3rem;
+    text-align: left;
+  }
+
+  .sample-label {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.72rem;
+    color: var(--teal);
+    background: var(--teal-dim);
+    display: inline-block;
+    padding: 0.25rem 0.6rem;
+    border-radius: 999px;
+    margin-bottom: 0.9rem;
+  }
+
+  .sample-headline {
+    font-family: 'Fraunces', serif;
+    font-weight: 500;
+    font-size: 1.2rem;
+    margin-bottom: 0.4rem;
+  }
+
+  .sample-sub {
+    color: var(--text-mute);
+    font-size: 0.88rem;
+    margin-bottom: 1.5rem;
+    max-width: 48ch;
+  }
+
+  .sample-chart {
+    display: flex;
+    align-items: flex-end;
+    gap: 0.6rem;
+    height: 130px;
+    margin-bottom: 0.5rem;
+  }
+
+  .sample-bar-col {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    height: 100%;
+    justify-content: flex-end;
+    gap: 0.4rem;
+    position: relative;
+    cursor: pointer;
+    border-radius: 8px;
+    padding-top: 1.5rem;
+    transition: background 0.15s ease;
+  }
+
+  .sample-bar-col:hover,
+  .sample-bar-col.active { background: var(--surface-2, #1C3134); }
+
+  .bar-tooltip {
+    position: absolute;
+    bottom: 100%;
+    left: 50%;
+    transform: translateX(-50%) translateY(-4px);
+    background: var(--ink);
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    padding: 0.45rem 0.7rem;
+    font-size: 0.75rem;
+    white-space: nowrap;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.15s ease;
+    z-index: 5;
+    text-align: center;
+  }
+
+  .bar-tooltip b { color: var(--teal); font-family: 'Space Mono', monospace; }
+
+  .sample-bar-col:hover .bar-tooltip { opacity: 1; }
+
+  .sample-bar-value {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.72rem;
+    color: var(--text-mute);
+  }
+
+  .sample-bar {
+    width: 100%;
+    max-width: 30px;
+    background: linear-gradient(to top, var(--teal), #5FAFA466);
+    border-radius: 6px 6px 2px 2px;
+  }
+
+  .sample-bar-col.last .sample-bar { background: linear-gradient(to top, var(--teal), #8FCFC4); }
+  .sample-bar-col.last .sample-bar-value { color: var(--teal); font-weight: 700; }
+
+  .sample-day {
+    font-size: 0.72rem;
+    color: var(--text-faint, var(--text-mute));
+    margin-top: 0.3rem;
+  }
+
+  .day-detail {
+    display: none;
+    background: var(--ink);
+    border: 1px solid var(--teal);
+    border-radius: 12px;
+    padding: 1.1rem 1.25rem;
+    margin-top: 1rem;
+  }
+
+  .day-detail.show { display: block; }
+
+  .day-detail-date {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.78rem;
+    color: var(--teal);
+    margin-bottom: 0.6rem;
+  }
+
+  .day-detail-score {
+    font-size: 0.92rem;
+    margin-bottom: 0.6rem;
+  }
+
+  .day-detail-score b { font-family: 'Space Mono', monospace; color: var(--teal); }
+
+  .day-detail-items {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+
+  .day-detail-tag {
+    font-size: 0.78rem;
+    color: var(--text-mute);
+    background: var(--surface);
+    border: 1px solid var(--line);
+    padding: 0.35rem 0.7rem;
+    border-radius: 999px;
+  }
+
+  .day-detail-empty { font-size: 0.85rem; color: var(--text-mute); }
+
+  .sample-stats {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+    margin-top: 1.75rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--line);
+  }
+
+  .sample-stat-value {
+    font-family: 'Space Mono', monospace;
+    font-size: 1.3rem;
+    color: var(--teal);
+    font-weight: 700;
+    margin-bottom: 0.25rem;
+  }
+
+  .sample-stat-label {
+    font-size: 0.8rem;
+    color: var(--text-mute);
+  }
+
+  /* ---------- Signup / login box ---------- */
+
+  .auth-box {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 16px;
+    padding: 2rem;
+  }
+
+  .auth-box h2 {
+    font-family: 'Fraunces', serif;
+    font-weight: 500;
+    font-size: 1.35rem;
+    margin-bottom: 0.75rem;
+  }
+
+  .auth-box > p, #pitchView > p {
+    color: var(--text-mute);
+    font-size: 0.95rem;
+    margin-bottom: 1.5rem;
+    max-width: 50ch;
+  }
+
+  .anon-note {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.6rem;
+    background: var(--teal-dim);
+    border: 1px solid var(--teal);
+    border-radius: 10px;
+    padding: 0.85rem 1rem;
+    font-size: 0.85rem;
+    color: var(--teal);
+    margin-bottom: 1.5rem;
+  }
+
+  .auth-form {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+
+  .auth-form input {
+    background: var(--ink);
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    color: var(--text);
+    font-family: 'Inter', sans-serif;
+    font-size: 0.95rem;
+    padding: 0.85rem 1.1rem;
+  }
+
+  .auth-form input:focus-visible { outline: 2px solid var(--teal); outline-offset: 2px; }
+
+  .auth-actions {
+    display: flex;
+    gap: 0.75rem;
+    align-items: center;
+    margin-top: 0.25rem;
+  }
+
+  .btn {
+    font-family: 'Inter', sans-serif;
+    font-weight: 600;
+    font-size: 0.95rem;
+    padding: 0.85rem 1.5rem;
+    border-radius: 999px;
+    border: none;
+    cursor: pointer;
+    background: var(--teal);
+    color: #082220;
+    transition: transform 0.2s ease;
+    text-decoration: none;
+    display: inline-block;
+  }
+
+  .btn:hover { transform: translateY(-1px); }
+
+  .btn-ghost {
+    background: transparent;
+    border: 1px solid var(--line);
+    color: var(--text-mute);
+  }
+
+  .auth-msg {
+    font-size: 0.85rem;
+    margin-top: 0.75rem;
+  }
+
+  .auth-msg.error { color: var(--rust); }
+  .auth-msg.success { color: var(--teal); }
+
+  .link-btn {
+    background: none;
+    border: none;
+    color: var(--text-mute);
+    font-size: 0.85rem;
+    text-decoration: underline;
+    cursor: pointer;
+    padding: 0.4rem 0;
+    align-self: flex-start;
+  }
+
+  .link-btn:hover { color: var(--teal); }
+
+  .saved-view { display: none; }
+  .saved-view.show { display: block; }
+  .saved-view .nickname { color: var(--text); font-weight: 600; }
+
 </style>
 </head>
 <body>
@@ -413,26 +792,83 @@ src="https://www.facebook.com/tr?id=1119044180571388&ev=PageView&noscript=1"
   <section class="hero">
     <p class="kicker reveal reveal-1">Life Score</p>
 
-    <div class="score-readout reveal reveal-2">
-      <span class="score-num" id="scoreNum">–</span>
-      <span class="score-max">/ 100</span>
+    <div class="teaser-slots reveal reveal-2" id="teaserSlots">
+      <div class="teaser-reel">🧠<span class="teaser-num">--</span></div>
+      <div class="teaser-reel">💪<span class="teaser-num">--</span></div>
+      <div class="teaser-reel">💰<span class="teaser-num">--</span></div>
+      <div class="teaser-reel">⏳<span class="teaser-num">--</span></div>
     </div>
-    <p class="score-caption reveal reveal-2">this isn't <b>your</b> score yet — you're about to see your own</p>
+    <p class="score-caption reveal reveal-2">this isn't <b>your</b> freedom yet — you're about to reveal your own</p>
 
-    <h1 class="reveal reveal-3">If your life were a video game, what score would you get?</h1>
-    <p class="hero-sub reveal reveal-3">A 2-minute look at how close you are to your goals. No judgment, no pressure — just a clearer view of yourself.</p>
+    <h1 class="reveal reveal-3">How many days are you from real freedom?</h1>
+    <p class="hero-sub reveal reveal-3">A 2-minute check-in across your mind, body, money, and time. No judgment, no pressure — just a clearer view of yourself.</p>
   </section>
 
-  <section class="list-preview">
-    <p class="list-preview-label">Get your score</p>
+  <section class="list-preview" id="pickerSection">
+    <p class="list-preview-label">Reveal my freedom</p>
     <p class="list-preview-sub">Mark anything below that showed up for you in the last 24 hours.</p>
     <div id="habitSection"></div>
 
     <div class="picker-footer">
       <span class="picker-count"><b id="selCount">0</b> / 15 marked</span>
-      <button class="cta" id="continueBtn" onclick="continueFlow()">Get your score</button>
+      <button class="cta" id="revealBtn" onclick="startSpin()">🎰 Reveal my freedom</button>
     </div>
     <p class="cta-note">Free · No sign-up to start · <a href="history.html" style="color:var(--text-mute);">Already have reports? Log in</a></p>
+
+    <div class="slot-machine hidden" id="slotMachine"></div>
+
+    <div class="post-reveal hidden" id="postReveal">
+      <div class="sample-table">
+        <p class="sample-label">Example</p>
+        <p class="sample-headline">This is what a week of checking in looks like</p>
+        <p class="sample-sub">Not your data — a sample of the pattern you'll start seeing after a few check-ins. Hover or tap a day to see what it looked like.</p>
+        <div class="sample-chart" id="sampleChart"></div>
+        <div class="day-detail" id="sampleDayDetail"></div>
+        <div class="sample-stats">
+          <div>
+            <p class="sample-stat-value">−110 days</p>
+            <p class="sample-stat-label">Total distance closed over the week</p>
+          </div>
+          <div>
+            <p class="sample-stat-value">Overthinking</p>
+            <p class="sample-stat-label">Showed up most — 3 of 7 days</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="auth-box">
+        <div id="autoSavedView" class="hidden">
+          <h2>Today's check-in saved ✓</h2>
+          <p>Logged in as <span class="nickname" id="autoSavedEmail"></span>. Come back tomorrow — or whenever — and check in again to see your trend.</p>
+          <a class="btn" href="history.html">See my trend</a>
+        </div>
+
+        <div id="pitchView">
+          <h2>Save today's check-in</h2>
+          <p>Create a free account and today's result is saved with today's date. Come back tomorrow, in a few days, or next week, check in again, and we'll show you exactly what's changed since last time.</p>
+          <div class="anon-note">
+            <span>🔒</span>
+            <span>Your email is only used to save your check-ins and recover your password — never shared, never shown to anyone else.</span>
+          </div>
+          <div class="auth-form">
+            <input type="email" id="email" placeholder="you@email.com" autocomplete="email">
+            <input type="password" id="password" placeholder="Choose a password">
+            <div class="auth-actions">
+              <button class="btn" onclick="saveReport()">Save today's check-in</button>
+              <button class="btn btn-ghost" onclick="skipSave()">Not now</button>
+            </div>
+            <p class="auth-msg" id="authMsg"></p>
+            <button class="link-btn" onclick="forgotPassword()">Forgot your password?</button>
+          </div>
+        </div>
+
+        <div id="savedView" class="saved-view">
+          <h2>Saved ✓</h2>
+          <p>This check-in is saved under <span class="nickname" id="savedEmail"></span>. Come back anytime, log in with the same email and password, and check in again to see your trend.</p>
+          <a class="btn" href="history.html">View my trend</a>
+        </div>
+      </div>
+    </div>
   </section>
 
   <section class="steps">
@@ -448,8 +884,8 @@ src="https://www.facebook.com/tr?id=1119044180571388&ev=PageView&noscript=1"
       <div class="step">
         <span class="step-index">02</span>
         <div>
-          <p class="step-title">See your score instantly</p>
-          <p class="step-desc">No waiting, no quiz — your score and how many days you are from your goal show up right away.</p>
+          <p class="step-title">Watch your freedom reveal instantly</p>
+          <p class="step-desc">No waiting, no quiz — 4 reels spin and land on how many days you are from mental, physical, financial, and time freedom.</p>
         </div>
       </div>
       <div class="step">
@@ -470,22 +906,18 @@ src="https://www.facebook.com/tr?id=1119044180571388&ev=PageView&noscript=1"
 
   <section class="closing">
     <h2>Curious? Let's take a look together.</h2>
-    <a class="cta" href="habits.html">Get your score</a>
+    <a class="cta" href="#pickerSection">🎰 Reveal my freedom</a>
   </section>
 
   <footer>Life Score — a gamified way to know yourself</footer>
 
 <script>
-  const el = document.getElementById('scoreNum');
-  const target = 68;
-  let current = 0;
-  setTimeout(() => {
-    const iv = setInterval(() => {
-      current += Math.ceil((target - current) / 6) || 1;
-      if (current >= target) { current = target; clearInterval(iv); }
-      el.textContent = current;
-    }, 60);
-  }, 500);
+  // Small looping teaser animation in the hero — purely decorative,
+  // no sound (autoplay audio isn't allowed before a user gesture).
+  const teaserEls = document.querySelectorAll('#teaserSlots .teaser-num');
+  setInterval(() => {
+    teaserEls.forEach(el => { el.textContent = Math.floor(Math.random() * 90); });
+  }, 700);
 </script>
 
 <script>
@@ -562,20 +994,332 @@ src="https://www.facebook.com/tr?id=1119044180571388&ev=PageView&noscript=1"
     }
     document.getElementById('selCount').textContent = state.size;
   }
+</script>
 
-  function continueFlow() {
-    const selections = {};
-    state.forEach(name => { selections[name] = 'quit'; });
-    sessionStorage.setItem('lifeScoreHabits', JSON.stringify(selections));
-    sessionStorage.setItem('lifeScoreTotalHabits', String(TOTAL_HABITS));
-    if (typeof fbq !== 'undefined') fbq('trackCustom', 'HabitsSelected', { count: state.size });
-    if (typeof ttq !== 'undefined') ttq.track('HabitsSelected', { count: state.size });
-    window.location.href = 'results.html';
+<script src="lifescore.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="config.js"></script>
+
+<script>
+  // ---------- Example chart (illustrative, not the person's real data) ----------
+  const sampleData = [
+    { day: 'Mon', date: 'Sep 1', total: 210, items: ['Overthinking', 'Laziness & Procrastination', 'Unhealthy Eating & Drinking'] },
+    { day: 'Tue', date: 'Sep 2', total: 185, items: ['Overthinking', 'Social Media & Gaming Addiction'] },
+    { day: 'Wed', date: 'Sep 3', total: 165, items: ['Laziness & Procrastination', 'Negative Feelings'] },
+    { day: 'Thu', date: 'Sep 4', total: 140, items: ['Overthinking'] },
+    { day: 'Fri', date: 'Sep 5', total: 120, items: ['Social Media & Gaming Addiction'] },
+    { day: 'Sat', date: 'Sep 6', total: 110, items: [] },
+    { day: 'Sun', date: 'Sep 7', total: 100, items: [] }
+  ];
+
+  function renderBarChart(containerEl, data, detailEl, dateLabel) {
+    containerEl.innerHTML = '';
+    const maxTotal = 360; // 4 freedoms × 90 days max
+
+    data.forEach((d, i) => {
+      const col = document.createElement('div');
+      col.className = 'sample-bar-col' + (i === data.length - 1 ? ' last' : '');
+
+      const tooltip = document.createElement('div');
+      tooltip.className = 'bar-tooltip';
+      tooltip.innerHTML = `${dateLabel(d)}<br><b>${d.total}</b> days total`;
+
+      const value = document.createElement('span');
+      value.className = 'sample-bar-value';
+      value.textContent = d.total;
+
+      const bar = document.createElement('div');
+      bar.className = 'sample-bar';
+      // Shorter distance-to-freedom = taller bar (closer to fully free).
+      const heightPct = 100 - Math.round((d.total / maxTotal) * 100);
+      bar.style.height = Math.max(6, heightPct) + '%';
+
+      const label = document.createElement('span');
+      label.className = 'sample-day';
+      label.textContent = d.day;
+
+      col.appendChild(tooltip);
+      col.appendChild(value);
+      col.appendChild(bar);
+      col.appendChild(label);
+
+      col.onclick = () => {
+        [...containerEl.children].forEach(c => c.classList.remove('active'));
+        col.classList.add('active');
+        showDayDetail(detailEl, d, dateLabel(d));
+      };
+
+      containerEl.appendChild(col);
+    });
+  }
+
+  function showDayDetail(detailEl, d, dateLabel) {
+    const itemsHtml = d.items && d.items.length
+      ? `<div class="day-detail-items">${d.items.map(name => `<span class="day-detail-tag">${name}</span>`).join('')}</div>`
+      : `<p class="day-detail-empty">Nothing marked that day.</p>`;
+
+    detailEl.innerHTML = `
+      <p class="day-detail-date">${dateLabel}</p>
+      <p class="day-detail-score">Total distance to freedom: <b>${d.total}</b> days</p>
+      ${itemsHtml}
+    `;
+    detailEl.classList.add('show');
+  }
+
+  renderBarChart(
+    document.getElementById('sampleChart'),
+    sampleData,
+    document.getElementById('sampleDayDetail'),
+    d => d.date
+  );
+
+  // ---------- The real reveal: slot machine ----------
+  let audioCtx = null;
+  function ensureAudio() {
+    if (!audioCtx) {
+      const AC = window.AudioContext || window.webkitAudioContext;
+      if (AC) audioCtx = new AC();
+    }
+  }
+
+  function playTick() {
+    if (!audioCtx) return;
+    const o = audioCtx.createOscillator();
+    const g = audioCtx.createGain();
+    o.type = 'square';
+    o.frequency.value = 650 + Math.random() * 250;
+    g.gain.value = 0.05;
+    o.connect(g); g.connect(audioCtx.destination);
+    o.start();
+    g.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + 0.05);
+    o.stop(audioCtx.currentTime + 0.06);
+  }
+
+  function playLand(freq) {
+    if (!audioCtx) return;
+    const o = audioCtx.createOscillator();
+    const g = audioCtx.createGain();
+    o.type = 'sine';
+    o.frequency.value = freq;
+    g.gain.value = 0.18;
+    o.connect(g); g.connect(audioCtx.destination);
+    o.start();
+    o.frequency.exponentialRampToValueAtTime(freq * 1.5, audioCtx.currentTime + 0.18);
+    g.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + 0.45);
+    o.stop(audioCtx.currentTime + 0.45);
+  }
+
+  const FREEDOM_ORDER = ['mental', 'physical', 'financial', 'temporal'];
+  const LAND_FREQS = { mental: 440, physical: 494, financial: 554, temporal: 659 };
+
+  let freedomResult = null;
+  let habits = [];
+  let landedCount = 0;
+
+  function buildReels() {
+    const container = document.getElementById('slotMachine');
+    container.innerHTML = '';
+    FREEDOM_ORDER.forEach(key => {
+      const cat = freedomResult[key];
+      const reel = document.createElement('div');
+      reel.className = 'reel';
+      reel.id = 'reel-' + key;
+      reel.style.setProperty('--cat-color', cat.color);
+      reel.innerHTML = `
+        <div class="reel-emoji">${cat.emoji}</div>
+        <div class="reel-label">${cat.label}</div>
+        <div class="reel-value" id="reel-value-${key}">–</div>
+        <div class="reel-sub">days to go</div>
+      `;
+      container.appendChild(reel);
+    });
+  }
+
+  function spinReel(key, finalValue, startDelay) {
+    const valueEl = document.getElementById('reel-value-' + key);
+    const reelEl = document.getElementById('reel-' + key);
+    const duration = 1100 + startDelay;
+    const tickMs = 65;
+    let elapsed = 0;
+
+    setTimeout(() => {
+      const iv = setInterval(() => {
+        valueEl.textContent = Math.floor(Math.random() * 90);
+        playTick();
+        elapsed += tickMs;
+        if (elapsed >= duration) {
+          clearInterval(iv);
+          valueEl.textContent = finalValue;
+          reelEl.classList.add('landed');
+          playLand(LAND_FREQS[key]);
+          landedCount++;
+          if (landedCount === FREEDOM_ORDER.length) onAllReelsLanded();
+        }
+      }, tickMs);
+    }, startDelay);
+  }
+
+  function startSpin() {
+    habits = Array.from(state).map(name => ({ name, choice: 'quit' }));
+    freedomResult = computeFreedomDays(Array.from(state));
+    landedCount = 0;
+
+    ensureAudio();
+    document.getElementById('pickerSection').querySelector('.picker-footer').classList.add('hidden');
+    document.getElementById('slotMachine').classList.remove('hidden');
+    buildReels();
+    FREEDOM_ORDER.forEach((key, i) => spinReel(key, freedomResult[key].days, i * 280));
+
+    if (typeof fbq !== 'undefined') fbq('track', 'ViewContent', { content_name: 'freedom_reveal' });
+    if (typeof ttq !== 'undefined') ttq.track('ViewContent', { content_id: 'freedom_reveal', content_name: 'freedom_reveal' });
+  }
+
+  function onAllReelsLanded() {
+    document.getElementById('postReveal').classList.remove('hidden');
+    document.getElementById('postReveal').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    autoSaveIfLoggedIn();
+  }
+
+  // ---------- Saving the check-in (real accounts via Supabase Auth) ----------
+
+  async function saveReportForUser(userId) {
+    const now = new Date();
+    const startOfToday = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+    const startOfTomorrow = new Date(startOfToday);
+    startOfTomorrow.setDate(startOfTomorrow.getDate() + 1);
+
+    const payload = {
+      habits: habits,
+      mental_days: freedomResult.mental.days,
+      physical_days: freedomResult.physical.days,
+      financial_days: freedomResult.financial.days,
+      temporal_days: freedomResult.temporal.days
+    };
+
+    const { data: existing, error: findError } = await supabaseClient
+      .from('reports')
+      .select('id')
+      .eq('user_id', userId)
+      .gte('created_at', startOfToday.toISOString())
+      .lt('created_at', startOfTomorrow.toISOString())
+      .limit(1)
+      .maybeSingle();
+
+    if (findError) return { error: findError };
+
+    if (existing) {
+      return await supabaseClient.from('reports').update(payload).eq('id', existing.id);
+    }
+    return await supabaseClient.from('reports').insert({ user_id: userId, ...payload });
+  }
+
+  async function autoSaveIfLoggedIn() {
+    if (typeof supabase === 'undefined' || !supabaseClient) return;
+    try {
+      const { data } = await supabaseClient.auth.getSession();
+      if (!data.session) return;
+
+      const email = data.session.user.email;
+      const { error } = await saveReportForUser(data.session.user.id);
+      if (error) return;
+
+      document.querySelectorAll('#pitchView, #savedView').forEach(el => el.style.display = 'none');
+      document.getElementById('autoSavedView').classList.remove('hidden');
+      document.getElementById('autoSavedEmail').textContent = email;
+    } catch (e) { /* no session / offline — manual pitch still works */ }
+  }
+
+  async function saveReport() {
+    const email = document.getElementById('email').value.trim().toLowerCase();
+    const password = document.getElementById('password').value;
+    const msgEl = document.getElementById('authMsg');
+    const saveBtn = document.querySelector('.auth-actions .btn');
+
+    if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      msgEl.textContent = 'Enter a valid email address.';
+      msgEl.className = 'auth-msg error';
+      return;
+    }
+    if (!password || password.length < 6) {
+      msgEl.textContent = 'Password needs to be at least 6 characters.';
+      msgEl.className = 'auth-msg error';
+      return;
+    }
+
+    saveBtn.disabled = true;
+    msgEl.textContent = 'Saving...';
+    msgEl.className = 'auth-msg';
+
+    try {
+      if (typeof supabase === 'undefined' || !supabaseClient) {
+        throw new Error('Supabase library did not load — check your internet connection and reload the page.');
+      }
+
+      let { data: signInData, error: signInError } = await supabaseClient.auth.signInWithPassword({ email, password });
+      let user = signInData?.user;
+
+      if (signInError) {
+        const { data: signUpData, error: signUpError } = await supabaseClient.auth.signUp({ email, password });
+        if (signUpError) {
+          if (signUpError.message.toLowerCase().includes('already')) {
+            throw new Error('That email is already registered with a different password. Use "Forgot your password?" below.');
+          }
+          throw new Error(signUpError.message);
+        }
+        user = signUpData.user;
+      }
+
+      if (!user) throw new Error('Something went wrong creating your account — try again.');
+
+      const { error: insertError } = await saveReportForUser(user.id);
+      if (insertError) throw new Error(insertError.message);
+
+      document.getElementById('pitchView').style.display = 'none';
+      document.getElementById('savedView').classList.add('show');
+      document.getElementById('savedEmail').textContent = email;
+
+      if (typeof fbq !== 'undefined') fbq('track', 'CompleteRegistration');
+      if (typeof ttq !== 'undefined') ttq.track('CompleteRegistration');
+
+    } catch (err) {
+      msgEl.textContent = err.message;
+      msgEl.className = 'auth-msg error';
+      saveBtn.disabled = false;
+    }
+  }
+
+  async function forgotPassword() {
+    const email = document.getElementById('email').value.trim().toLowerCase();
+    const msgEl = document.getElementById('authMsg');
+
+    if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      msgEl.textContent = 'Enter your email above first, then tap this again.';
+      msgEl.className = 'auth-msg error';
+      return;
+    }
+
+    msgEl.textContent = 'Sending reset link...';
+    msgEl.className = 'auth-msg';
+
+    try {
+      const { error } = await supabaseClient.auth.resetPasswordForEmail(email, {
+        redirectTo: window.location.origin + '/reset-password.html'
+      });
+      if (error) throw new Error(error.message);
+      msgEl.textContent = 'Check your email for a link to reset your password.';
+      msgEl.className = 'auth-msg success';
+    } catch (err) {
+      msgEl.textContent = err.message;
+      msgEl.className = 'auth-msg error';
+    }
+  }
+
+  function skipSave() {
+    document.querySelector('.auth-box').innerHTML =
+      '<h2>No problem</h2><p style="margin-bottom:0;">Nothing is saved — this result exists only for this visit. You can always come back and check in again from scratch.</p>';
   }
 </script>
 
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="config.js"></script>
 <script>
   function setHeaderAuth(loggedIn) {
     const btn = document.getElementById('headerAuthBtn');
