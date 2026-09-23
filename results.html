@@ -129,26 +129,70 @@ src="https://www.facebook.com/tr?id=1119044180571388&ev=PageView&noscript=1"
 
   .result-label { font-size: 0.85rem; color: var(--text-mute); }
 
-  .bottleneck-box {
+  .sample-table {
     background: var(--surface);
     border: 1px solid var(--line);
     border-radius: 16px;
     padding: 1.75rem;
     margin-bottom: 3rem;
+    text-align: left;
   }
 
-  .bottleneck-box p.label {
+  .sample-label {
     font-family: 'Space Mono', monospace;
-    font-size: 0.75rem;
-    color: var(--rust);
-    margin-bottom: 0.6rem;
+    font-size: 0.72rem;
+    color: var(--teal);
+    background: var(--teal-dim);
+    display: inline-block;
+    padding: 0.25rem 0.6rem;
+    border-radius: 999px;
+    margin-bottom: 0.9rem;
   }
 
-  .bottleneck-box p.sentence {
+  .sample-headline {
     font-family: 'Fraunces', serif;
     font-weight: 500;
     font-size: 1.2rem;
+    margin-bottom: 0.4rem;
   }
+
+  .sample-sub {
+    color: var(--text-mute);
+    font-size: 0.88rem;
+    margin-bottom: 1.5rem;
+    max-width: 48ch;
+  }
+
+  .week-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.9rem;
+  }
+
+  .week-table th {
+    text-align: left;
+    font-family: 'Space Mono', monospace;
+    font-size: 0.72rem;
+    color: var(--text-mute);
+    font-weight: 400;
+    padding: 0 0 0.6rem;
+    border-bottom: 1px solid var(--line);
+  }
+
+  .week-table td {
+    padding: 0.6rem 0;
+    border-bottom: 1px solid var(--line-soft);
+    color: var(--text);
+  }
+
+  .week-table tr:last-child td { border-bottom: none; }
+
+  .week-table .score-cell {
+    font-family: 'Space Mono', monospace;
+    color: var(--text-mute);
+  }
+
+  .week-table .score-cell.up { color: var(--teal); font-weight: 700; }
 
   /* ---------- Signup / login box ---------- */
 
@@ -242,6 +286,19 @@ src="https://www.facebook.com/tr?id=1119044180571388&ev=PageView&noscript=1"
   .auth-msg.error { color: var(--rust); }
   .auth-msg.success { color: var(--teal); }
 
+  .link-btn {
+    background: none;
+    border: none;
+    color: var(--text-mute);
+    font-size: 0.85rem;
+    text-decoration: underline;
+    cursor: pointer;
+    padding: 0.4rem 0;
+    align-self: flex-start;
+  }
+
+  .link-btn:hover { color: var(--teal); }
+
   .saved-view { display: none; }
   .saved-view.show { display: block; }
   .saved-view .nickname { color: var(--text); font-weight: 600; }
@@ -278,15 +335,30 @@ src="https://www.facebook.com/tr?id=1119044180571388&ev=PageView&noscript=1"
         </div>
       </div>
 
-      <div class="bottleneck-box reveal reveal-2">
-        <p class="label">What's holding you back</p>
-        <p class="sentence" id="bottleneckSentence"></p>
+      <div class="sample-table reveal reveal-2">
+        <p class="sample-label">Example</p>
+        <p class="sample-headline">This is what daily tracking looks like</p>
+        <p class="sample-sub">A real pattern from checking in once a day for a week — not your data, just an example of what you'll see once you start.</p>
+        <table class="week-table">
+          <thead>
+            <tr><th>Day</th><th>Score</th><th>Most frequent</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>Mon</td><td class="score-cell">42</td><td>Overthinking</td></tr>
+            <tr><td>Tue</td><td class="score-cell">47</td><td>Overthinking</td></tr>
+            <tr><td>Wed</td><td class="score-cell">45</td><td>Procrastination</td></tr>
+            <tr><td>Thu</td><td class="score-cell">53</td><td>Overthinking</td></tr>
+            <tr><td>Fri</td><td class="score-cell">58</td><td>Social Media</td></tr>
+            <tr><td>Sat</td><td class="score-cell">61</td><td>—</td></tr>
+            <tr><td>Sun</td><td class="score-cell up">65</td><td>—</td></tr>
+          </tbody>
+        </table>
       </div>
 
       <div class="auth-box reveal reveal-3">
         <div id="autoSavedView" class="hidden">
           <h2>Today's check-in saved ✓</h2>
-          <p>Logged in as <span class="nickname" id="autoSavedNickname"></span>. Come back tomorrow — or whenever — and check in again to see your trend.</p>
+          <p>Logged in as <span class="nickname" id="autoSavedEmail"></span>. Come back tomorrow — or whenever — and check in again to see your trend.</p>
           <a class="btn" href="history.html">See my trend</a>
         </div>
 
@@ -295,22 +367,23 @@ src="https://www.facebook.com/tr?id=1119044180571388&ev=PageView&noscript=1"
           <p>Create a free account and today's result is saved with today's date. Come back tomorrow, in a few days, or next week, check in again, and we'll show you exactly what's changed since last time.</p>
           <div class="anon-note">
             <span>🔒</span>
-            <span>Anonymous by design — no name or email needed. Just a nickname and a password so you can find your check-ins again.</span>
+            <span>Your email is only used to save your check-ins and recover your password — never shared, never shown to anyone else.</span>
           </div>
           <div class="auth-form">
-            <input type="text" id="nickname" placeholder="Choose a nickname" autocomplete="off">
+            <input type="email" id="email" placeholder="you@email.com" autocomplete="email">
             <input type="password" id="password" placeholder="Choose a password">
             <div class="auth-actions">
               <button class="btn" onclick="saveReport()">Save today's check-in</button>
               <button class="btn btn-ghost" onclick="skipSave()">Not now</button>
             </div>
             <p class="auth-msg" id="authMsg"></p>
+            <button class="link-btn" onclick="forgotPassword()">Forgot your password?</button>
           </div>
         </div>
 
         <div id="savedView" class="saved-view">
           <h2>Saved ✓</h2>
-          <p>This check-in is saved under <span class="nickname" id="savedNickname"></span>. Come back anytime, log in with the same nickname and password, and check in again to see your trend.</p>
+          <p>This check-in is saved under <span class="nickname" id="savedEmail"></span>. Come back anytime, log in with the same email and password, and check in again to see your trend.</p>
           <a class="btn" href="history.html">View my trend</a>
         </div>
       </div>
@@ -341,19 +414,11 @@ src="https://www.facebook.com/tr?id=1119044180571388&ev=PageView&noscript=1"
     document.getElementById('scoreNum').textContent = result.score;
     document.getElementById('daysNum').textContent = result.bottleneck ? result.bottleneck.daysRemaining : 0;
 
-    if (result.bottleneck) {
-      document.getElementById('bottleneckSentence').textContent =
-        `In the last 24 hours, "${result.bottleneck.name}" is what showed up the most.`;
-    } else {
-      document.getElementById('bottleneckSentence').textContent =
-        "Nothing marked for the last 24 hours — that's a good place to be.";
-    }
-
     if (typeof fbq !== 'undefined') fbq('track', 'ViewContent', { content_name: 'life_score_result', value: result.score });
     if (typeof ttq !== 'undefined') ttq.track('ViewContent', { content_id: 'life_score_result', content_name: 'life_score_result', value: result.score, currency: 'USD' });
   }
 
-  function saveReportForUser(userId, nickname) {
+  function saveReportForUser(userId) {
     return supabaseClient.from('reports').insert({
       user_id: userId,
       score: result.score,
@@ -364,7 +429,7 @@ src="https://www.facebook.com/tr?id=1119044180571388&ev=PageView&noscript=1"
   }
 
   // If this browser already has a logged-in session (a returning check-in),
-  // save automatically — no need to ask for nickname/password again.
+  // save automatically — no need to log in again.
   (async function autoSaveIfLoggedIn() {
     if (!totalHabits) return; // nothing to save if they didn't go through the list
     if (typeof supabase === 'undefined' || !supabaseClient) return;
@@ -373,13 +438,13 @@ src="https://www.facebook.com/tr?id=1119044180571388&ev=PageView&noscript=1"
       const { data } = await supabaseClient.auth.getSession();
       if (!data.session) return;
 
-      const nickname = sessionStorage.getItem('lifeScoreNickname') || 'you';
-      const { error } = await saveReportForUser(data.session.user.id, nickname);
+      const email = data.session.user.email;
+      const { error } = await saveReportForUser(data.session.user.id);
       if (error) return; // fall back to the manual pitch silently
 
       document.querySelector('.auth-box').querySelectorAll('#pitchView, #savedView').forEach(el => el.style.display = 'none');
       document.getElementById('autoSavedView').classList.remove('hidden');
-      document.getElementById('autoSavedNickname').textContent = nickname;
+      document.getElementById('autoSavedEmail').textContent = email;
     } catch (e) {
       // no session / network issue — the manual pitch below still works
     }
@@ -388,17 +453,17 @@ src="https://www.facebook.com/tr?id=1119044180571388&ev=PageView&noscript=1"
   // ---------- Real accounts via Supabase Auth (first-time save) ----------
 
   async function saveReport() {
-    const nickname = document.getElementById('nickname').value.trim();
+    const email = document.getElementById('email').value.trim().toLowerCase();
     const password = document.getElementById('password').value;
     const msgEl = document.getElementById('authMsg');
     const saveBtn = document.querySelector('.auth-actions .btn');
 
-    if (!nickname || !password) {
-      msgEl.textContent = 'Enter a nickname and a password.';
+    if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      msgEl.textContent = 'Enter a valid email address.';
       msgEl.className = 'auth-msg error';
       return;
     }
-    if (password.length < 6) {
+    if (!password || password.length < 6) {
       msgEl.textContent = 'Password needs to be at least 6 characters.';
       msgEl.className = 'auth-msg error';
       return;
@@ -413,19 +478,17 @@ src="https://www.facebook.com/tr?id=1119044180571388&ev=PageView&noscript=1"
         throw new Error('Supabase library did not load — check your internet connection and reload the page.');
       }
 
-      const email = nicknameToEmail(nickname);
-
       // Try logging in first (returning user).
       let { data: signInData, error: signInError } = await supabaseClient.auth.signInWithPassword({ email, password });
       let user = signInData?.user;
 
       if (signInError) {
-        // Not an existing match — try creating a new account with this nickname.
+        // Not an existing match — try creating a new account with this email.
         const { data: signUpData, error: signUpError } = await supabaseClient.auth.signUp({ email, password });
 
         if (signUpError) {
           if (signUpError.message.toLowerCase().includes('already')) {
-            throw new Error('That nickname is taken with a different password.');
+            throw new Error('That email is already registered with a different password. Use "Forgot your password?" below.');
           }
           throw new Error(signUpError.message);
         }
@@ -436,20 +499,12 @@ src="https://www.facebook.com/tr?id=1119044180571388&ev=PageView&noscript=1"
         throw new Error('Something went wrong creating your account — try again.');
       }
 
-      const { error: insertError } = await supabaseClient.from('reports').insert({
-        user_id: user.id,
-        score: result.score,
-        days_remaining: result.bottleneck ? result.bottleneck.daysRemaining : null,
-        bottleneck_habit: result.bottleneck ? result.bottleneck.name : null,
-        habits: habits
-      });
-
+      const { error: insertError } = await saveReportForUser(user.id);
       if (insertError) throw new Error(insertError.message);
 
-      sessionStorage.setItem('lifeScoreNickname', nickname);
       document.getElementById('pitchView').style.display = 'none';
       document.getElementById('savedView').classList.add('show');
-      document.getElementById('savedNickname').textContent = nickname;
+      document.getElementById('savedEmail').textContent = email;
 
       if (typeof fbq !== 'undefined') fbq('track', 'CompleteRegistration');
       if (typeof ttq !== 'undefined') ttq.track('CompleteRegistration');
@@ -458,6 +513,32 @@ src="https://www.facebook.com/tr?id=1119044180571388&ev=PageView&noscript=1"
       msgEl.textContent = err.message;
       msgEl.className = 'auth-msg error';
       saveBtn.disabled = false;
+    }
+  }
+
+  async function forgotPassword() {
+    const email = document.getElementById('email').value.trim().toLowerCase();
+    const msgEl = document.getElementById('authMsg');
+
+    if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      msgEl.textContent = 'Enter your email above first, then tap this again.';
+      msgEl.className = 'auth-msg error';
+      return;
+    }
+
+    msgEl.textContent = 'Sending reset link...';
+    msgEl.className = 'auth-msg';
+
+    try {
+      const { error } = await supabaseClient.auth.resetPasswordForEmail(email, {
+        redirectTo: window.location.origin + '/reset-password.html'
+      });
+      if (error) throw new Error(error.message);
+      msgEl.textContent = 'Check your email for a link to reset your password.';
+      msgEl.className = 'auth-msg success';
+    } catch (err) {
+      msgEl.textContent = err.message;
+      msgEl.className = 'auth-msg error';
     }
   }
 

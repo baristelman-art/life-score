@@ -114,6 +114,20 @@ src="https://www.facebook.com/tr?id=1119044180571388&ev=PageView&noscript=1"
   .btn:hover { transform: translateY(-1px); }
 
   .auth-msg { font-size: 0.85rem; color: var(--rust); }
+  .auth-msg.success { color: var(--teal); }
+
+  .link-btn {
+    background: none;
+    border: none;
+    color: var(--text-mute);
+    font-size: 0.85rem;
+    text-decoration: underline;
+    cursor: pointer;
+    padding: 0.4rem 0;
+    align-self: flex-start;
+  }
+
+  .link-btn:hover { color: var(--teal); }
 
   /* ---------- Report list ---------- */
 
@@ -199,20 +213,21 @@ src="https://www.facebook.com/tr?id=1119044180571388&ev=PageView&noscript=1"
 
     <div id="loginView">
       <h1>Log in to see your reports</h1>
-      <p class="sub">Enter the nickname and password you used when you saved a result.</p>
+      <p class="sub">Enter the email and password you used when you saved a check-in.</p>
       <div class="login-box">
         <div class="login-form">
-          <input type="text" id="nickname" placeholder="Nickname">
+          <input type="email" id="email" placeholder="you@email.com" autocomplete="email">
           <input type="password" id="password" placeholder="Password">
           <button class="btn" onclick="doLogin()">Log in</button>
           <p class="auth-msg" id="loginMsg"></p>
+          <button class="link-btn" onclick="doForgotPassword()">Forgot your password?</button>
         </div>
       </div>
     </div>
 
     <div id="reportsView" class="hidden">
       <h1>Your trend</h1>
-      <p class="sub">Logged in as <span class="nickname" id="loggedInName"></span></p>
+      <p class="sub">Logged in as <span class="nickname" id="loggedInEmail"></span></p>
       <a class="btn" href="habits.html" style="display:inline-block; text-decoration:none; margin-bottom:2rem;">+ New check-in</a>
       <div id="trendBox"></div>
       <div id="reportList"></div>
@@ -224,37 +239,65 @@ src="https://www.facebook.com/tr?id=1119044180571388&ev=PageView&noscript=1"
 <script src="config.js"></script>
 <script>
   async function doLogin() {
-    const nickname = document.getElementById('nickname').value.trim();
+    const email = document.getElementById('email').value.trim().toLowerCase();
     const password = document.getElementById('password').value;
     const msgEl = document.getElementById('loginMsg');
     const loginBtn = document.querySelector('.login-form .btn');
 
-    if (!nickname || !password) {
-      msgEl.textContent = 'Enter your nickname and password.';
+    if (!email || !password) {
+      msgEl.textContent = 'Enter your email and password.';
+      msgEl.className = 'auth-msg';
       return;
     }
 
     loginBtn.disabled = true;
     msgEl.textContent = 'Logging in...';
+    msgEl.className = 'auth-msg';
 
     try {
       if (typeof supabase === 'undefined' || !supabaseClient) {
         throw new Error('Supabase library did not load — check your internet connection and reload the page.');
       }
 
-      const email = nicknameToEmail(nickname);
       const { data, error } = await supabaseClient.auth.signInWithPassword({ email, password });
 
-      if (error) throw new Error("That nickname and password don't match an account.");
+      if (error) throw new Error("That email and password don't match an account.");
 
-      await loadAndShowReports(nickname, data.user.id);
+      await loadAndShowReports(data.user.email, data.user.id);
     } catch (err) {
       msgEl.textContent = err.message;
+      msgEl.className = 'auth-msg';
       loginBtn.disabled = false;
     }
   }
 
-  async function loadAndShowReports(nickname, userId) {
+  async function doForgotPassword() {
+    const email = document.getElementById('email').value.trim().toLowerCase();
+    const msgEl = document.getElementById('loginMsg');
+
+    if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      msgEl.textContent = 'Enter your email above first, then tap this again.';
+      msgEl.className = 'auth-msg';
+      return;
+    }
+
+    msgEl.textContent = 'Sending reset link...';
+    msgEl.className = 'auth-msg';
+
+    try {
+      const { error } = await supabaseClient.auth.resetPasswordForEmail(email, {
+        redirectTo: window.location.origin + '/reset-password.html'
+      });
+      if (error) throw new Error(error.message);
+      msgEl.textContent = 'Check your email for a link to reset your password.';
+      msgEl.className = 'auth-msg success';
+    } catch (err) {
+      msgEl.textContent = err.message;
+      msgEl.className = 'auth-msg';
+    }
+  }
+
+  async function loadAndShowReports(email, userId) {
     const { data: reports, error } = await supabaseClient
       .from('reports')
       .select('*')
@@ -266,13 +309,13 @@ src="https://www.facebook.com/tr?id=1119044180571388&ev=PageView&noscript=1"
       return;
     }
 
-    showReports(nickname, reports);
+    showReports(email, reports);
   }
 
-  function showReports(nickname, reports) {
+  function showReports(email, reports) {
     document.getElementById('loginView').classList.add('hidden');
     document.getElementById('reportsView').classList.remove('hidden');
-    document.getElementById('loggedInName').textContent = nickname;
+    document.getElementById('loggedInEmail').textContent = email;
 
     const sorted = [...reports].sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
     renderTrend(sorted);
@@ -354,13 +397,11 @@ src="https://www.facebook.com/tr?id=1119044180571388&ev=PageView&noscript=1"
     });
   }
 
-  // If a session already exists (e.g. just came from saving a report), skip straight to it.
+  // If a session already exists (e.g. just came from saving a check-in), skip straight to it.
   (async () => {
-    const remembered = sessionStorage.getItem('lifeScoreNickname');
-    if (!remembered) return;
     const { data } = await supabaseClient.auth.getSession();
     if (data.session) {
-      await loadAndShowReports(remembered, data.session.user.id);
+      await loadAndShowReports(data.session.user.email, data.session.user.id);
     }
   })();
 </script>
