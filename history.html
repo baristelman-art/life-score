@@ -283,6 +283,15 @@ src="https://www.facebook.com/tr?id=1119044180571388&ev=PageView&noscript=1"
 
   .day-detail-items { display: flex; flex-wrap: wrap; gap: 0.5rem; }
 
+  .day-detail-freedoms {
+    display: flex;
+    gap: 0.75rem;
+    font-size: 0.82rem;
+    color: var(--text-mute);
+    margin-bottom: 0.75rem;
+    font-family: 'Space Mono', monospace;
+  }
+
   .day-detail-tag {
     font-size: 0.78rem;
     color: var(--text-mute);
@@ -558,9 +567,19 @@ src="https://www.facebook.com/tr?id=1119044180571388&ev=PageView&noscript=1"
       ? `<div class="day-detail-items">${items.map(name => `<span class="day-detail-tag">${name}</span>`).join('')}</div>`
       : `<p class="day-detail-empty">Nothing marked that day.</p>`;
 
+    const hasFreedomData = r.mental_days !== null && r.mental_days !== undefined;
+    const freedomHtml = hasFreedomData ? `
+      <div class="day-detail-freedoms">
+        <span>🧠 ${r.mental_days}d</span>
+        <span>💪 ${r.physical_days}d</span>
+        <span>💰 ${r.financial_days}d</span>
+        <span>⏳ ${r.temporal_days}d</span>
+      </div>` : '';
+
     detailEl.innerHTML = `
       <p class="day-detail-date">${dateLabel}</p>
       <p class="day-detail-score">Score: <b>${r.score}</b> / 100</p>
+      ${freedomHtml}
       ${itemsHtml}
     `;
     detailEl.classList.add('show');

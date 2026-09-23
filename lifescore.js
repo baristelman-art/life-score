@@ -35,6 +35,64 @@ function daysRemaining(choice, fit) {
   return Math.round(TYPICAL_DAYS[choice] * (1 - fit));
 }
 
+/* ---------- The 4 Freedoms ----------
+   Every item in the 15-item list feeds exactly one of four freedoms.
+   Days-to-freedom for a category is 90 (the "quit" timeline) scaled by
+   how many of that category's items are currently marked — 0 marked
+   means that freedom is already effectively won.
+*/
+const FREEDOM_CATEGORIES = {
+  mental: {
+    label: 'Mental Freedom',
+    emoji: '🧠',
+    color: '#7DA3D6',
+    items: ['Overthinking', 'Obsessing Over Others', 'Dwelling on the Past', 'Worrying About the Future', 'Negative Feelings', 'Pornography']
+  },
+  physical: {
+    label: 'Physical Freedom',
+    emoji: '💪',
+    color: '#5FAFA4',
+    items: ['Overeating', 'Unhealthy Eating & Drinking', 'Alcohol, Smoking & Drugs']
+  },
+  financial: {
+    label: 'Financial Freedom',
+    emoji: '💰',
+    color: '#E8B04B',
+    items: ['Attachment to Possessions', 'Gambling', 'Unnecessary Spending']
+  },
+  temporal: {
+    label: 'Time Freedom',
+    emoji: '⏳',
+    color: '#B98AE0',
+    items: ['Impulsive Behavior', 'Laziness & Procrastination', 'Social Media & Gaming Addiction']
+  }
+};
+
+const FREEDOM_BASE_DAYS = 90;
+
+/*
+  selectedNames: array of habit-name strings the person marked today.
+  Returns: {
+    mental:   { label, emoji, color, marked, total, days },
+    physical: { ... },
+    financial:{ ... },
+    temporal: { ... }
+  }
+*/
+function computeFreedomDays(selectedNames) {
+  const selectedSet = new Set(selectedNames);
+  const result = {};
+
+  Object.entries(FREEDOM_CATEGORIES).forEach(([key, cat]) => {
+    const marked = cat.items.filter(item => selectedSet.has(item)).length;
+    const total = cat.items.length;
+    const days = Math.round(FREEDOM_BASE_DAYS * (marked / total));
+    result[key] = { label: cat.label, emoji: cat.emoji, color: cat.color, marked, total, days };
+  });
+
+  return result;
+}
+
 /*
   selectedHabits: array of { name } — items the person marked as
   "I have this and want to quit". totalCount: size of the full list

@@ -123,31 +123,99 @@ src="https://www.facebook.com/tr?id=1119044180571388&ev=PageView&noscript=1"
   .empty-state { text-align: center; color: var(--text-mute); padding: 3rem 0; }
   .empty-state a { color: var(--teal); }
 
-  .result-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 1rem;
+  .reveal-cta {
+    text-align: center;
     margin-bottom: 2.5rem;
   }
 
-  .result-card {
-    background: var(--surface);
-    border: 1px solid var(--line);
-    border-radius: 16px;
-    padding: 1.75rem 1.5rem;
-    text-align: center;
-  }
-
-  .result-num {
-    font-family: 'Space Mono', monospace;
-    font-size: clamp(2.6rem, 9vw, 3.6rem);
-    font-weight: 700;
-    color: var(--teal);
-    line-height: 1;
+  .reveal-headline {
+    font-family: 'Fraunces', serif;
+    font-weight: 500;
+    font-size: clamp(1.4rem, 3.4vw, 1.8rem);
     margin-bottom: 0.5rem;
   }
 
-  .result-label { font-size: 0.85rem; color: var(--text-mute); }
+  .reveal-sub {
+    color: var(--text-mute);
+    font-size: 0.95rem;
+    max-width: 42ch;
+    margin: 0 auto 1.75rem;
+  }
+
+  .spin-btn {
+    font-family: 'Inter', sans-serif;
+    font-weight: 700;
+    font-size: 1.05rem;
+    padding: 1rem 2.1rem;
+    border-radius: 999px;
+    border: none;
+    cursor: pointer;
+    background: var(--teal);
+    color: #082220;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    box-shadow: 0 0 0 0 var(--teal-dim);
+  }
+
+  .spin-btn:hover {
+    transform: translateY(-2px) scale(1.03);
+    box-shadow: 0 10px 30px -8px var(--teal-dim);
+  }
+
+  .slot-machine {
+    display: flex;
+    gap: 0.85rem;
+    justify-content: center;
+    flex-wrap: wrap;
+    margin-bottom: 2.5rem;
+  }
+
+  .reel {
+    --cat-color: var(--teal);
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 16px;
+    padding: 1.5rem 0.75rem;
+    width: 130px;
+    text-align: center;
+    transition: transform 0.3s cubic-bezier(.34,1.56,.64,1), border-color 0.3s ease, box-shadow 0.3s ease;
+  }
+
+  .reel.landed {
+    border-color: var(--cat-color);
+    box-shadow: 0 0 34px -6px var(--cat-color);
+    transform: scale(1.05);
+  }
+
+  .reel-emoji { font-size: 1.6rem; margin-bottom: 0.5rem; }
+
+  .reel-label {
+    font-size: 0.68rem;
+    color: var(--text-mute);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    margin-bottom: 0.75rem;
+  }
+
+  .reel-value {
+    font-family: 'Space Mono', monospace;
+    font-size: 2.1rem;
+    font-weight: 700;
+    color: var(--text-mute);
+    line-height: 1;
+    transition: color 0.2s ease;
+  }
+
+  .reel.landed .reel-value {
+    color: var(--cat-color);
+    text-shadow: 0 0 18px var(--cat-color);
+  }
+
+  .reel-sub { font-size: 0.68rem; color: var(--text-mute); margin-top: 0.4rem; }
+
+  @media (max-width: 480px) {
+    .slot-machine { gap: 0.6rem; }
+    .reel { width: 44%; padding: 1.25rem 0.5rem; }
+  }
 
   .sample-table {
     background: var(--surface);
@@ -426,10 +494,6 @@ src="https://www.facebook.com/tr?id=1119044180571388&ev=PageView&noscript=1"
   .saved-view.show { display: block; }
   .saved-view .nickname { color: var(--text); font-weight: 600; }
 
-  @media (max-width: 480px) {
-    .result-grid { grid-template-columns: 1fr; }
-  }
-
   .bg-texture {
     position: fixed;
     inset: 0;
@@ -464,16 +528,13 @@ src="https://www.facebook.com/tr?id=1119044180571388&ev=PageView&noscript=1"
     </div>
 
     <div id="resultBlock">
-      <div class="result-grid reveal">
-        <div class="result-card">
-          <div class="result-num" id="scoreNum">–</div>
-          <div class="result-label">Life Score / 100</div>
-        </div>
-        <div class="result-card">
-          <div class="result-num" id="daysNum">–</div>
-          <div class="result-label">days from your goal</div>
-        </div>
+      <div class="reveal-cta reveal" id="revealCta">
+        <p class="reveal-headline">Your 4 Freedoms are ready</p>
+        <p class="reveal-sub">Based on what you marked, see how many days stand between you and each one.</p>
+        <button class="btn spin-btn" onclick="startSpin()">🎰 Reveal my freedom</button>
       </div>
+
+      <div class="slot-machine hidden" id="slotMachine"></div>
 
       <div class="sample-table reveal reveal-2">
         <p class="sample-label">Example</p>
@@ -545,7 +606,8 @@ src="https://www.facebook.com/tr?id=1119044180571388&ev=PageView&noscript=1"
   const habits = habitNames.map(name => ({ name, choice: selections[name] }));
   const totalHabits = parseInt(sessionStorage.getItem('lifeScoreTotalHabits') || '0', 10);
 
-  const result = instantAnalysis(habits, totalHabits);
+  const result = instantAnalysis(habits, totalHabits); // kept for score history / trend chart continuity
+  const freedomResult = computeFreedomDays(habitNames);
 
   // ---------- Example chart (illustrative, not the person's real data) ----------
   const sampleData = [
@@ -621,11 +683,96 @@ src="https://www.facebook.com/tr?id=1119044180571388&ev=PageView&noscript=1"
     document.getElementById('emptyState').classList.remove('hidden');
     document.getElementById('resultBlock').style.display = 'none';
   } else {
-    document.getElementById('scoreNum').textContent = result.score;
-    document.getElementById('daysNum').textContent = result.bottleneck ? result.bottleneck.daysRemaining : 0;
-
     if (typeof fbq !== 'undefined') fbq('track', 'ViewContent', { content_name: 'life_score_result', value: result.score });
     if (typeof ttq !== 'undefined') ttq.track('ViewContent', { content_id: 'life_score_result', content_name: 'life_score_result', value: result.score, currency: 'USD' });
+  }
+
+  // ---------- Slot machine reveal: sound + spin ----------
+  let audioCtx = null;
+  function ensureAudio() {
+    if (!audioCtx) {
+      const AC = window.AudioContext || window.webkitAudioContext;
+      if (AC) audioCtx = new AC();
+    }
+  }
+
+  function playTick() {
+    if (!audioCtx) return;
+    const o = audioCtx.createOscillator();
+    const g = audioCtx.createGain();
+    o.type = 'square';
+    o.frequency.value = 650 + Math.random() * 250;
+    g.gain.value = 0.05;
+    o.connect(g); g.connect(audioCtx.destination);
+    o.start();
+    g.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + 0.05);
+    o.stop(audioCtx.currentTime + 0.06);
+  }
+
+  function playLand(freq) {
+    if (!audioCtx) return;
+    const o = audioCtx.createOscillator();
+    const g = audioCtx.createGain();
+    o.type = 'sine';
+    o.frequency.value = freq;
+    g.gain.value = 0.18;
+    o.connect(g); g.connect(audioCtx.destination);
+    o.start();
+    o.frequency.exponentialRampToValueAtTime(freq * 1.5, audioCtx.currentTime + 0.18);
+    g.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + 0.45);
+    o.stop(audioCtx.currentTime + 0.45);
+  }
+
+  const FREEDOM_ORDER = ['mental', 'physical', 'financial', 'temporal'];
+  const LAND_FREQS = { mental: 440, physical: 494, financial: 554, temporal: 659 }; // rising chord as reels land
+
+  function buildReels() {
+    const container = document.getElementById('slotMachine');
+    container.innerHTML = '';
+    FREEDOM_ORDER.forEach(key => {
+      const cat = freedomResult[key];
+      const reel = document.createElement('div');
+      reel.className = 'reel';
+      reel.id = 'reel-' + key;
+      reel.style.setProperty('--cat-color', cat.color);
+      reel.innerHTML = `
+        <div class="reel-emoji">${cat.emoji}</div>
+        <div class="reel-label">${cat.label}</div>
+        <div class="reel-value" id="reel-value-${key}">–</div>
+        <div class="reel-sub">days to go</div>
+      `;
+      container.appendChild(reel);
+    });
+  }
+
+  function spinReel(key, finalValue, startDelay) {
+    const valueEl = document.getElementById('reel-value-' + key);
+    const reelEl = document.getElementById('reel-' + key);
+    const duration = 1100 + startDelay;
+    const tickMs = 65;
+    let elapsed = 0;
+
+    setTimeout(() => {
+      const iv = setInterval(() => {
+        valueEl.textContent = Math.floor(Math.random() * 90);
+        playTick();
+        elapsed += tickMs;
+        if (elapsed >= duration) {
+          clearInterval(iv);
+          valueEl.textContent = finalValue;
+          reelEl.classList.add('landed');
+          playLand(LAND_FREQS[key]);
+        }
+      }, tickMs);
+    }, startDelay);
+  }
+
+  function startSpin() {
+    ensureAudio();
+    document.getElementById('revealCta').classList.add('hidden');
+    document.getElementById('slotMachine').classList.remove('hidden');
+    buildReels();
+    FREEDOM_ORDER.forEach((key, i) => spinReel(key, freedomResult[key].days, i * 280));
   }
 
   // Only one report per calendar day (local time) — checking in again
@@ -641,7 +788,11 @@ src="https://www.facebook.com/tr?id=1119044180571388&ev=PageView&noscript=1"
       score: result.score,
       days_remaining: result.bottleneck ? result.bottleneck.daysRemaining : null,
       bottleneck_habit: result.bottleneck ? result.bottleneck.name : null,
-      habits: habits
+      habits: habits,
+      mental_days: freedomResult.mental.days,
+      physical_days: freedomResult.physical.days,
+      financial_days: freedomResult.financial.days,
+      temporal_days: freedomResult.temporal.days
     };
 
     const { data: existing, error: findError } = await supabaseClient
