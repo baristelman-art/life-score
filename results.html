@@ -95,6 +95,25 @@ src="https://www.facebook.com/tr?id=1119044180571388&ev=PageView&noscript=1"
     color: var(--text-mute);
   }
 
+  .header-right { display: flex; align-items: center; gap: 0.75rem; }
+
+  .header-auth-btn {
+    font-family: 'Inter', sans-serif;
+    font-weight: 600;
+    font-size: 0.85rem;
+    padding: 0.5rem 1rem;
+    border-radius: 999px;
+    border: 1px solid var(--line);
+    background: transparent;
+    color: var(--text-mute);
+    cursor: pointer;
+    transition: all 0.15s ease;
+  }
+
+  .header-auth-btn:hover { border-color: var(--teal); color: var(--teal); }
+  .header-auth-btn.logout { border-color: var(--rust); color: var(--rust); }
+  .header-auth-btn.logout:hover { background: #C9836822; }
+
   .wrap {
     max-width: 640px;
     margin: 0 auto;
@@ -431,7 +450,10 @@ src="https://www.facebook.com/tr?id=1119044180571388&ev=PageView&noscript=1"
   <header>
     <div class="header-inner">
       <a class="brand" href="index.html">Life Score</a>
-      <span class="date-tag" id="todayDate"></span>
+      <div class="header-right">
+        <span class="date-tag" id="todayDate"></span>
+        <button class="header-auth-btn" id="headerAuthBtn" onclick="headerAuthAction()"></button>
+      </div>
     </div>
   </header>
 
@@ -758,6 +780,37 @@ src="https://www.facebook.com/tr?id=1119044180571388&ev=PageView&noscript=1"
     document.querySelector('.auth-box').innerHTML =
       '<h2>No problem</h2><p style="margin-bottom:0;">Nothing is saved — this result exists only for this visit. You can always come back and check in again from scratch.</p>';
   }
+
+  function setHeaderAuth(loggedIn) {
+    const btn = document.getElementById('headerAuthBtn');
+    if (!btn) return;
+    if (loggedIn) {
+      btn.textContent = 'Log out';
+      btn.className = 'header-auth-btn logout';
+    } else {
+      btn.textContent = 'Log in';
+      btn.className = 'header-auth-btn';
+    }
+  }
+
+  async function headerAuthAction() {
+    const btn = document.getElementById('headerAuthBtn');
+    if (btn.classList.contains('logout')) {
+      await supabaseClient.auth.signOut();
+      setHeaderAuth(false);
+      location.reload();
+    } else {
+      window.location.href = 'history.html';
+    }
+  }
+
+  setHeaderAuth(false);
+  (async () => {
+    try {
+      const { data } = await supabaseClient.auth.getSession();
+      setHeaderAuth(!!data.session);
+    } catch (e) { /* leave as "Log in" */ }
+  })();
 </script>
 
 </body>

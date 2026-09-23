@@ -103,6 +103,25 @@ src="https://www.facebook.com/tr?id=1119044180571388&ev=PageView&noscript=1"
 
   .progress-pill b { color: var(--teal); font-weight: 400; }
 
+  .header-right { display: flex; align-items: center; gap: 0.75rem; }
+
+  .header-auth-btn {
+    font-family: 'Inter', sans-serif;
+    font-weight: 600;
+    font-size: 0.85rem;
+    padding: 0.5rem 1rem;
+    border-radius: 999px;
+    border: 1px solid var(--line);
+    background: transparent;
+    color: var(--text-mute);
+    cursor: pointer;
+    transition: all 0.15s ease;
+  }
+
+  .header-auth-btn:hover { border-color: var(--teal); color: var(--teal); }
+  .header-auth-btn.logout { border-color: #C98368; color: #C98368; }
+  .header-auth-btn.logout:hover { background: #C9836822; }
+
   .intro {
     max-width: 700px;
     margin: 0 auto;
@@ -257,7 +276,10 @@ src="https://www.facebook.com/tr?id=1119044180571388&ev=PageView&noscript=1"
   <header>
     <div class="header-inner">
       <a class="brand" href="index.html">Life Score</a>
-      <span class="progress-pill"><b id="selCount">0</b> / 15 today</span>
+      <div class="header-right">
+        <span class="progress-pill"><b id="selCount">0</b> / 15 today</span>
+        <button class="header-auth-btn" id="headerAuthBtn" onclick="headerAuthAction()"></button>
+      </div>
     </div>
   </header>
 
@@ -364,6 +386,40 @@ src="https://www.facebook.com/tr?id=1119044180571388&ev=PageView&noscript=1"
     if (typeof ttq !== 'undefined') ttq.track('HabitsSelected', { count: state.size });
     window.location.href = 'results.html';
   }
+</script>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="config.js"></script>
+<script>
+  function setHeaderAuth(loggedIn) {
+    const btn = document.getElementById('headerAuthBtn');
+    if (!btn) return;
+    if (loggedIn) {
+      btn.textContent = 'Log out';
+      btn.className = 'header-auth-btn logout';
+    } else {
+      btn.textContent = 'Log in';
+      btn.className = 'header-auth-btn';
+    }
+  }
+
+  async function headerAuthAction() {
+    const btn = document.getElementById('headerAuthBtn');
+    if (btn.classList.contains('logout')) {
+      await supabaseClient.auth.signOut();
+      setHeaderAuth(false);
+    } else {
+      window.location.href = 'history.html';
+    }
+  }
+
+  setHeaderAuth(false);
+  (async () => {
+    try {
+      const { data } = await supabaseClient.auth.getSession();
+      setHeaderAuth(!!data.session);
+    } catch (e) { /* leave as "Log in" */ }
+  })();
 </script>
 
 </body>

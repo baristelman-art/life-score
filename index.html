@@ -89,9 +89,47 @@ src="https://www.facebook.com/tr?id=1119044180571388&ev=PageView&noscript=1"
     align-items: center;
     justify-content: center;
     text-align: center;
-    padding: 6rem 1.5rem 3rem;
+    padding: 3rem 1.5rem 3rem;
     position: relative;
   }
+
+  .site-header {
+    border-bottom: 1px solid var(--line);
+    padding: 1.1rem 1.5rem;
+    position: relative;
+    z-index: 2;
+  }
+
+  .site-header-inner {
+    max-width: 700px;
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .site-brand {
+    font-family: 'Fraunces', serif;
+    font-weight: 500;
+    font-size: 1.05rem;
+  }
+
+  .header-auth-btn {
+    font-family: 'Inter', sans-serif;
+    font-weight: 600;
+    font-size: 0.85rem;
+    padding: 0.5rem 1rem;
+    border-radius: 999px;
+    border: 1px solid var(--line);
+    background: transparent;
+    color: var(--text-mute);
+    cursor: pointer;
+    transition: all 0.15s ease;
+  }
+
+  .header-auth-btn:hover { border-color: var(--teal); color: var(--teal); }
+  .header-auth-btn.logout { border-color: #C98368; color: #C98368; }
+  .header-auth-btn.logout:hover { background: #C9836822; }
 
   .hero::before {
     content: '';
@@ -365,6 +403,13 @@ src="https://www.facebook.com/tr?id=1119044180571388&ev=PageView&noscript=1"
 <body>
 <div class="bg-texture"></div>
 
+  <header class="site-header">
+    <div class="site-header-inner">
+      <span class="site-brand">Life Score</span>
+      <button class="header-auth-btn" id="headerAuthBtn" onclick="headerAuthAction()"></button>
+    </div>
+  </header>
+
   <section class="hero">
     <p class="kicker reveal reveal-1">Life Score</p>
 
@@ -527,6 +572,40 @@ src="https://www.facebook.com/tr?id=1119044180571388&ev=PageView&noscript=1"
     if (typeof ttq !== 'undefined') ttq.track('HabitsSelected', { count: state.size });
     window.location.href = 'results.html';
   }
+</script>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="config.js"></script>
+<script>
+  function setHeaderAuth(loggedIn) {
+    const btn = document.getElementById('headerAuthBtn');
+    if (!btn) return;
+    if (loggedIn) {
+      btn.textContent = 'Log out';
+      btn.className = 'header-auth-btn logout';
+    } else {
+      btn.textContent = 'Log in';
+      btn.className = 'header-auth-btn';
+    }
+  }
+
+  async function headerAuthAction() {
+    const btn = document.getElementById('headerAuthBtn');
+    if (btn.classList.contains('logout')) {
+      await supabaseClient.auth.signOut();
+      setHeaderAuth(false);
+    } else {
+      window.location.href = 'history.html';
+    }
+  }
+
+  setHeaderAuth(false);
+  (async () => {
+    try {
+      const { data } = await supabaseClient.auth.getSession();
+      setHeaderAuth(!!data.session);
+    } catch (e) { /* library not loaded yet or offline — leave as "Log in" */ }
+  })();
 </script>
 
 </body>

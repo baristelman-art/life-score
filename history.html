@@ -419,12 +419,26 @@ src="https://www.facebook.com/tr?id=1119044180571388&ev=PageView&noscript=1"
     showReports(email, reports);
   }
 
+  // Safety net: if this account has old rows from before check-ins were
+  // capped at one per day, only keep the most recent row per calendar date.
+  function dedupeByDay(reports) {
+    const byDay = new Map();
+    reports.forEach(r => {
+      const dayKey = new Date(r.created_at).toLocaleDateString('en-CA'); // YYYY-MM-DD, local time
+      const existing = byDay.get(dayKey);
+      if (!existing || new Date(r.created_at) > new Date(existing.created_at)) {
+        byDay.set(dayKey, r);
+      }
+    });
+    return [...byDay.values()];
+  }
+
   function showReports(email, reports) {
     document.getElementById('loginView').classList.add('hidden');
     document.getElementById('reportsView').classList.remove('hidden');
     setHeaderAuth(true);
 
-    const sorted = [...reports].sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
+    const sorted = dedupeByDay(reports).sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
     renderTrend(sorted);
     renderList(sorted);
   }
