@@ -60,6 +60,7 @@ src="https://www.facebook.com/tr?id=1119044180571388&ev=PageView&noscript=1"
     font-family: 'Inter', sans-serif;
     line-height: 1.5;
     padding-bottom: 7rem;
+    position: relative;
   }
 
   header {
@@ -235,9 +236,23 @@ src="https://www.facebook.com/tr?id=1119044180571388&ev=PageView&noscript=1"
     .quit-btn { font-size: 0.78rem; padding: 0.6rem 0.85rem; }
     .footer-note { display: none; }
   }
+
+  .bg-texture {
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    background-image: url('bg-pattern.png');
+    background-repeat: repeat;
+    background-size: 420px 420px;
+    opacity: 0.5;
+    pointer-events: none;
+  }
+
+  body > * { position: relative; z-index: 1; }
 </style>
 </head>
 <body>
+<div class="bg-texture"></div>
 
   <header>
     <div class="header-inner">

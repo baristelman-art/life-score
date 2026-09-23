@@ -54,6 +54,7 @@ src="https://www.facebook.com/tr?id=1119044180571388&ev=PageView&noscript=1"
     color: var(--text);
     font-family: 'Inter', sans-serif;
     line-height: 1.5;
+    position: relative;
   }
 
   .hidden { display: none; }
@@ -275,9 +276,23 @@ src="https://www.facebook.com/tr?id=1119044180571388&ev=PageView&noscript=1"
   }
 
   .day-detail-empty { font-size: 0.85rem; color: var(--text-mute); }
+
+  .bg-texture {
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    background-image: url('bg-pattern.png');
+    background-repeat: repeat;
+    background-size: 420px 420px;
+    opacity: 0.5;
+    pointer-events: none;
+  }
+
+  body > * { position: relative; z-index: 1; }
 </style>
 </head>
 <body>
+<div class="bg-texture"></div>
 
   <header>
     <div class="header-inner">
@@ -496,7 +511,6 @@ src="https://www.facebook.com/tr?id=1119044180571388&ev=PageView&noscript=1"
       ${itemsHtml}
     `;
     detailEl.classList.add('show');
-  }
   }
 
   function renderList(sorted) {
