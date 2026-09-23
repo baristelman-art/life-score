@@ -214,9 +214,7 @@ src="https://www.facebook.com/tr?id=1119044180571388&ev=PageView&noscript=1"
     font-size: 1rem;
     font-weight: 600;
     color: var(--text);
-    margin-bottom: 0.25rem;
-    padding-bottom: 0.75rem;
-    border-bottom: 1px solid var(--line);
+    margin-bottom: 1rem;
     display: flex;
     align-items: center;
     gap: 0.5rem;
@@ -228,7 +226,6 @@ src="https://www.facebook.com/tr?id=1119044180571388&ev=PageView&noscript=1"
     justify-content: space-between;
     gap: 1rem;
     padding: 1.1rem 0;
-    border-bottom: 1px solid var(--line-soft, #ffffff0a);
   }
 
   .habit-name {
@@ -255,15 +252,15 @@ src="https://www.facebook.com/tr?id=1119044180571388&ev=PageView&noscript=1"
   }
 
   .quit-btn:hover {
-    border-color: #FF6452;
-    color: #FF6452;
+    border-color: var(--teal);
+    color: var(--teal);
   }
 
   .quit-btn.active {
-    background: #FF6452;
-    border-color: #FF6452;
-    color: #2B0A05;
-    box-shadow: 0 4px 18px -4px #FF645244;
+    background: var(--teal);
+    border-color: var(--teal);
+    color: #082220;
+    box-shadow: 0 4px 18px -4px var(--teal-dim);
   }
 
   .picker-footer {
@@ -281,7 +278,7 @@ src="https://www.facebook.com/tr?id=1119044180571388&ev=PageView&noscript=1"
     color: var(--text-mute);
   }
 
-  .picker-count b { color: #FF6452; font-weight: 400; }
+  .picker-count b { color: var(--teal); font-weight: 400; }
 
   @media (max-width: 480px) {
     .habit-row { flex-direction: column; align-items: flex-start; gap: 0.6rem; }
