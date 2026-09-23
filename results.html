@@ -163,36 +163,139 @@ src="https://www.facebook.com/tr?id=1119044180571388&ev=PageView&noscript=1"
     max-width: 48ch;
   }
 
-  .week-table {
-    width: 100%;
-    border-collapse: collapse;
-    font-size: 0.9rem;
+  .sample-chart {
+    display: flex;
+    align-items: flex-end;
+    gap: 0.6rem;
+    height: 130px;
+    margin-bottom: 0.5rem;
   }
 
-  .week-table th {
-    text-align: left;
+  .sample-bar-col {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    height: 100%;
+    justify-content: flex-end;
+    gap: 0.4rem;
+    position: relative;
+    cursor: pointer;
+    border-radius: 8px;
+    padding-top: 1.5rem;
+    transition: background 0.15s ease;
+  }
+
+  .sample-bar-col:hover,
+  .sample-bar-col.active { background: var(--surface-2, #1C3134); }
+
+  .bar-tooltip {
+    position: absolute;
+    bottom: 100%;
+    left: 50%;
+    transform: translateX(-50%) translateY(-4px);
+    background: var(--ink);
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    padding: 0.45rem 0.7rem;
+    font-size: 0.75rem;
+    white-space: nowrap;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.15s ease;
+    z-index: 5;
+    text-align: center;
+  }
+
+  .bar-tooltip b { color: var(--teal); font-family: 'Space Mono', monospace; }
+
+  .sample-bar-col:hover .bar-tooltip { opacity: 1; }
+
+  .sample-bar-value {
     font-family: 'Space Mono', monospace;
     font-size: 0.72rem;
     color: var(--text-mute);
-    font-weight: 400;
-    padding: 0 0 0.6rem;
-    border-bottom: 1px solid var(--line);
   }
 
-  .week-table td {
-    padding: 0.6rem 0;
-    border-bottom: 1px solid var(--line-soft);
-    color: var(--text);
+  .sample-bar {
+    width: 100%;
+    max-width: 30px;
+    background: linear-gradient(to top, var(--teal), #5FAFA466);
+    border-radius: 6px 6px 2px 2px;
   }
 
-  .week-table tr:last-child td { border-bottom: none; }
+  .sample-bar-col.last .sample-bar { background: linear-gradient(to top, var(--teal), #8FCFC4); }
+  .sample-bar-col.last .sample-bar-value { color: var(--teal); font-weight: 700; }
 
-  .week-table .score-cell {
+  .sample-day {
+    font-size: 0.72rem;
+    color: var(--text-faint, var(--text-mute));
+    margin-top: 0.3rem;
+  }
+
+  .day-detail {
+    display: none;
+    background: var(--ink);
+    border: 1px solid var(--teal);
+    border-radius: 12px;
+    padding: 1.1rem 1.25rem;
+    margin-top: 1rem;
+  }
+
+  .day-detail.show { display: block; }
+
+  .day-detail-date {
     font-family: 'Space Mono', monospace;
+    font-size: 0.78rem;
+    color: var(--teal);
+    margin-bottom: 0.6rem;
+  }
+
+  .day-detail-score {
+    font-size: 0.92rem;
+    margin-bottom: 0.6rem;
+  }
+
+  .day-detail-score b { font-family: 'Space Mono', monospace; color: var(--teal); }
+
+  .day-detail-items {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+
+  .day-detail-tag {
+    font-size: 0.78rem;
+    color: var(--text-mute);
+    background: var(--surface);
+    border: 1px solid var(--line);
+    padding: 0.35rem 0.7rem;
+    border-radius: 999px;
+  }
+
+  .day-detail-empty { font-size: 0.85rem; color: var(--text-mute); }
+
+  .sample-stats {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+    margin-top: 1.75rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--line);
+  }
+
+  .sample-stat-value {
+    font-family: 'Space Mono', monospace;
+    font-size: 1.3rem;
+    color: var(--teal);
+    font-weight: 700;
+    margin-bottom: 0.25rem;
+  }
+
+  .sample-stat-label {
+    font-size: 0.8rem;
     color: var(--text-mute);
   }
-
-  .week-table .score-cell.up { color: var(--teal); font-weight: 700; }
 
   /* ---------- Signup / login box ---------- */
 
@@ -337,22 +440,22 @@ src="https://www.facebook.com/tr?id=1119044180571388&ev=PageView&noscript=1"
 
       <div class="sample-table reveal reveal-2">
         <p class="sample-label">Example</p>
-        <p class="sample-headline">This is what daily tracking looks like</p>
-        <p class="sample-sub">A real pattern from checking in once a day for a week — not your data, just an example of what you'll see once you start.</p>
-        <table class="week-table">
-          <thead>
-            <tr><th>Day</th><th>Score</th><th>Most frequent</th></tr>
-          </thead>
-          <tbody>
-            <tr><td>Mon</td><td class="score-cell">42</td><td>Overthinking</td></tr>
-            <tr><td>Tue</td><td class="score-cell">47</td><td>Overthinking</td></tr>
-            <tr><td>Wed</td><td class="score-cell">45</td><td>Procrastination</td></tr>
-            <tr><td>Thu</td><td class="score-cell">53</td><td>Overthinking</td></tr>
-            <tr><td>Fri</td><td class="score-cell">58</td><td>Social Media</td></tr>
-            <tr><td>Sat</td><td class="score-cell">61</td><td>—</td></tr>
-            <tr><td>Sun</td><td class="score-cell up">65</td><td>—</td></tr>
-          </tbody>
-        </table>
+        <p class="sample-headline">This is what a week of checking in looks like</p>
+        <p class="sample-sub">Not your data — a sample of the pattern you'll start seeing after a few check-ins. Hover or tap a day to see what it looked like.</p>
+
+        <div class="sample-chart" id="sampleChart"></div>
+        <div class="day-detail" id="sampleDayDetail"></div>
+
+        <div class="sample-stats">
+          <div>
+            <p class="sample-stat-value">+23 pts</p>
+            <p class="sample-stat-label">Score improved over the week</p>
+          </div>
+          <div>
+            <p class="sample-stat-value">Overthinking</p>
+            <p class="sample-stat-label">Showed up most — 3 of 7 days</p>
+          </div>
+        </div>
       </div>
 
       <div class="auth-box reveal reveal-3">
@@ -406,6 +509,76 @@ src="https://www.facebook.com/tr?id=1119044180571388&ev=PageView&noscript=1"
   const totalHabits = parseInt(sessionStorage.getItem('lifeScoreTotalHabits') || '0', 10);
 
   const result = instantAnalysis(habits, totalHabits);
+
+  // ---------- Example chart (illustrative, not the person's real data) ----------
+  const sampleData = [
+    { day: 'Mon', date: 'Sep 1', score: 42, items: ['Overthinking', 'Laziness & Procrastination', 'Unhealthy Eating & Drinking'] },
+    { day: 'Tue', date: 'Sep 2', score: 47, items: ['Overthinking', 'Social Media & Gaming Addiction'] },
+    { day: 'Wed', date: 'Sep 3', score: 45, items: ['Laziness & Procrastination', 'Negative Feelings'] },
+    { day: 'Thu', date: 'Sep 4', score: 53, items: ['Overthinking'] },
+    { day: 'Fri', date: 'Sep 5', score: 58, items: ['Social Media & Gaming Addiction'] },
+    { day: 'Sat', date: 'Sep 6', score: 61, items: [] },
+    { day: 'Sun', date: 'Sep 7', score: 65, items: [] }
+  ];
+
+  function renderBarChart(containerEl, data, detailEl, dateLabel) {
+    containerEl.innerHTML = '';
+    const maxScore = 100;
+
+    data.forEach((d, i) => {
+      const col = document.createElement('div');
+      col.className = 'sample-bar-col' + (i === data.length - 1 ? ' last' : '');
+
+      const tooltip = document.createElement('div');
+      tooltip.className = 'bar-tooltip';
+      tooltip.innerHTML = `${dateLabel(d)}<br><b>${d.score}</b> / 100`;
+
+      const value = document.createElement('span');
+      value.className = 'sample-bar-value';
+      value.textContent = d.score;
+
+      const bar = document.createElement('div');
+      bar.className = 'sample-bar';
+      bar.style.height = Math.max(6, Math.round((d.score / maxScore) * 100)) + '%';
+
+      const label = document.createElement('span');
+      label.className = 'sample-day';
+      label.textContent = d.day;
+
+      col.appendChild(tooltip);
+      col.appendChild(value);
+      col.appendChild(bar);
+      col.appendChild(label);
+
+      col.onclick = () => {
+        [...containerEl.children].forEach(c => c.classList.remove('active'));
+        col.classList.add('active');
+        showDayDetail(detailEl, d, dateLabel(d));
+      };
+
+      containerEl.appendChild(col);
+    });
+  }
+
+  function showDayDetail(detailEl, d, dateLabel) {
+    const itemsHtml = d.items && d.items.length
+      ? `<div class="day-detail-items">${d.items.map(name => `<span class="day-detail-tag">${name}</span>`).join('')}</div>`
+      : `<p class="day-detail-empty">Nothing marked that day.</p>`;
+
+    detailEl.innerHTML = `
+      <p class="day-detail-date">${dateLabel}</p>
+      <p class="day-detail-score">Score: <b>${d.score}</b> / 100</p>
+      ${itemsHtml}
+    `;
+    detailEl.classList.add('show');
+  }
+
+  renderBarChart(
+    document.getElementById('sampleChart'),
+    sampleData,
+    document.getElementById('sampleDayDetail'),
+    d => d.date
+  );
 
   if (!totalHabits) {
     document.getElementById('emptyState').classList.remove('hidden');

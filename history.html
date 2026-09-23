@@ -171,34 +171,110 @@ src="https://www.facebook.com/tr?id=1119044180571388&ev=PageView&noscript=1"
     margin-bottom: 0.5rem;
   }
 
-  .trend-sub { color: var(--text-mute); font-size: 0.9rem; margin-bottom: 1.25rem; }
+  .trend-sub { color: var(--text-mute); font-size: 0.9rem; margin-bottom: 1.5rem; }
 
-  .trend-cols {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 1.5rem;
+  .chart {
+    display: flex;
+    align-items: flex-end;
+    gap: 0.5rem;
+    height: 140px;
+    overflow-x: auto;
+    padding-bottom: 0.25rem;
   }
 
-  .trend-col-title {
-    font-size: 0.78rem;
+  .bar-col {
+    flex: 1;
+    min-width: 32px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    height: 100%;
+    justify-content: flex-end;
+    gap: 0.4rem;
+    position: relative;
+    cursor: pointer;
+    border-radius: 8px;
+    padding-top: 1.5rem;
+    transition: background 0.15s ease;
+  }
+
+  .bar-col:hover, .bar-col.active { background: #1C3134; }
+
+  .bar-tooltip {
+    position: absolute;
+    bottom: 100%;
+    left: 50%;
+    transform: translateX(-50%) translateY(-4px);
+    background: var(--ink);
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    padding: 0.45rem 0.7rem;
+    font-size: 0.75rem;
+    white-space: nowrap;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.15s ease;
+    z-index: 5;
+    text-align: center;
+  }
+
+  .bar-tooltip b { color: var(--teal); font-family: 'Space Mono', monospace; }
+  .bar-col:hover .bar-tooltip { opacity: 1; }
+
+  .bar-value {
     font-family: 'Space Mono', monospace;
+    font-size: 0.7rem;
+    color: var(--text-mute);
+  }
+
+  .bar-fill {
+    width: 100%;
+    max-width: 28px;
+    background: linear-gradient(to top, var(--teal), #5FAFA466);
+    border-radius: 6px 6px 2px 2px;
+  }
+
+  .bar-col.active .bar-fill { background: linear-gradient(to top, var(--teal), #8FCFC4); }
+
+  .bar-day {
+    font-size: 0.68rem;
+    color: var(--text-mute);
+    margin-top: 0.2rem;
+  }
+
+  .day-detail {
+    display: none;
+    background: var(--ink);
+    border: 1px solid var(--teal);
+    border-radius: 12px;
+    padding: 1.1rem 1.25rem;
+    margin-top: 1.25rem;
+  }
+
+  .day-detail.show { display: block; }
+
+  .day-detail-date {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.78rem;
+    color: var(--teal);
     margin-bottom: 0.6rem;
   }
 
-  .trend-col-title.up { color: var(--teal); }
-  .trend-col-title.down { color: #C98368; }
+  .day-detail-score { font-size: 0.92rem; margin-bottom: 0.6rem; }
+  .day-detail-score b { font-family: 'Space Mono', monospace; color: var(--teal); }
 
-  .trend-item {
-    font-size: 0.88rem;
-    color: var(--text);
-    padding: 0.35rem 0;
+  .day-detail-items { display: flex; flex-wrap: wrap; gap: 0.5rem; }
+
+  .day-detail-tag {
+    font-size: 0.78rem;
+    color: var(--text-mute);
+    background: var(--surface);
+    border: 1px solid var(--line);
+    padding: 0.35rem 0.7rem;
+    border-radius: 999px;
   }
 
-  .trend-empty { font-size: 0.85rem; color: var(--text-mute); }
-
-  @media (max-width: 480px) {
-    .trend-cols { grid-template-columns: 1fr; }
-  }
+  .day-detail-empty { font-size: 0.85rem; color: var(--text-mute); }
 </style>
 </head>
 <body>
@@ -323,7 +399,7 @@ src="https://www.facebook.com/tr?id=1119044180571388&ev=PageView&noscript=1"
   }
 
   function habitNamesOf(report) {
-    return new Set((report.habits || []).map(h => h.name));
+    return (report.habits || []).map(h => h.name);
   }
 
   function renderTrend(sorted) {
@@ -333,41 +409,94 @@ src="https://www.facebook.com/tr?id=1119044180571388&ev=PageView&noscript=1"
       box.innerHTML = `
         <div class="trend-box">
           <p class="trend-headline">Check in again to see your trend</p>
-          <p class="trend-sub" style="margin-bottom:0;">Once you have a second check-in, we'll show you exactly what changed since the last one.</p>
+          <p class="trend-sub" style="margin-bottom:0;">Once you have a second check-in, we'll show you a chart here — hover or tap any day to see what it looked like.</p>
         </div>`;
       return;
     }
 
-    const [latest, prev] = sorted;
+    const latest = sorted[0];
+    const prev = sorted[1];
     const delta = latest.score - prev.score;
-    const latestSet = habitNamesOf(latest);
-    const prevSet = habitNamesOf(prev);
-
-    const newlyShowedUp = [...latestSet].filter(n => !prevSet.has(n));
-    const noLongerThere = [...prevSet].filter(n => !latestSet.has(n));
-
     const deltaText = delta > 0 ? `up ${delta} points` : delta < 0 ? `down ${Math.abs(delta)} points` : 'unchanged';
     const deltaColor = delta > 0 ? 'var(--teal)' : delta < 0 ? '#C98368' : 'var(--text-mute)';
 
     box.innerHTML = `
       <div class="trend-box">
         <p class="trend-headline">Since your last check-in: <span style="color:${deltaColor}">${deltaText}</span></p>
-        <p class="trend-sub">Comparing today's check-in to ${new Date(prev.created_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}.</p>
-        <div class="trend-cols">
-          <div>
-            <p class="trend-col-title down">Showed up new</p>
-            ${newlyShowedUp.length
-              ? newlyShowedUp.map(n => `<div class="trend-item">${n}</div>`).join('')
-              : '<p class="trend-empty">Nothing new</p>'}
-          </div>
-          <div>
-            <p class="trend-col-title up">Not there anymore</p>
-            ${noLongerThere.length
-              ? noLongerThere.map(n => `<div class="trend-item">${n}</div>`).join('')
-              : '<p class="trend-empty">Nothing cleared yet</p>'}
-          </div>
-        </div>
+        <p class="trend-sub">Hover or tap a day below to see what was marked that day.</p>
+        <div class="chart" id="historyChart"></div>
+        <div class="day-detail" id="historyDayDetail"></div>
       </div>`;
+
+    // Chart reads left-to-right chronologically (oldest to newest); cap at the
+    // most recent 14 check-ins so the chart stays readable.
+    const chronological = [...sorted].reverse().slice(-14);
+
+    renderBarChart(
+      document.getElementById('historyChart'),
+      chronological,
+      document.getElementById('historyDayDetail'),
+      r => new Date(r.created_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })
+    );
+  }
+
+  function renderBarChart(containerEl, data, detailEl, dateLabelFn) {
+    containerEl.innerHTML = '';
+    const maxScore = 100;
+
+    data.forEach((r, i) => {
+      const col = document.createElement('div');
+      col.className = 'bar-col' + (i === data.length - 1 ? ' active' : '');
+
+      const tooltip = document.createElement('div');
+      tooltip.className = 'bar-tooltip';
+      tooltip.innerHTML = `${dateLabelFn(r)}<br><b>${r.score}</b> / 100`;
+
+      const value = document.createElement('span');
+      value.className = 'bar-value';
+      value.textContent = r.score;
+
+      const bar = document.createElement('div');
+      bar.className = 'bar-fill';
+      bar.style.height = Math.max(6, Math.round((r.score / maxScore) * 100)) + '%';
+
+      const dayLbl = document.createElement('span');
+      dayLbl.className = 'bar-day';
+      dayLbl.textContent = new Date(r.created_at || Date.now()).toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+
+      col.appendChild(tooltip);
+      col.appendChild(value);
+      col.appendChild(bar);
+      col.appendChild(dayLbl);
+
+      col.onclick = () => {
+        [...containerEl.children].forEach(c => c.classList.remove('active'));
+        col.classList.add('active');
+        showDayDetail(detailEl, r, dateLabelFn(r));
+      };
+
+      containerEl.appendChild(col);
+    });
+
+    // Show the most recent day's detail by default.
+    if (data.length) {
+      showDayDetail(detailEl, data[data.length - 1], dateLabelFn(data[data.length - 1]));
+    }
+  }
+
+  function showDayDetail(detailEl, r, dateLabel) {
+    const items = habitNamesOf(r);
+    const itemsHtml = items.length
+      ? `<div class="day-detail-items">${items.map(name => `<span class="day-detail-tag">${name}</span>`).join('')}</div>`
+      : `<p class="day-detail-empty">Nothing marked that day.</p>`;
+
+    detailEl.innerHTML = `
+      <p class="day-detail-date">${dateLabel}</p>
+      <p class="day-detail-score">Score: <b>${r.score}</b> / 100</p>
+      ${itemsHtml}
+    `;
+    detailEl.classList.add('show');
+  }
   }
 
   function renderList(sorted) {
