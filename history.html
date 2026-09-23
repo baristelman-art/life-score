@@ -61,6 +61,23 @@ src="https://www.facebook.com/tr?id=1119044180571388&ev=PageView&noscript=1"
 
   header { border-bottom: 1px solid var(--line); padding: 1.1rem 1.5rem; }
   .header-inner { max-width: 640px; margin: 0 auto; display: flex; align-items: center; justify-content: space-between; }
+
+  .header-auth-btn {
+    font-family: 'Inter', sans-serif;
+    font-weight: 600;
+    font-size: 0.85rem;
+    padding: 0.5rem 1rem;
+    border-radius: 999px;
+    border: 1px solid var(--line);
+    background: transparent;
+    color: var(--text-mute);
+    cursor: pointer;
+    transition: all 0.15s ease;
+  }
+
+  .header-auth-btn:hover { border-color: var(--teal); color: var(--teal); }
+  .header-auth-btn.logout { border-color: var(--rust); color: var(--rust); }
+  .header-auth-btn.logout:hover { background: #C9836822; }
   .brand { font-family: 'Fraunces', serif; font-weight: 500; font-size: 1.05rem; text-decoration: none; color: var(--text); }
 
   .wrap { max-width: 640px; margin: 0 auto; padding: 4rem 1.5rem 5rem; }
@@ -297,6 +314,7 @@ src="https://www.facebook.com/tr?id=1119044180571388&ev=PageView&noscript=1"
   <header>
     <div class="header-inner">
       <a class="brand" href="index.html">Life Score</a>
+      <button class="header-auth-btn" id="headerAuthBtn" onclick="headerAuthAction()"></button>
     </div>
   </header>
 
@@ -318,8 +336,6 @@ src="https://www.facebook.com/tr?id=1119044180571388&ev=PageView&noscript=1"
 
     <div id="reportsView" class="hidden">
       <h1>Your trend</h1>
-      <p class="sub">Logged in as <span class="nickname" id="loggedInEmail"></span></p>
-      <a class="btn" href="habits.html" style="display:inline-block; text-decoration:none; margin-bottom:2rem;">+ New check-in</a>
       <div id="trendBox"></div>
       <div id="reportList"></div>
     </div>
@@ -406,11 +422,34 @@ src="https://www.facebook.com/tr?id=1119044180571388&ev=PageView&noscript=1"
   function showReports(email, reports) {
     document.getElementById('loginView').classList.add('hidden');
     document.getElementById('reportsView').classList.remove('hidden');
-    document.getElementById('loggedInEmail').textContent = email;
+    setHeaderAuth(true);
 
     const sorted = [...reports].sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
     renderTrend(sorted);
     renderList(sorted);
+  }
+
+  function setHeaderAuth(loggedIn) {
+    const btn = document.getElementById('headerAuthBtn');
+    if (loggedIn) {
+      btn.textContent = 'Log out';
+      btn.className = 'header-auth-btn logout';
+    } else {
+      btn.textContent = 'Log in';
+      btn.className = 'header-auth-btn';
+    }
+  }
+
+  async function headerAuthAction() {
+    const btn = document.getElementById('headerAuthBtn');
+    if (btn.classList.contains('logout')) {
+      await supabaseClient.auth.signOut();
+      document.getElementById('reportsView').classList.add('hidden');
+      document.getElementById('loginView').classList.remove('hidden');
+      setHeaderAuth(false);
+    } else {
+      document.getElementById('email')?.focus();
+    }
   }
 
   function habitNamesOf(report) {
@@ -541,6 +580,7 @@ src="https://www.facebook.com/tr?id=1119044180571388&ev=PageView&noscript=1"
   }
 
   // If a session already exists (e.g. just came from saving a check-in), skip straight to it.
+  setHeaderAuth(false);
   (async () => {
     const { data } = await supabaseClient.auth.getSession();
     if (data.session) {

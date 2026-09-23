@@ -606,14 +606,38 @@ src="https://www.facebook.com/tr?id=1119044180571388&ev=PageView&noscript=1"
     if (typeof ttq !== 'undefined') ttq.track('ViewContent', { content_id: 'life_score_result', content_name: 'life_score_result', value: result.score, currency: 'USD' });
   }
 
-  function saveReportForUser(userId) {
-    return supabaseClient.from('reports').insert({
-      user_id: userId,
+  // Only one report per calendar day (local time) — checking in again
+  // today updates today's row instead of adding a new one. A new day
+  // (after midnight, local time) always creates a fresh row.
+  async function saveReportForUser(userId) {
+    const now = new Date();
+    const startOfToday = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+    const startOfTomorrow = new Date(startOfToday);
+    startOfTomorrow.setDate(startOfTomorrow.getDate() + 1);
+
+    const payload = {
       score: result.score,
       days_remaining: result.bottleneck ? result.bottleneck.daysRemaining : null,
       bottleneck_habit: result.bottleneck ? result.bottleneck.name : null,
       habits: habits
-    });
+    };
+
+    const { data: existing, error: findError } = await supabaseClient
+      .from('reports')
+      .select('id')
+      .eq('user_id', userId)
+      .gte('created_at', startOfToday.toISOString())
+      .lt('created_at', startOfTomorrow.toISOString())
+      .limit(1)
+      .maybeSingle();
+
+    if (findError) return { error: findError };
+
+    if (existing) {
+      return await supabaseClient.from('reports').update(payload).eq('id', existing.id);
+    }
+
+    return await supabaseClient.from('reports').insert({ user_id: userId, ...payload });
   }
 
   // If this browser already has a logged-in session (a returning check-in),
