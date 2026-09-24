@@ -153,39 +153,41 @@ src="https://www.facebook.com/tr?id=1119044180571388&ev=PageView&noscript=1"
   }
 
   .teaser-slots {
-    display: flex;
-    gap: 0.9rem;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 0.6rem;
     margin-bottom: 1.75rem;
     width: 100%;
     max-width: 480px;
   }
 
   .teaser-reel {
-    flex: 1;
+    min-width: 0;
     background: var(--surface);
     border: 1px solid var(--line);
     border-radius: 16px;
-    padding: 1.4rem 1rem;
+    padding: 1.1rem 0.4rem;
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 0.6rem;
-    font-size: 2rem;
+    gap: 0.5rem;
+    font-size: 1.6rem;
   }
 
   .teaser-num {
     font-family: 'Space Mono', monospace;
-    font-size: 1.6rem;
+    font-size: clamp(1.1rem, 5.5vw, 1.5rem);
     font-weight: 700;
     color: var(--teal);
   }
 
   .teaser-label {
-    font-size: 0.65rem;
+    font-size: clamp(0.55rem, 2.4vw, 0.65rem);
     font-weight: 600;
     color: var(--text-mute);
     text-transform: uppercase;
-    letter-spacing: 0.04em;
+    letter-spacing: 0.03em;
+    text-align: center;
   }
 
   .score-caption {
@@ -277,46 +279,30 @@ src="https://www.facebook.com/tr?id=1119044180571388&ev=PageView&noscript=1"
     gap: 0.5rem;
   }
 
-  .habit-row {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 1rem;
-    padding: 1.1rem 0;
-  }
-
-  .habit-name {
-    font-size: 1.12rem;
-    color: var(--text);
-    flex: 1;
-    min-width: 0;
+  .habit-btn {
+    display: block;
+    width: 100%;
     text-align: left;
-  }
-
-  .quit-btn {
     font-family: 'Inter', sans-serif;
-    font-size: 0.95rem;
-    font-weight: 600;
-    padding: 0.7rem 1.2rem;
-    border-radius: 999px;
-    border: 1.5px solid var(--line);
-    background: transparent;
-    color: var(--text-mute);
+    font-size: 1.08rem;
+    font-weight: 500;
+    color: var(--text);
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    padding: 1.1rem 1.3rem;
+    margin-bottom: 0.6rem;
     cursor: pointer;
     transition: all 0.18s ease;
-    white-space: nowrap;
-    flex-shrink: 0;
   }
 
-  .quit-btn:hover {
-    border-color: var(--teal);
-    color: var(--teal);
-  }
+  .habit-btn:hover { border-color: var(--teal); }
 
-  .quit-btn.active {
+  .habit-btn.active {
     background: var(--teal);
     border-color: var(--teal);
     color: #082220;
+    font-weight: 600;
     box-shadow: 0 4px 18px -4px var(--teal-dim);
   }
 
@@ -336,11 +322,6 @@ src="https://www.facebook.com/tr?id=1119044180571388&ev=PageView&noscript=1"
   }
 
   .picker-count b { color: var(--teal); font-weight: 400; }
-
-  @media (max-width: 480px) {
-    .habit-row { flex-direction: column; align-items: flex-start; gap: 0.6rem; }
-    .quit-btn { align-self: flex-start; }
-  }
 
   .steps {
     max-width: 780px;
@@ -456,7 +437,8 @@ src="https://www.facebook.com/tr?id=1119044180571388&ev=PageView&noscript=1"
     grid-template-rows: 1fr 1fr;
     gap: 0.85rem;
     margin-bottom: 2.5rem;
-    min-height: calc(100svh - 1rem);
+    min-height: calc(100svh - 9rem);
+    max-height: 560px;
   }
 
   .reel {
@@ -483,7 +465,7 @@ src="https://www.facebook.com/tr?id=1119044180571388&ev=PageView&noscript=1"
     transform: scale(1.02);
   }
 
-  .reel-emoji { font-size: 1.8rem; }
+  .reel-emoji { font-size: 1.6rem; }
 
   .reel-label {
     font-size: 0.78rem;
@@ -495,7 +477,7 @@ src="https://www.facebook.com/tr?id=1119044180571388&ev=PageView&noscript=1"
 
   .reel-value {
     font-family: 'Space Mono', monospace;
-    font-size: 2.4rem;
+    font-size: 2.1rem;
     font-weight: 700;
     color: var(--text-mute);
     line-height: 1;
@@ -514,16 +496,17 @@ src="https://www.facebook.com/tr?id=1119044180571388&ev=PageView&noscript=1"
     .slot-machine {
       grid-template-columns: 1fr 1fr;
       grid-template-rows: 1fr 1fr;
-      height: calc(100svh - 0.5rem);
+      height: calc(100svh - 5.5rem);
+      max-height: 480px;
       min-height: 0;
       gap: 0.6rem;
       margin-bottom: 1rem;
       padding-top: 0;
     }
-    .reel { padding: 0.5rem 0.5rem; gap: 0.25rem; }
-    .reel-emoji { font-size: clamp(1.3rem, 7vw, 2rem); }
-    .reel-label { font-size: clamp(0.6rem, 2.8vw, 0.72rem); }
-    .reel-value { font-size: clamp(1.6rem, 9vw, 2.1rem); }
+    .reel { padding: 0.5rem 0.5rem; gap: 0.2rem; }
+    .reel-emoji { font-size: clamp(1.1rem, 6vw, 1.7rem); }
+    .reel-label { font-size: clamp(0.58rem, 2.6vw, 0.68rem); }
+    .reel-value { font-size: clamp(1.4rem, 8vw, 1.8rem); }
     .reel-sub { font-size: clamp(0.55rem, 2.5vw, 0.65rem); }
   }
 
@@ -952,7 +935,7 @@ src="https://www.facebook.com/tr?id=1119044180571388&ev=PageView&noscript=1"
     teaserEls.forEach(el => { el.textContent = Math.floor(Math.random() * 90); });
   }
   spinTeaser();
-  setInterval(spinTeaser, 5000);
+  setInterval(spinTeaser, 2000);
 </script>
 
 <script>
@@ -999,21 +982,11 @@ src="https://www.facebook.com/tr?id=1119044180571388&ev=PageView&noscript=1"
     catDiv.appendChild(title);
 
     cat.habits.forEach(habit => {
-      const row = document.createElement('div');
-      row.className = 'habit-row';
-
-      const nameEl = document.createElement('span');
-      nameEl.className = 'habit-name';
-      nameEl.textContent = habit;
-
       const btn = document.createElement('button');
-      btn.className = 'quit-btn';
-      btn.textContent = 'Yes, in the last 24h';
+      btn.className = 'habit-btn';
+      btn.textContent = habit;
       btn.onclick = () => toggleHabit(habit, btn);
-
-      row.appendChild(nameEl);
-      row.appendChild(btn);
-      catDiv.appendChild(row);
+      catDiv.appendChild(btn);
     });
 
     section.appendChild(catDiv);
@@ -1204,7 +1177,6 @@ src="https://www.facebook.com/tr?id=1119044180571388&ev=PageView&noscript=1"
     landedCount = 0;
 
     ensureAudio();
-    document.getElementById('siteHeader').classList.add('hidden');
     document.getElementById('heroSection').classList.add('hidden');
     document.getElementById('pickerIntro').classList.add('hidden');
     document.getElementById('slotMachine').classList.remove('hidden');
