@@ -59,7 +59,7 @@ src="https://www.facebook.com/tr?id=1119044180571388&ev=PageView&noscript=1"
 
   .hidden { display: none; }
 
-  header { border-bottom: 1px solid var(--line); padding: 1.1rem 1.5rem; }
+  header { padding: 1.1rem 1.5rem; }
   .header-inner { max-width: 640px; margin: 0 auto; display: flex; align-items: center; justify-content: space-between; }
 
   .header-auth-btn {
@@ -303,6 +303,23 @@ src="https://www.facebook.com/tr?id=1119044180571388&ev=PageView&noscript=1"
 
   .day-detail-empty { font-size: 0.85rem; color: var(--text-mute); }
 
+  .day-detail.win {
+    border-color: var(--teal);
+    box-shadow: 0 0 30px -8px var(--teal-dim);
+  }
+
+  .day-detail-win {
+    font-family: 'Fraunces', serif;
+    font-weight: 500;
+    font-size: 1.05rem;
+    color: var(--teal);
+  }
+
+  .report-card.win {
+    border-color: var(--teal);
+    box-shadow: 0 0 24px -8px var(--teal-dim);
+  }
+
   .bg-texture {
     position: fixed;
     inset: 0;
@@ -353,6 +370,7 @@ src="https://www.facebook.com/tr?id=1119044180571388&ev=PageView&noscript=1"
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="config.js"></script>
+<script src="lifescore.js"></script>
 <script>
   async function doLogin() {
     const email = document.getElementById('email').value.trim().toLowerCase();
@@ -548,6 +566,11 @@ src="https://www.facebook.com/tr?id=1119044180571388&ev=PageView&noscript=1"
       bar.className = 'bar-fill';
       const heightPct = total === null ? 6 : Math.max(6, 100 - Math.round((total / maxTotal) * 100));
       bar.style.height = heightPct + '%';
+      if (total !== null) {
+        const barColor = freedomColorScale(total, maxTotal);
+        bar.style.background = `linear-gradient(to top, ${barColor}, ${barColor}99)`;
+        value.style.color = barColor;
+      }
 
       const dayLbl = document.createElement('span');
       dayLbl.className = 'bar-day';
@@ -575,26 +598,49 @@ src="https://www.facebook.com/tr?id=1119044180571388&ev=PageView&noscript=1"
 
   function showDayDetail(detailEl, r, dateLabel) {
     const items = habitNamesOf(r);
+    const total = totalDaysOf(r);
+
+    // Legacy check-ins saved before freedom tracking existed — no
+    // meaningful numbers to show, so say that plainly instead of a
+    // confusing row of dashes.
+    if (total === null) {
+      detailEl.className = 'day-detail show';
+      detailEl.innerHTML = `
+        <p class="day-detail-date">${dateLabel}</p>
+        <p class="day-detail-empty">This check-in was saved before freedom tracking started — no numbers for this day.</p>
+      `;
+      return;
+    }
+
+    if (total === 0) {
+      // Nothing marked at all — a full win, so make it feel like one.
+      detailEl.className = 'day-detail show win';
+      detailEl.innerHTML = `
+        <p class="day-detail-date">${dateLabel}</p>
+        <p class="day-detail-win">🎉 Completely free — nothing was holding you back.</p>
+      `;
+      return;
+    }
+
     const itemsHtml = items.length
       ? `<div class="day-detail-items">${items.map(name => `<span class="day-detail-tag">${name}</span>`).join('')}</div>`
-      : `<p class="day-detail-empty">Nothing marked that day.</p>`;
-
-    const total = totalDaysOf(r);
-    const freedomHtml = total !== null ? `
+      : '';
+    const barColor = freedomColorScale(total, 360);
+    const freedomHtml = `
       <div class="day-detail-freedoms">
-        <span>🧠 ${r.mental_days}d</span>
-        <span>💪 ${r.physical_days}d</span>
-        <span>💰 ${r.financial_days}d</span>
-        <span>⏳ ${r.temporal_days}d</span>
-      </div>` : '';
+        <span style="color:${freedomColorScale(r.mental_days, 90)}">🧠 ${r.mental_days}d</span>
+        <span style="color:${freedomColorScale(r.physical_days, 90)}">💪 ${r.physical_days}d</span>
+        <span style="color:${freedomColorScale(r.financial_days, 90)}">💰 ${r.financial_days}d</span>
+        <span style="color:${freedomColorScale(r.temporal_days, 90)}">⏳ ${r.temporal_days}d</span>
+      </div>`;
 
+    detailEl.className = 'day-detail show';
     detailEl.innerHTML = `
       <p class="day-detail-date">${dateLabel}</p>
-      <p class="day-detail-score">Total distance to freedom: <b>${total === null ? '—' : total}</b> days</p>
+      <p class="day-detail-score">Total distance to freedom: <b style="color:${barColor}">${total}</b> days</p>
       ${freedomHtml}
       ${itemsHtml}
     `;
-    detailEl.classList.add('show');
   }
 
   function renderList(sorted) {
@@ -608,20 +654,41 @@ src="https://www.facebook.com/tr?id=1119044180571388&ev=PageView&noscript=1"
 
     sorted.forEach(r => {
       const card = document.createElement('div');
-      card.className = 'report-card';
       const dateStr = new Date(r.created_at).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' });
       const total = totalDaysOf(r);
+
+      if (total === null) {
+        card.className = 'report-card';
+        card.innerHTML = `
+          <div class="report-top"><span class="report-date">${dateStr}</span></div>
+          <p class="day-detail-empty" style="margin:0;">Saved before freedom tracking started.</p>
+        `;
+        listEl.appendChild(card);
+        return;
+      }
+
+      if (total === 0) {
+        card.className = 'report-card win';
+        card.innerHTML = `
+          <div class="report-top"><span class="report-date">${dateStr}</span></div>
+          <p class="day-detail-win" style="margin:0;">🎉 Completely free that day.</p>
+        `;
+        listEl.appendChild(card);
+        return;
+      }
+
+      card.className = 'report-card';
       card.innerHTML = `
         <div class="report-top">
           <span class="report-date">${dateStr}</span>
         </div>
         <div class="report-nums">
-          <div><div class="num">${r.mental_days ?? '—'}</div><div class="lbl">🧠 mental</div></div>
-          <div><div class="num">${r.physical_days ?? '—'}</div><div class="lbl">💪 physical</div></div>
-          <div><div class="num">${r.financial_days ?? '—'}</div><div class="lbl">💰 financial</div></div>
-          <div><div class="num">${r.temporal_days ?? '—'}</div><div class="lbl">⏳ time</div></div>
+          <div><div class="num" style="color:${freedomColorScale(r.mental_days, 90)}">${r.mental_days}</div><div class="lbl">🧠 mental</div></div>
+          <div><div class="num" style="color:${freedomColorScale(r.physical_days, 90)}">${r.physical_days}</div><div class="lbl">💪 physical</div></div>
+          <div><div class="num" style="color:${freedomColorScale(r.financial_days, 90)}">${r.financial_days}</div><div class="lbl">💰 financial</div></div>
+          <div><div class="num" style="color:${freedomColorScale(r.temporal_days, 90)}">${r.temporal_days}</div><div class="lbl">⏳ time</div></div>
         </div>
-        <div class="report-bottleneck">Total distance to freedom: <b>${total === null ? '—' : total + ' days'}</b></div>
+        <div class="report-bottleneck">Total distance to freedom: <b style="color:${freedomColorScale(total, 360)}">${total} days</b></div>
       `;
       listEl.appendChild(card);
     });

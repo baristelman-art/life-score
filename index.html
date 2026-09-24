@@ -99,7 +99,6 @@ src="https://www.facebook.com/tr?id=1119044180571388&ev=PageView&noscript=1"
   }
 
   .site-header {
-    border-bottom: 1px solid var(--line);
     padding: 1.1rem 1.5rem;
     position: relative;
     z-index: 2;
@@ -153,26 +152,28 @@ src="https://www.facebook.com/tr?id=1119044180571388&ev=PageView&noscript=1"
 
   .teaser-slots {
     display: flex;
-    gap: 0.6rem;
-    margin-bottom: 1.5rem;
+    gap: 0.9rem;
+    margin-bottom: 1.75rem;
+    width: 100%;
+    max-width: 480px;
   }
 
   .teaser-reel {
+    flex: 1;
     background: var(--surface);
     border: 1px solid var(--line);
-    border-radius: 14px;
-    padding: 0.9rem 1rem;
+    border-radius: 16px;
+    padding: 1.4rem 1rem;
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 0.4rem;
-    font-size: 1.3rem;
-    min-width: 62px;
+    gap: 0.6rem;
+    font-size: 2rem;
   }
 
   .teaser-num {
     font-family: 'Space Mono', monospace;
-    font-size: 1.15rem;
+    font-size: 1.6rem;
     font-weight: 700;
     color: var(--teal);
   }
@@ -257,7 +258,7 @@ src="https://www.facebook.com/tr?id=1119044180571388&ev=PageView&noscript=1"
   .category:first-child { margin-top: 0; }
 
   .category-title {
-    font-size: 1rem;
+    font-size: 1.12rem;
     font-weight: 600;
     color: var(--text);
     margin-bottom: 1rem;
@@ -275,7 +276,7 @@ src="https://www.facebook.com/tr?id=1119044180571388&ev=PageView&noscript=1"
   }
 
   .habit-name {
-    font-size: 1rem;
+    font-size: 1.12rem;
     color: var(--text);
     flex: 1;
     min-width: 0;
@@ -284,9 +285,9 @@ src="https://www.facebook.com/tr?id=1119044180571388&ev=PageView&noscript=1"
 
   .quit-btn {
     font-family: 'Inter', sans-serif;
-    font-size: 0.85rem;
+    font-size: 0.95rem;
     font-weight: 600;
-    padding: 0.65rem 1.1rem;
+    padding: 0.7rem 1.2rem;
     border-radius: 999px;
     border: 1.5px solid var(--line);
     background: transparent;
@@ -335,7 +336,6 @@ src="https://www.facebook.com/tr?id=1119044180571388&ev=PageView&noscript=1"
     max-width: 780px;
     margin: 0 auto;
     padding: 5rem 1.5rem 6rem;
-    border-top: 1px solid var(--line);
   }
 
   .steps-head {
@@ -353,10 +353,7 @@ src="https://www.facebook.com/tr?id=1119044180571388&ev=PageView&noscript=1"
     grid-template-columns: 3rem 1fr;
     gap: 1.25rem;
     padding: 1.75rem 0;
-    border-bottom: 1px solid var(--line);
   }
-
-  .step:last-child { border-bottom: none; }
 
   .step-index {
     font-family: 'Space Mono', monospace;
@@ -392,7 +389,6 @@ src="https://www.facebook.com/tr?id=1119044180571388&ev=PageView&noscript=1"
   .closing {
     text-align: center;
     padding: 5rem 1.5rem 6rem;
-    border-top: 1px solid var(--line);
   }
 
   .closing h2 {
@@ -446,42 +442,49 @@ src="https://www.facebook.com/tr?id=1119044180571388&ev=PageView&noscript=1"
 
   .slot-machine {
     display: flex;
+    flex-direction: column;
     gap: 0.85rem;
     justify-content: center;
-    flex-wrap: wrap;
     margin-bottom: 2.5rem;
+    min-height: calc(100svh - 12rem);
   }
 
   .reel {
     --cat-color: var(--teal);
     background: var(--surface);
     border: 1px solid var(--line);
-    border-radius: 16px;
-    padding: 1.5rem 0.75rem;
-    width: 130px;
-    text-align: center;
+    border-radius: 18px;
+    padding: 1.4rem 1.6rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
     transition: transform 0.3s cubic-bezier(.34,1.56,.64,1), border-color 0.3s ease, box-shadow 0.3s ease;
   }
 
   .reel.landed {
     border-color: var(--cat-color);
     box-shadow: 0 0 34px -6px var(--cat-color);
-    transform: scale(1.05);
+    transform: scale(1.02);
   }
 
-  .reel-emoji { font-size: 1.6rem; margin-bottom: 0.5rem; }
+  .reel-left { display: flex; align-items: center; gap: 0.85rem; }
+
+  .reel-emoji { font-size: 2rem; }
 
   .reel-label {
-    font-size: 0.68rem;
+    font-size: 0.85rem;
+    font-weight: 600;
     color: var(--text-mute);
     text-transform: uppercase;
-    letter-spacing: 0.06em;
-    margin-bottom: 0.75rem;
+    letter-spacing: 0.05em;
   }
+
+  .reel-right { text-align: right; }
 
   .reel-value {
     font-family: 'Space Mono', monospace;
-    font-size: 2.1rem;
+    font-size: 2.6rem;
     font-weight: 700;
     color: var(--text-mute);
     line-height: 1;
@@ -493,11 +496,14 @@ src="https://www.facebook.com/tr?id=1119044180571388&ev=PageView&noscript=1"
     text-shadow: 0 0 18px var(--cat-color);
   }
 
-  .reel-sub { font-size: 0.68rem; color: var(--text-mute); margin-top: 0.4rem; }
+  .reel-sub { font-size: 0.7rem; color: var(--text-mute); margin-top: 0.25rem; }
 
   @media (max-width: 480px) {
-    .slot-machine { gap: 0.6rem; }
-    .reel { width: 44%; padding: 1.25rem 0.5rem; }
+    .slot-machine { gap: 0.7rem; justify-content: flex-start; padding-top: 1rem; }
+    .reel { padding: 1.1rem 1.25rem; }
+    .reel-emoji { font-size: 1.8rem; }
+    .reel-label { font-size: 0.78rem; }
+    .reel-value { font-size: 2.2rem; }
   }
 
   .sample-table {
@@ -652,7 +658,6 @@ src="https://www.facebook.com/tr?id=1119044180571388&ev=PageView&noscript=1"
     gap: 1rem;
     margin-top: 1.75rem;
     padding-top: 1.5rem;
-    border-top: 1px solid var(--line);
   }
 
   .sample-stat-value {
@@ -805,32 +810,34 @@ src="https://www.facebook.com/tr?id=1119044180571388&ev=PageView&noscript=1"
   </section>
 
   <section class="list-preview" id="pickerSection">
-    <p class="list-preview-label">Reveal my freedom</p>
-    <p class="list-preview-sub">Mark anything below that showed up for you in the last 24 hours.</p>
-    <div id="habitSection"></div>
+    <div id="pickerIntro">
+      <p class="list-preview-label">Reveal my freedom</p>
+      <p class="list-preview-sub">Mark anything below that showed up for you in the last 24 hours.</p>
+      <div id="habitSection"></div>
 
-    <div class="picker-footer">
-      <span class="picker-count"><b id="selCount">0</b> / 15 marked</span>
-      <button class="cta" id="revealBtn" onclick="startSpin()">🎰 Reveal my freedom</button>
+      <div class="picker-footer">
+        <span class="picker-count"><b id="selCount">0</b> / 15 marked</span>
+        <button class="cta" id="revealBtn" onclick="startSpin()">🎰 Reveal my freedom</button>
+      </div>
+      <p class="cta-note">Free · No sign-up to start · <a href="history.html" style="color:var(--text-mute);">Already have reports? Log in</a></p>
     </div>
-    <p class="cta-note">Free · No sign-up to start · <a href="history.html" style="color:var(--text-mute);">Already have reports? Log in</a></p>
 
     <div class="slot-machine hidden" id="slotMachine"></div>
 
     <div class="post-reveal hidden" id="postReveal">
       <div class="sample-table">
-        <p class="sample-label">Example</p>
+        <p class="sample-label">📊 Example</p>
         <p class="sample-headline">This is what a week of checking in looks like</p>
-        <p class="sample-sub">Not your data — a sample of the pattern you'll start seeing after a few check-ins. Hover or tap a day to see what it looked like.</p>
+        <p class="sample-sub">Not your data — a sample of the pattern you'll start seeing after a few check-ins. Bars go from 🔵 close to free to 🔴 far away. Hover or tap a day to see what it looked like.</p>
         <div class="sample-chart" id="sampleChart"></div>
         <div class="day-detail" id="sampleDayDetail"></div>
         <div class="sample-stats">
           <div>
-            <p class="sample-stat-value">−110 days</p>
+            <p class="sample-stat-value" style="color:var(--teal);">−110 days 📉</p>
             <p class="sample-stat-label">Total distance closed over the week</p>
           </div>
           <div>
-            <p class="sample-stat-value">Overthinking</p>
+            <p class="sample-stat-value">🧠 Overthinking</p>
             <p class="sample-stat-label">Showed up most — 3 of 7 days</p>
           </div>
         </div>
@@ -1033,6 +1040,9 @@ src="https://www.facebook.com/tr?id=1119044180571388&ev=PageView&noscript=1"
       // Shorter distance-to-freedom = taller bar (closer to fully free).
       const heightPct = 100 - Math.round((d.total / maxTotal) * 100);
       bar.style.height = Math.max(6, heightPct) + '%';
+      const barColor = freedomColorScale(d.total, maxTotal);
+      bar.style.background = `linear-gradient(to top, ${barColor}, ${barColor}99)`;
+      value.style.color = barColor;
 
       const label = document.createElement('span');
       label.className = 'sample-day';
@@ -1056,11 +1066,12 @@ src="https://www.facebook.com/tr?id=1119044180571388&ev=PageView&noscript=1"
   function showDayDetail(detailEl, d, dateLabel) {
     const itemsHtml = d.items && d.items.length
       ? `<div class="day-detail-items">${d.items.map(name => `<span class="day-detail-tag">${name}</span>`).join('')}</div>`
-      : `<p class="day-detail-empty">Nothing marked that day.</p>`;
+      : `<p class="day-detail-empty">🎉 Nothing marked — a completely free day.</p>`;
+    const barColor = freedomColorScale(d.total, 360);
 
     detailEl.innerHTML = `
       <p class="day-detail-date">${dateLabel}</p>
-      <p class="day-detail-score">Total distance to freedom: <b>${d.total}</b> days</p>
+      <p class="day-detail-score">Total distance to freedom: <b style="color:${barColor}">${d.total}</b> days</p>
       ${itemsHtml}
     `;
     detailEl.classList.add('show');
@@ -1126,10 +1137,14 @@ src="https://www.facebook.com/tr?id=1119044180571388&ev=PageView&noscript=1"
       reel.id = 'reel-' + key;
       reel.style.setProperty('--cat-color', cat.color);
       reel.innerHTML = `
-        <div class="reel-emoji">${cat.emoji}</div>
-        <div class="reel-label">${cat.label}</div>
-        <div class="reel-value" id="reel-value-${key}">–</div>
-        <div class="reel-sub">days to go</div>
+        <div class="reel-left">
+          <div class="reel-emoji">${cat.emoji}</div>
+          <div class="reel-label">${cat.label}</div>
+        </div>
+        <div class="reel-right">
+          <div class="reel-value" id="reel-value-${key}">–</div>
+          <div class="reel-sub">days to go</div>
+        </div>
       `;
       container.appendChild(reel);
     });
@@ -1165,7 +1180,7 @@ src="https://www.facebook.com/tr?id=1119044180571388&ev=PageView&noscript=1"
     landedCount = 0;
 
     ensureAudio();
-    document.getElementById('pickerSection').querySelector('.picker-footer').classList.add('hidden');
+    document.getElementById('pickerIntro').classList.add('hidden');
     document.getElementById('slotMachine').classList.remove('hidden');
     buildReels();
     FREEDOM_ORDER.forEach((key, i) => spinReel(key, freedomResult[key].days, i * 280));
@@ -1176,7 +1191,6 @@ src="https://www.facebook.com/tr?id=1119044180571388&ev=PageView&noscript=1"
 
   function onAllReelsLanded() {
     document.getElementById('postReveal').classList.remove('hidden');
-    document.getElementById('postReveal').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
     autoSaveIfLoggedIn();
   }
 

@@ -69,3 +69,12 @@ function computeFreedomDays(selectedNames) {
 function totalFreedomDays(freedomResult) {
   return Object.values(freedomResult).reduce((sum, f) => sum + f.days, 0);
 }
+
+// A blue (low/good) → red (high/bad) color scale for any "days" value,
+// used to color chart bars and numbers so bigger distances visibly feel
+// more urgent. value/max both in days; result is an hsl() string.
+function freedomColorScale(value, max) {
+  const t = Math.max(0, Math.min(1, value / max));
+  const hue = Math.round(210 - t * 210); // 210 = blue, 0 = red
+  return `hsl(${hue}, 75%, 58%)`;
+}
