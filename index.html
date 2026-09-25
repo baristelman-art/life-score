@@ -174,11 +174,36 @@ src="https://www.facebook.com/tr?id=1119044180571388&ev=PageView&noscript=1"
     font-size: 1.6rem;
   }
 
+  .teaser-emoji {
+    display: block;
+    font-size: clamp(1.3rem, 6vw, 1.7rem);
+    transition: transform 0.1s ease;
+  }
+
   .teaser-num {
+    display: block;
     font-family: 'Space Mono', monospace;
-    font-size: clamp(1.1rem, 5.5vw, 1.5rem);
+    font-size: clamp(1.1rem, 5.5vw, 1.4rem);
     font-weight: 700;
     color: var(--teal);
+    text-align: center;
+  }
+
+  .teaser-reel.spinning .teaser-emoji,
+  .teaser-reel.spinning .teaser-num,
+  .teaser-reel.spinning .teaser-label {
+    filter: blur(0.4px);
+    opacity: 0.85;
+  }
+
+  .teaser-reel.landed {
+    animation: teaserLandPulse 0.4s ease;
+  }
+
+  @keyframes teaserLandPulse {
+    0% { transform: scale(1); }
+    40% { transform: scale(1.08); }
+    100% { transform: scale(1); }
   }
 
   .teaser-label {
@@ -472,7 +497,7 @@ src="https://www.facebook.com/tr?id=1119044180571388&ev=PageView&noscript=1"
     font-weight: 600;
     color: var(--text-mute);
     text-transform: uppercase;
-    letter-spacing: 0.05em;
+    letter-spacing: 0.16em;
   }
 
   .reel-value {
@@ -806,10 +831,10 @@ src="https://www.facebook.com/tr?id=1119044180571388&ev=PageView&noscript=1"
     <p class="kicker reveal reveal-1">Life Score</p>
 
     <div class="teaser-slots reveal reveal-2" id="teaserSlots">
-      <div class="teaser-reel">🧠<span class="teaser-num">--</span><span class="teaser-label">Mental</span></div>
-      <div class="teaser-reel">💪<span class="teaser-num">--</span><span class="teaser-label">Physical</span></div>
-      <div class="teaser-reel">💰<span class="teaser-num">--</span><span class="teaser-label">Financial</span></div>
-      <div class="teaser-reel">⏳<span class="teaser-num">--</span><span class="teaser-label">Time</span></div>
+      <div class="teaser-reel" id="teaserReel0"><span class="teaser-emoji" id="teaserEmoji0">🧠</span><span class="teaser-num" id="teaserNum0">--</span><span class="teaser-label" id="teaserLabel0">Mental</span></div>
+      <div class="teaser-reel" id="teaserReel1"><span class="teaser-emoji" id="teaserEmoji1">💪</span><span class="teaser-num" id="teaserNum1">--</span><span class="teaser-label" id="teaserLabel1">Physical</span></div>
+      <div class="teaser-reel" id="teaserReel2"><span class="teaser-emoji" id="teaserEmoji2">💰</span><span class="teaser-num" id="teaserNum2">--</span><span class="teaser-label" id="teaserLabel2">Financial</span></div>
+      <div class="teaser-reel" id="teaserReel3"><span class="teaser-emoji" id="teaserEmoji3">⏳</span><span class="teaser-num" id="teaserNum3">--</span><span class="teaser-label" id="teaserLabel3">Time</span></div>
     </div>
     <p class="score-caption reveal reveal-2">this isn't <b>your</b> freedom yet — you're about to reveal your own</p>
 
@@ -927,15 +952,101 @@ src="https://www.facebook.com/tr?id=1119044180571388&ev=PageView&noscript=1"
   <footer>Life Score — a gamified way to know yourself</footer>
 
 <script>
-  // Small looping teaser animation in the hero — purely decorative,
-  // no sound (autoplay audio isn't allowed before a user gesture).
-  // Spins once immediately on page load, then every 5 seconds.
-  const teaserEls = document.querySelectorAll('#teaserSlots .teaser-num');
-  function spinTeaser() {
-    teaserEls.forEach(el => { el.textContent = Math.floor(Math.random() * 90); });
+  // Casino-style teaser reels — spin-and-land in bursts (not continuously),
+  // pausing between bursts, then spinning again. While spinning, the emoji,
+  // number AND label all change together, like real slot machine symbols.
+  // Includes sound, unlocked on the visitor's first tap/click (browsers
+  // block audio autoplay before any user gesture — this is unavoidable).
+
+  const TEASER_SYMBOLS = [
+    { emoji: '🧠', label: 'Mental' },
+    { emoji: '💪', label: 'Physical' },
+    { emoji: '💰', label: 'Financial' },
+    { emoji: '⏳', label: 'Time' }
+  ];
+
+  function randomTeaserSymbol() {
+    return TEASER_SYMBOLS[Math.floor(Math.random() * TEASER_SYMBOLS.length)];
   }
-  spinTeaser();
-  setInterval(spinTeaser, 2000);
+
+  let teaserAudioCtx = null;
+  function unlockTeaserAudio() {
+    if (!teaserAudioCtx) {
+      const AC = window.AudioContext || window.webkitAudioContext;
+      if (AC) teaserAudioCtx = new AC();
+    } else if (teaserAudioCtx.state === 'suspended') {
+      teaserAudioCtx.resume();
+    }
+  }
+  document.addEventListener('pointerdown', unlockTeaserAudio, { once: true });
+
+  function playTeaserTick() {
+    if (!teaserAudioCtx) return;
+    const o = teaserAudioCtx.createOscillator();
+    const g = teaserAudioCtx.createGain();
+    o.type = 'square';
+    o.frequency.value = 600 + Math.random() * 200;
+    g.gain.value = 0.03;
+    o.connect(g); g.connect(teaserAudioCtx.destination);
+    o.start();
+    g.gain.exponentialRampToValueAtTime(0.0001, teaserAudioCtx.currentTime + 0.04);
+    o.stop(teaserAudioCtx.currentTime + 0.05);
+  }
+
+  function playTeaserLand(freq) {
+    if (!teaserAudioCtx) return;
+    const o = teaserAudioCtx.createOscillator();
+    const g = teaserAudioCtx.createGain();
+    o.type = 'sine';
+    o.frequency.value = freq;
+    g.gain.value = 0.1;
+    o.connect(g); g.connect(teaserAudioCtx.destination);
+    o.start();
+    g.gain.exponentialRampToValueAtTime(0.0001, teaserAudioCtx.currentTime + 0.3);
+    o.stop(teaserAudioCtx.currentTime + 0.3);
+  }
+
+  const TEASER_LAND_FREQS = [440, 494, 554, 659];
+
+  function spinOneTeaserReel(i, startDelay) {
+    const reelEl = document.getElementById('teaserReel' + i);
+    const emojiEl = document.getElementById('teaserEmoji' + i);
+    const numEl = document.getElementById('teaserNum' + i);
+    const labelEl = document.getElementById('teaserLabel' + i);
+    const spinMs = 900;
+    const tickMs = 85;
+    let elapsed = 0;
+
+    setTimeout(() => {
+      reelEl.classList.add('spinning');
+      const iv = setInterval(() => {
+        const sym = randomTeaserSymbol();
+        emojiEl.textContent = sym.emoji;
+        labelEl.textContent = sym.label;
+        numEl.textContent = Math.floor(Math.random() * 90);
+        playTeaserTick();
+        elapsed += tickMs;
+        if (elapsed >= spinMs) {
+          clearInterval(iv);
+          const finalSym = randomTeaserSymbol();
+          emojiEl.textContent = finalSym.emoji;
+          labelEl.textContent = finalSym.label;
+          numEl.textContent = Math.floor(Math.random() * 90);
+          reelEl.classList.remove('spinning');
+          reelEl.classList.add('landed');
+          playTeaserLand(TEASER_LAND_FREQS[i]);
+          setTimeout(() => reelEl.classList.remove('landed'), 400);
+        }
+      }, tickMs);
+    }, startDelay);
+  }
+
+  function runTeaserBurst() {
+    for (let i = 0; i < 4; i++) spinOneTeaserReel(i, i * 180);
+  }
+
+  runTeaserBurst();
+  setInterval(runTeaserBurst, 5000); // spin-and-land burst every 5 seconds
 </script>
 
 <script>
