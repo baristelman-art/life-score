@@ -175,12 +175,12 @@ src="https://www.facebook.com/tr?id=1119044180571388&ev=PageView&noscript=1"
   }
 
   .teaser-window {
-    height: 4.8rem;
+    height: 5.6rem;
     overflow: hidden;
     position: relative;
     width: 100%;
-    -webkit-mask-image: linear-gradient(to bottom, transparent 0%, #000 16%, #000 84%, transparent 100%);
-    mask-image: linear-gradient(to bottom, transparent 0%, #000 16%, #000 84%, transparent 100%);
+    -webkit-mask-image: linear-gradient(to bottom, transparent 0%, #000 8%, #000 92%, transparent 100%);
+    mask-image: linear-gradient(to bottom, transparent 0%, #000 8%, #000 92%, transparent 100%);
   }
 
   .teaser-strip {
@@ -190,7 +190,7 @@ src="https://www.facebook.com/tr?id=1119044180571388&ev=PageView&noscript=1"
   }
 
   .teaser-tile {
-    height: 4.8rem;
+    height: 5.6rem;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -511,6 +511,53 @@ src="https://www.facebook.com/tr?id=1119044180571388&ev=PageView&noscript=1"
 
   .reel-emoji { font-size: 1.6rem; }
 
+  .reel-window {
+    height: 5.6rem;
+    overflow: hidden;
+    position: relative;
+    width: 100%;
+    -webkit-mask-image: linear-gradient(to bottom, transparent 0%, #000 8%, #000 92%, transparent 100%);
+    mask-image: linear-gradient(to bottom, transparent 0%, #000 8%, #000 92%, transparent 100%);
+  }
+
+  .reel-strip {
+    display: flex;
+    flex-direction: column;
+    will-change: transform;
+  }
+
+  .reel-tile {
+    height: 5.6rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0.4rem;
+  }
+
+  .reel-tile .r-emoji { font-size: 1.6rem; }
+
+  .reel-tile .r-value {
+    font-family: 'Space Mono', monospace;
+    font-size: 2.1rem;
+    font-weight: 700;
+    color: var(--text-mute);
+    line-height: 1;
+  }
+
+  .reel.landed .reel-tile .r-value {
+    color: var(--cat-color);
+    text-shadow: 0 0 18px var(--cat-color);
+  }
+
+  .reel-tile .r-label {
+    font-size: 0.78rem;
+    font-weight: 600;
+    color: var(--text-mute);
+    text-transform: uppercase;
+    letter-spacing: 0.16em;
+  }
+
   .reel-label {
     font-size: 0.78rem;
     font-weight: 600;
@@ -548,9 +595,9 @@ src="https://www.facebook.com/tr?id=1119044180571388&ev=PageView&noscript=1"
       padding-top: 0;
     }
     .reel { padding: 0.5rem 0.5rem; gap: 0.4rem; }
-    .reel-emoji { font-size: clamp(1.1rem, 6vw, 1.7rem); }
-    .reel-label { font-size: clamp(0.58rem, 2.6vw, 0.68rem); }
-    .reel-value { font-size: clamp(1.4rem, 8vw, 1.8rem); }
+    .reel-emoji, .reel-tile .r-emoji { font-size: clamp(1.1rem, 6vw, 1.7rem); }
+    .reel-label, .reel-tile .r-label { font-size: clamp(0.58rem, 2.6vw, 0.68rem); }
+    .reel-value, .reel-tile .r-value { font-size: clamp(1.4rem, 8vw, 1.8rem); }
     .reel-sub { font-size: clamp(0.55rem, 2.5vw, 0.65rem); }
   }
 
@@ -1033,7 +1080,7 @@ src="https://www.facebook.com/tr?id=1119044180571388&ev=PageView&noscript=1"
   // A real mechanical-reel motion: a tall strip of symbol tiles (emoji +
   // number + label, moving together as one unit) slides past a small
   // window, easing to a stop on the final tile — not just text swapping.
-  const TILE_HEIGHT_REM = 4.8;
+  const TILE_HEIGHT_REM = 5.6;
   const TILES_PER_SPIN = 10;
 
   function buildTile(sym, num) {
@@ -1305,6 +1352,13 @@ src="https://www.facebook.com/tr?id=1119044180571388&ev=PageView&noscript=1"
   let habits = [];
   let landedCount = 0;
 
+  const REEL_TILE_HEIGHT_REM = 5.6;
+  const REEL_TILES_PER_SPIN = 10;
+
+  function buildReelTile(sym, num) {
+    return `<div class="reel-tile"><span class="r-emoji">${sym.emoji}</span><span class="r-value">${num}</span><span class="r-label">${sym.label}</span></div>`;
+  }
+
   function buildReels() {
     const container = document.getElementById('slotMachine');
     container.innerHTML = '';
@@ -1315,9 +1369,7 @@ src="https://www.facebook.com/tr?id=1119044180571388&ev=PageView&noscript=1"
       reel.id = 'reel-' + key;
       reel.style.setProperty('--cat-color', cat.color);
       reel.innerHTML = `
-        <div class="reel-emoji" id="reel-emoji-${key}">${cat.emoji}</div>
-        <div class="reel-label" id="reel-label-${key}">${cat.label}</div>
-        <div class="reel-value" id="reel-value-${key}">–</div>
+        <div class="reel-window"><div class="reel-strip" id="reel-strip-${key}"></div></div>
         <div class="reel-sub">days to go</div>
       `;
       container.appendChild(reel);
@@ -1325,34 +1377,43 @@ src="https://www.facebook.com/tr?id=1119044180571388&ev=PageView&noscript=1"
   }
 
   function spinReel(key, finalValue, startDelay) {
-    const emojiEl = document.getElementById('reel-emoji-' + key);
-    const labelEl = document.getElementById('reel-label-' + key);
-    const valueEl = document.getElementById('reel-value-' + key);
     const reelEl = document.getElementById('reel-' + key);
+    const stripEl = document.getElementById('reel-strip-' + key);
     const cat = freedomResult[key];
-    const duration = 1100 + startDelay;
-    const tickMs = 65;
-    let elapsed = 0;
+    const spinMs = 1100;
 
     setTimeout(() => {
-      const iv = setInterval(() => {
+      let html = '';
+      for (let t = 0; t < REEL_TILES_PER_SPIN; t++) {
         const randomSym = TEASER_SYMBOLS[Math.floor(Math.random() * TEASER_SYMBOLS.length)];
-        emojiEl.textContent = randomSym.emoji;
-        labelEl.textContent = randomSym.label;
-        valueEl.textContent = Math.floor(Math.random() * 90);
+        html += buildReelTile(randomSym, Math.floor(Math.random() * 90));
+      }
+      html += buildReelTile(cat, finalValue);
+      stripEl.innerHTML = html;
+
+      stripEl.style.transition = 'none';
+      stripEl.style.transform = 'translateY(0)';
+      void stripEl.offsetHeight; // force reflow before animating
+
+      requestAnimationFrame(() => {
+        stripEl.style.transition = `transform ${spinMs}ms cubic-bezier(.15,.65,.25,1)`;
+        stripEl.style.transform = `translateY(-${REEL_TILES_PER_SPIN * REEL_TILE_HEIGHT_REM}rem)`;
+      });
+
+      const tickTotal = 14;
+      let tickCount = 0;
+      const tickIv = setInterval(() => {
         playTick();
-        elapsed += tickMs;
-        if (elapsed >= duration) {
-          clearInterval(iv);
-          emojiEl.textContent = cat.emoji;
-          labelEl.textContent = cat.label;
-          valueEl.textContent = finalValue;
-          reelEl.classList.add('landed');
-          playLand(LAND_FREQS[key]);
-          landedCount++;
-          if (landedCount === FREEDOM_ORDER.length) onAllReelsLanded();
-        }
-      }, tickMs);
+        tickCount++;
+        if (tickCount >= tickTotal) clearInterval(tickIv);
+      }, spinMs / tickTotal);
+
+      setTimeout(() => {
+        reelEl.classList.add('landed');
+        playLand(LAND_FREQS[key]);
+        landedCount++;
+        if (landedCount === FREEDOM_ORDER.length) onAllReelsLanded();
+      }, spinMs);
     }, startDelay);
   }
 
