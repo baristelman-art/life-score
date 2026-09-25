@@ -978,7 +978,9 @@ src="https://www.facebook.com/tr?id=1119044180571388&ev=PageView&noscript=1"
       teaserAudioCtx.resume();
     }
   }
-  document.addEventListener('pointerdown', unlockTeaserAudio, { once: true });
+  ['pointerdown', 'touchstart', 'click', 'keydown'].forEach(evt =>
+    document.addEventListener(evt, unlockTeaserAudio, { once: true, passive: true })
+  );
 
   function playTeaserTick() {
     if (!teaserAudioCtx) return;
@@ -1045,8 +1047,26 @@ src="https://www.facebook.com/tr?id=1119044180571388&ev=PageView&noscript=1"
     for (let i = 0; i < 4; i++) spinOneTeaserReel(i, i * 180);
   }
 
-  runTeaserBurst();
-  setInterval(runTeaserBurst, 5000); // spin-and-land burst every 5 seconds
+  // Only spin (and make sound) while the reels are actually visible on
+  // screen — pauses the moment the visitor scrolls past them, resumes
+  // the moment they scroll back. Navigating to another page stops it
+  // entirely since this whole script is gone with the old page.
+  let teaserInterval = null;
+  const teaserObserver = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        if (!teaserInterval) {
+          runTeaserBurst();
+          teaserInterval = setInterval(runTeaserBurst, 5000);
+        }
+      } else if (teaserInterval) {
+        clearInterval(teaserInterval);
+        teaserInterval = null;
+      }
+    });
+  }, { threshold: 0.3 });
+
+  teaserObserver.observe(document.getElementById('teaserSlots'));
 </script>
 
 <script>
@@ -1104,12 +1124,15 @@ src="https://www.facebook.com/tr?id=1119044180571388&ev=PageView&noscript=1"
   });
 
   function toggleHabit(habit, btnEl) {
+    unlockTeaserAudio();
     if (state.has(habit)) {
       state.delete(habit);
       btnEl.classList.remove('active');
+      playTeaserTick();
     } else {
       state.add(habit);
       btnEl.classList.add('active');
+      playTeaserLand(520);
     }
     document.getElementById('selCount').textContent = state.size;
   }
