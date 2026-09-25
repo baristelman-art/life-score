@@ -477,9 +477,9 @@ src="https://www.facebook.com/tr?id=1119044180571388&ev=PageView&noscript=1"
 
   .slot-machine {
     display: grid;
-    grid-template-columns: 1fr 1fr;
-    grid-template-rows: 1fr 1fr;
-    gap: 0.85rem;
+    grid-template-columns: repeat(4, 1fr);
+    grid-template-rows: 1fr;
+    gap: 0.6rem;
     margin-bottom: 2.5rem;
     min-height: calc(100svh - 9rem);
     max-height: 560px;
@@ -490,13 +490,13 @@ src="https://www.facebook.com/tr?id=1119044180571388&ev=PageView&noscript=1"
     background: var(--surface);
     border: 1px solid var(--line);
     border-radius: 18px;
-    padding: 1rem 1rem;
+    padding: 1rem 0.5rem;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
     text-align: center;
-    gap: 0.55rem;
+    gap: 0.9rem;
     flex: 1 1 0;
     min-height: 0;
     overflow: hidden;
@@ -512,7 +512,7 @@ src="https://www.facebook.com/tr?id=1119044180571388&ev=PageView&noscript=1"
   .reel-emoji { font-size: 1.6rem; }
 
   .reel-window {
-    height: 5.6rem;
+    height: 6.4rem;
     overflow: hidden;
     position: relative;
     width: 100%;
@@ -527,19 +527,19 @@ src="https://www.facebook.com/tr?id=1119044180571388&ev=PageView&noscript=1"
   }
 
   .reel-tile {
-    height: 5.6rem;
+    height: 6.4rem;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    gap: 0.4rem;
+    gap: 0.5rem;
   }
 
-  .reel-tile .r-emoji { font-size: 1.6rem; }
+  .reel-tile .r-emoji { font-size: clamp(1.15rem, 5vw, 1.5rem); line-height: 1; }
 
   .reel-tile .r-value {
     font-family: 'Space Mono', monospace;
-    font-size: 2.1rem;
+    font-size: clamp(1.3rem, 6.5vw, 1.9rem);
     font-weight: 700;
     color: var(--text-mute);
     line-height: 1;
@@ -551,11 +551,15 @@ src="https://www.facebook.com/tr?id=1119044180571388&ev=PageView&noscript=1"
   }
 
   .reel-tile .r-label {
-    font-size: 0.78rem;
+    font-size: clamp(0.55rem, 2.4vw, 0.68rem);
     font-weight: 600;
     color: var(--text-mute);
     text-transform: uppercase;
-    letter-spacing: 0.16em;
+    letter-spacing: 0.06em;
+    line-height: 1.3;
+    white-space: normal;
+    max-width: 100%;
+    padding: 0 0.1rem;
   }
 
   .reel-label {
@@ -585,19 +589,19 @@ src="https://www.facebook.com/tr?id=1119044180571388&ev=PageView&noscript=1"
   @media (max-width: 480px) {
     .list-preview { padding-bottom: 1.25rem; }
     .slot-machine {
-      grid-template-columns: 1fr 1fr;
-      grid-template-rows: 1fr 1fr;
+      grid-template-columns: repeat(4, 1fr);
+      grid-template-rows: 1fr;
       height: calc(100svh - 5.5rem);
       max-height: 480px;
       min-height: 0;
-      gap: 0.6rem;
+      gap: 0.4rem;
       margin-bottom: 1rem;
       padding-top: 0;
     }
     .reel { padding: 0.5rem 0.5rem; gap: 0.4rem; }
-    .reel-emoji, .reel-tile .r-emoji { font-size: clamp(1.1rem, 6vw, 1.7rem); }
-    .reel-label, .reel-tile .r-label { font-size: clamp(0.58rem, 2.6vw, 0.68rem); }
-    .reel-value, .reel-tile .r-value { font-size: clamp(1.4rem, 8vw, 1.8rem); }
+    .reel-emoji { font-size: clamp(1.1rem, 6vw, 1.7rem); }
+    .reel-label { font-size: clamp(0.58rem, 2.6vw, 0.68rem); }
+    .reel-value { font-size: clamp(1.4rem, 8vw, 1.8rem); }
     .reel-sub { font-size: clamp(0.55rem, 2.5vw, 0.65rem); }
   }
 
@@ -1352,11 +1356,11 @@ src="https://www.facebook.com/tr?id=1119044180571388&ev=PageView&noscript=1"
   let habits = [];
   let landedCount = 0;
 
-  const REEL_TILE_HEIGHT_REM = 5.6;
+  const REEL_TILE_HEIGHT_REM = 6.4;
   const REEL_TILES_PER_SPIN = 10;
 
   function buildReelTile(sym, num) {
-    return `<div class="reel-tile"><span class="r-emoji">${sym.emoji}</span><span class="r-value">${num}</span><span class="r-label">${sym.label}</span></div>`;
+    return `<div class="reel-tile"><span class="r-emoji">${sym.emoji}</span><span class="r-label">${sym.label}</span><span class="r-value">${num}</span></div>`;
   }
 
   function buildReels() {
