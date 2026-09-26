@@ -1015,12 +1015,12 @@ src="https://www.facebook.com/tr?id=1119044180571388&ev=PageView&noscript=1"
       <div class="sample-table">
         <p class="sample-label">📊 Example</p>
         <p class="sample-headline">This is what a week of checking in looks like</p>
-        <p class="sample-sub">Not your data — a sample of the pattern you'll start seeing after a few check-ins. Bars go from 🔵 close to free to 🔴 far away. Hover or tap a day to see what it looked like.</p>
+        <p class="sample-sub">Not your data — a sample of the pattern you'll start seeing after a few check-ins. Each habit runs its own 21-day clean streak, and the bar is your total across all of them: 🔵 low and close to free, 🔴 high and slipping. Hover or tap a day to see what it looked like.</p>
         <div class="sample-chart" id="sampleChart"></div>
         <div class="day-detail" id="sampleDayDetail"></div>
         <div class="sample-stats">
           <div>
-            <p class="sample-stat-value" style="color:var(--teal);">−110 days 📉</p>
+            <p class="sample-stat-value" style="color:var(--teal);">−65 days 📉</p>
             <p class="sample-stat-label">Total distance closed over the week</p>
           </div>
           <div>
@@ -1329,18 +1329,18 @@ src="https://www.facebook.com/tr?id=1119044180571388&ev=PageView&noscript=1"
 <script>
   // ---------- Example chart (illustrative, not the person's real data) ----------
   const sampleData = [
-    { day: 'Mon', date: 'Sep 1', total: 210, items: ['Overthinking', 'Laziness & Procrastination', 'Unhealthy Eating & Drinking'] },
-    { day: 'Tue', date: 'Sep 2', total: 185, items: ['Overthinking', 'Social Media & Gaming Addiction'] },
-    { day: 'Wed', date: 'Sep 3', total: 165, items: ['Laziness & Procrastination', 'Negative Feelings'] },
-    { day: 'Thu', date: 'Sep 4', total: 140, items: ['Overthinking'] },
-    { day: 'Fri', date: 'Sep 5', total: 120, items: ['Social Media & Gaming Addiction'] },
-    { day: 'Sat', date: 'Sep 6', total: 110, items: [] },
-    { day: 'Sun', date: 'Sep 7', total: 100, items: [] }
+    { day: 'Mon', date: 'Sep 1', total: 65, items: ['Overthinking', 'Laziness & Procrastination', 'Unhealthy Eating & Drinking'] },
+    { day: 'Tue', date: 'Sep 2', total: 55, items: ['Overthinking', 'Social Media & Gaming Addiction'] },
+    { day: 'Wed', date: 'Sep 3', total: 47, items: ['Laziness & Procrastination', 'Negative Feelings'] },
+    { day: 'Thu', date: 'Sep 4', total: 32, items: ['Overthinking'] },
+    { day: 'Fri', date: 'Sep 5', total: 21, items: ['Social Media & Gaming Addiction'] },
+    { day: 'Sat', date: 'Sep 6', total: 10, items: [] },
+    { day: 'Sun', date: 'Sep 7', total: 0, items: [] }
   ];
 
   function renderBarChart(containerEl, data, detailEl, dateLabel) {
     containerEl.innerHTML = '';
-    const maxTotal = 360; // 4 freedoms × 90 days max
+    const maxTotal = TOTAL_MAX_DAYS;
 
     data.forEach((d, i) => {
       const col = document.createElement('div');
@@ -1386,7 +1386,7 @@ src="https://www.facebook.com/tr?id=1119044180571388&ev=PageView&noscript=1"
     const itemsHtml = d.items && d.items.length
       ? `<div class="day-detail-items">${d.items.map(name => `<span class="day-detail-tag">${name}</span>`).join('')}</div>`
       : `<p class="day-detail-empty">🎉 Nothing marked — a completely free day.</p>`;
-    const barColor = freedomColorScale(d.total, 360);
+    const barColor = freedomColorScale(d.total, TOTAL_MAX_DAYS);
 
     detailEl.innerHTML = `
       <p class="day-detail-date">${dateLabel}</p>
@@ -1411,12 +1411,10 @@ src="https://www.facebook.com/tr?id=1119044180571388&ev=PageView&noscript=1"
     Object.values(FREEDOM_CATEGORIES).forEach(cat => {
       rows += `<tr class="matrix-cat-row"><td colspan="${sampleData.length + 1}" style="--cat-color:${cat.color}">${cat.emoji} ${cat.label}</td></tr>`;
       cat.items.forEach(habitName => {
-        let heat = 0;
         const cells = sampleData.map(d => {
           const marked = d.items.includes(habitName);
-          heat = marked ? Math.min(100, heat + 34) : Math.max(0, heat - 20);
-          const color = freedomColorScale(heat, 100);
-          return `<td><span class="matrix-dot" style="background:${color}" title="${marked ? 'showed up' : 'not marked'}"></span></td>`;
+          const color = marked ? '#D9534F' : '#4CAF7D';
+          return `<td><span class="matrix-dot" style="background:${color}" title="${marked ? 'marked' : 'clean day'}"></span></td>`;
         }).join('');
         rows += `<tr><td class="matrix-habit-name">${habitName}</td>${cells}</tr>`;
       });
@@ -1532,12 +1530,46 @@ src="https://www.facebook.com/tr?id=1119044180571388&ev=PageView&noscript=1"
     }, startDelay);
   }
 
-  function startSpin() {
+  // Builds { habitName: 'YYYY-MM-DD', ... } — the most recent PRIOR date
+  // (before today) each habit was marked, scanning the person's full
+  // check-in history. Returns {} for guests or on any error; each habit
+  // absent from the map is treated as never marked (already free).
+  async function fetchHabitLastMarkedMap() {
+    if (typeof supabase === 'undefined' || !supabaseClient) return {};
+    try {
+      const { data: sessionData } = await supabaseClient.auth.getSession();
+      if (!sessionData.session) return {};
+
+      const startOfToday = new Date();
+      startOfToday.setHours(0, 0, 0, 0);
+
+      const { data, error } = await supabaseClient
+        .from('reports')
+        .select('habits, created_at')
+        .eq('user_id', sessionData.session.user.id)
+        .lt('created_at', startOfToday.toISOString())
+        .order('created_at', { ascending: true });
+
+      if (error || !data) return {};
+
+      const map = {};
+      data.forEach(row => {
+        const dateStr = new Date(row.created_at).toLocaleDateString('en-CA');
+        (row.habits || []).forEach(h => { map[h.name] = dateStr; }); // ascending order → latest wins
+      });
+      return map;
+    } catch (e) {
+      return {};
+    }
+  }
+
+  async function startSpin() {
+    ensureAudio();
     habits = Array.from(state).map(name => ({ name, choice: 'quit' }));
-    freedomResult = computeFreedomDays(Array.from(state));
+    const lastMarkedMap = await fetchHabitLastMarkedMap();
+    freedomResult = computeFreedomDays(Array.from(state), lastMarkedMap, new Date().toLocaleDateString('en-CA'));
     landedCount = 0;
 
-    ensureAudio();
     document.getElementById('heroSection').classList.add('hidden');
     document.getElementById('pickerIntro').classList.add('hidden');
     document.getElementById('todayLabel').classList.remove('hidden');

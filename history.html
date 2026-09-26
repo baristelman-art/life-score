@@ -89,6 +89,19 @@ src="https://www.facebook.com/tr?id=1119044180571388&ev=PageView&noscript=1"
     margin-bottom: 0.5rem;
   }
 
+  .how-it-works {
+    font-size: 0.88rem;
+    color: var(--text-mute);
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    padding: 0.9rem 1.1rem;
+    margin-bottom: 1.5rem;
+    max-width: 62ch;
+  }
+
+  .how-it-works b { color: var(--text); }
+
   .sub { color: var(--text-mute); margin-bottom: 2.5rem; }
   .sub .nickname { color: var(--text); font-weight: 600; }
 
@@ -442,6 +455,11 @@ src="https://www.facebook.com/tr?id=1119044180571388&ev=PageView&noscript=1"
 
     <div id="reportsView" class="hidden">
       <h1>Your trend</h1>
+      <p class="how-it-works">
+        <b>How the numbers work:</b> each habit has its own 21-day clean streak. Mark it and it jumps
+        straight to 21; skip it and it counts down by 1 for every day that passes, checked in or not.
+        A category's score is just the sum of its habits — so more habits, or more relapses, means a bigger number.
+      </p>
       <div id="trendBox"></div>
       <div id="reportList"></div>
     </div>
@@ -626,7 +644,7 @@ src="https://www.facebook.com/tr?id=1119044180571388&ev=PageView&noscript=1"
       </div>
       <div class="trend-box">
         <p class="trend-headline">Habit pattern by day</p>
-        <p class="trend-sub">Each row is a habit. Red means it kept showing up; blue means it's been cooling off.</p>
+        <p class="trend-sub">Each row is a habit. 🔴 red = marked that day, 🟢 green = a clean day.</p>
         <div class="habit-matrix-wrap" id="habitMatrix"></div>
       </div>`;
 
@@ -662,12 +680,10 @@ src="https://www.facebook.com/tr?id=1119044180571388&ev=PageView&noscript=1"
       bodyRows += `<tr class="matrix-cat-row"><td colspan="${chronological.length + 1}" style="--cat-color:${cat.color}">${cat.emoji} ${cat.label}</td></tr>`;
 
       cat.items.forEach(habitName => {
-        let heat = 0;
         const cells = markedSets.map(set => {
           const marked = set.has(habitName);
-          heat = marked ? Math.min(100, heat + 34) : Math.max(0, heat - 20);
-          const color = freedomColorScale(heat, 100);
-          const title = marked ? 'showed up' : 'not marked';
+          const color = marked ? '#D9534F' : '#4CAF7D';
+          const title = marked ? 'marked' : 'clean day';
           return `<td><span class="matrix-dot" style="background:${color}" title="${title}"></span></td>`;
         }).join('');
         bodyRows += `<tr><td class="matrix-habit-name">${habitName}</td>${cells}</tr>`;
@@ -683,7 +699,7 @@ src="https://www.facebook.com/tr?id=1119044180571388&ev=PageView&noscript=1"
 
   function renderBarChart(containerEl, data, detailEl, dateLabelFn) {
     containerEl.innerHTML = '';
-    const maxTotal = 360; // 4 freedoms × 90 days max
+    const maxTotal = TOTAL_MAX_DAYS;
 
     data.forEach((r, i) => {
       const total = totalDaysOf(r);
@@ -765,10 +781,10 @@ src="https://www.facebook.com/tr?id=1119044180571388&ev=PageView&noscript=1"
       : '';
     const freedomHtml = `
       <div class="day-detail-freedoms">
-        <div class="freedom-stat"><span class="freedom-stat-emoji">🧠</span><span class="freedom-stat-lbl">Mental</span><span class="freedom-stat-val" style="color:${freedomColorScale(r.mental_days, 90)}">${r.mental_days}d</span></div>
-        <div class="freedom-stat"><span class="freedom-stat-emoji">💪</span><span class="freedom-stat-lbl">Physical</span><span class="freedom-stat-val" style="color:${freedomColorScale(r.physical_days, 90)}">${r.physical_days}d</span></div>
-        <div class="freedom-stat"><span class="freedom-stat-emoji">💰</span><span class="freedom-stat-lbl">Financial</span><span class="freedom-stat-val" style="color:${freedomColorScale(r.financial_days, 90)}">${r.financial_days}d</span></div>
-        <div class="freedom-stat"><span class="freedom-stat-emoji">⏳</span><span class="freedom-stat-lbl">Time</span><span class="freedom-stat-val" style="color:${freedomColorScale(r.temporal_days, 90)}">${r.temporal_days}d</span></div>
+        <div class="freedom-stat"><span class="freedom-stat-emoji">🧠</span><span class="freedom-stat-lbl">Mental</span><span class="freedom-stat-val" style="color:${freedomColorScale(r.mental_days, CATEGORY_MAX_DAYS.mental)}">${r.mental_days}d</span></div>
+        <div class="freedom-stat"><span class="freedom-stat-emoji">💪</span><span class="freedom-stat-lbl">Physical</span><span class="freedom-stat-val" style="color:${freedomColorScale(r.physical_days, CATEGORY_MAX_DAYS.physical)}">${r.physical_days}d</span></div>
+        <div class="freedom-stat"><span class="freedom-stat-emoji">💰</span><span class="freedom-stat-lbl">Financial</span><span class="freedom-stat-val" style="color:${freedomColorScale(r.financial_days, CATEGORY_MAX_DAYS.financial)}">${r.financial_days}d</span></div>
+        <div class="freedom-stat"><span class="freedom-stat-emoji">⏳</span><span class="freedom-stat-lbl">Time</span><span class="freedom-stat-val" style="color:${freedomColorScale(r.temporal_days, CATEGORY_MAX_DAYS.temporal)}">${r.temporal_days}d</span></div>
       </div>`;
 
     detailEl.className = 'day-detail show';
@@ -819,10 +835,10 @@ src="https://www.facebook.com/tr?id=1119044180571388&ev=PageView&noscript=1"
           <span class="report-date">${dateStr}</span>
         </div>
         <div class="report-nums">
-          <div><div class="num" style="color:${freedomColorScale(r.mental_days, 90)}">${r.mental_days}</div><div class="lbl">🧠 mental</div></div>
-          <div><div class="num" style="color:${freedomColorScale(r.physical_days, 90)}">${r.physical_days}</div><div class="lbl">💪 physical</div></div>
-          <div><div class="num" style="color:${freedomColorScale(r.financial_days, 90)}">${r.financial_days}</div><div class="lbl">💰 financial</div></div>
-          <div><div class="num" style="color:${freedomColorScale(r.temporal_days, 90)}">${r.temporal_days}</div><div class="lbl">⏳ time</div></div>
+          <div><div class="num" style="color:${freedomColorScale(r.mental_days, CATEGORY_MAX_DAYS.mental)}">${r.mental_days}</div><div class="lbl">🧠 mental</div></div>
+          <div><div class="num" style="color:${freedomColorScale(r.physical_days, CATEGORY_MAX_DAYS.physical)}">${r.physical_days}</div><div class="lbl">💪 physical</div></div>
+          <div><div class="num" style="color:${freedomColorScale(r.financial_days, CATEGORY_MAX_DAYS.financial)}">${r.financial_days}</div><div class="lbl">💰 financial</div></div>
+          <div><div class="num" style="color:${freedomColorScale(r.temporal_days, CATEGORY_MAX_DAYS.temporal)}">${r.temporal_days}</div><div class="lbl">⏳ time</div></div>
         </div>
       `;
       listEl.appendChild(card);
