@@ -627,30 +627,36 @@ src="https://www.facebook.com/tr?id=1119044180571388&ev=PageView&noscript=1"
   }
 
   .sample-table {
-    background: var(--surface);
+    background: linear-gradient(160deg, var(--surface), #1a2f31);
     border: 1px solid var(--line);
     border-radius: 16px;
     padding: 1.75rem;
     margin-bottom: 3rem;
     text-align: left;
+    box-shadow: 0 0 40px -20px var(--teal-dim);
   }
 
   .sample-label {
     font-family: 'Space Mono', monospace;
+    font-weight: 700;
     font-size: 0.72rem;
     color: var(--teal);
-    background: var(--teal-dim);
+    background: color-mix(in srgb, var(--teal) 18%, var(--ink));
+    border: 1.5px solid var(--teal);
     display: inline-block;
-    padding: 0.25rem 0.6rem;
+    padding: 0.3rem 0.7rem;
     border-radius: 999px;
     margin-bottom: 0.9rem;
+    box-shadow: 0 0 16px -6px var(--teal);
   }
 
   .sample-headline {
     font-family: 'Fraunces', serif;
-    font-weight: 500;
-    font-size: 1.2rem;
+    font-weight: 600;
+    font-size: 1.3rem;
     margin-bottom: 0.4rem;
+    color: var(--teal);
+    text-shadow: 0 0 18px rgba(95,175,164,0.35);
   }
 
   .sample-sub {
@@ -795,6 +801,62 @@ src="https://www.facebook.com/tr?id=1119044180571388&ev=PageView&noscript=1"
   .sample-stat-label {
     font-size: 0.8rem;
     color: var(--text-mute);
+  }
+
+  .sample-matrix-intro {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.72rem;
+    font-weight: 700;
+    color: var(--rust);
+    background: color-mix(in srgb, var(--rust) 18%, var(--ink));
+    border: 1.5px solid var(--rust);
+    display: inline-block;
+    padding: 0.3rem 0.7rem;
+    border-radius: 999px;
+    margin: 1.75rem 0 0.9rem;
+  }
+
+  .sample-matrix-wrap { overflow-x: auto; margin-top: 0.5rem; }
+
+  .sample-matrix {
+    border-collapse: collapse;
+    width: 100%;
+    min-width: 420px;
+  }
+
+  .sample-matrix th {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.7rem;
+    font-weight: 700;
+    color: var(--text-mute);
+    text-align: center;
+    padding: 0.35rem 0.3rem;
+    white-space: nowrap;
+  }
+
+  .sample-matrix .matrix-cat-row td {
+    font-weight: 700;
+    font-size: 0.82rem;
+    color: var(--cat-color);
+    background: color-mix(in srgb, var(--cat-color) 14%, var(--surface));
+    padding: 0.45rem 0.7rem;
+    border-radius: 8px;
+  }
+
+  .sample-matrix .matrix-habit-name {
+    font-size: 0.8rem;
+    color: var(--text);
+    padding: 0.45rem 0.7rem 0.45rem 1.15rem;
+    white-space: nowrap;
+  }
+
+  .sample-matrix td { text-align: center; padding: 0.3rem; }
+
+  .sample-matrix .matrix-dot {
+    display: inline-block;
+    width: 18px;
+    height: 18px;
+    border-radius: 6px;
   }
 
   /* ---------- Signup / login box ---------- */
@@ -965,6 +1027,14 @@ src="https://www.facebook.com/tr?id=1119044180571388&ev=PageView&noscript=1"
             <p class="sample-stat-value">🧠 Overthinking</p>
             <p class="sample-stat-label">Showed up most — 3 of 7 days</p>
           </div>
+        </div>
+
+        <p class="sample-matrix-intro">🔥 New: habit pattern by day</p>
+        <div class="sample-matrix-wrap">
+          <table class="sample-matrix">
+            <thead><tr><th></th><th>Mon</th><th>Tue</th><th>Wed</th><th>Thu</th><th>Fri</th><th>Sat</th><th>Sun</th></tr></thead>
+            <tbody id="sampleMatrixBody"></tbody>
+          </table>
         </div>
       </div>
 
@@ -1332,6 +1402,27 @@ src="https://www.facebook.com/tr?id=1119044180571388&ev=PageView&noscript=1"
     document.getElementById('sampleDayDetail'),
     d => d.date
   );
+
+  // Same illustrative week, shown as the day × habit heatmap so people can
+  // see what that feature looks like before they've checked in even once.
+  (function renderSampleMatrix() {
+    const body = document.getElementById('sampleMatrixBody');
+    let rows = '';
+    Object.values(FREEDOM_CATEGORIES).forEach(cat => {
+      rows += `<tr class="matrix-cat-row"><td colspan="${sampleData.length + 1}" style="--cat-color:${cat.color}">${cat.emoji} ${cat.label}</td></tr>`;
+      cat.items.forEach(habitName => {
+        let heat = 0;
+        const cells = sampleData.map(d => {
+          const marked = d.items.includes(habitName);
+          heat = marked ? Math.min(100, heat + 34) : Math.max(0, heat - 20);
+          const color = freedomColorScale(heat, 100);
+          return `<td><span class="matrix-dot" style="background:${color}" title="${marked ? 'showed up' : 'not marked'}"></span></td>`;
+        }).join('');
+        rows += `<tr><td class="matrix-habit-name">${habitName}</td>${cells}</tr>`;
+      });
+    });
+    body.innerHTML = rows;
+  })();
 
   // ---------- The real reveal: slot machine ----------
   let audioCtx = null;
