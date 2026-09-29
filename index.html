@@ -6,7 +6,8 @@
 <title>Life Score — If your life were a video game, what score would you get?</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Space+Mono:wght@400;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Space+Mono:wght@400;700&family=Inter:wght@400;500;600&display=swap" onload="this.onload=null;this.rel='stylesheet'">
+<noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Space+Mono:wght@400;700&family=Inter:wght@400;500;600&display=swap"></noscript>
 <!-- Meta Pixel Code -->
 <script>
 !function(f,b,e,v,n,t,s)
@@ -1673,6 +1674,7 @@ src="https://www.facebook.com/tr?id=1119044180571388&ev=PageView&noscript=1"
 
       let { data: signInData, error: signInError } = await supabaseClient.auth.signInWithPassword({ email, password });
       let user = signInData?.user;
+      let isNewAccount = false;
 
       if (signInError) {
         const { data: signUpData, error: signUpError } = await supabaseClient.auth.signUp({ email, password });
@@ -1683,6 +1685,7 @@ src="https://www.facebook.com/tr?id=1119044180571388&ev=PageView&noscript=1"
           throw new Error(signUpError.message);
         }
         user = signUpData.user;
+        isNewAccount = true;
       }
 
       if (!user) throw new Error('Something went wrong creating your account — try again.');
@@ -1694,8 +1697,10 @@ src="https://www.facebook.com/tr?id=1119044180571388&ev=PageView&noscript=1"
       document.getElementById('savedView').classList.add('show');
       document.getElementById('savedEmail').textContent = email;
 
-      if (typeof fbq !== 'undefined') fbq('track', 'CompleteRegistration');
-      if (typeof ttq !== 'undefined') ttq.track('CompleteRegistration');
+      if (isNewAccount) {
+        if (typeof fbq !== 'undefined') fbq('track', 'CompleteRegistration');
+        if (typeof ttq !== 'undefined') ttq.track('CompleteRegistration');
+      }
 
     } catch (err) {
       msgEl.textContent = err.message;
