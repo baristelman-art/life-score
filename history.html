@@ -3,11 +3,11 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>My reports — Life Score</title>
+<title>My levels — Life Score</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Space+Mono:wght@400;700&family=Inter:wght@400;500;600&display=swap" onload="this.onload=null;this.rel='stylesheet'">
-<noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Space+Mono:wght@400;700&family=Inter:wght@400;500;600&display=swap"></noscript>
+<link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Space+Mono:wght@400;700&family=Inter:wght@400;500;600&display=optional" onload="this.onload=null;this.rel='stylesheet'">
+<noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Space+Mono:wght@400;700&family=Inter:wght@400;500;600&display=optional"></noscript>
 <!-- Meta Pixel Code -->
 <script>
 !function(f,b,e,v,n,t,s)
@@ -58,7 +58,7 @@ src="https://www.facebook.com/tr?id=1119044180571388&ev=PageView&noscript=1"
     position: relative;
   }
 
-  .hidden { display: none; }
+  .hidden { display: none !important; }
 
   header { padding: 1.1rem 1.5rem; }
   .header-inner { max-width: 640px; margin: 0 auto; display: flex; align-items: center; justify-content: space-between; }
@@ -419,6 +419,7 @@ src="https://www.facebook.com/tr?id=1119044180571388&ev=PageView&noscript=1"
     inset: 0;
     z-index: 0;
     background-image: url('bg-pattern.png');
+    background-image: image-set(url('bg-pattern.webp') type('image/webp'), url('bg-pattern.png') type('image/png'));
     background-repeat: repeat;
     background-size: 420px 420px;
     opacity: 0.5;
@@ -426,6 +427,38 @@ src="https://www.facebook.com/tr?id=1119044180571388&ev=PageView&noscript=1"
   }
 
   body > * { position: relative; z-index: 1; }
+
+  .levels-intro { color: var(--text-mute); margin-bottom: 1.5rem; line-height: 1.55; }
+  .levels-section { margin-bottom: 1.5rem; }
+  .checkin-cta { display: flex; align-items: center; justify-content: space-between; gap: 1rem; flex-wrap: wrap;
+    background: var(--surface); border: 1px solid var(--teal); border-radius: 14px; padding: 1rem 1.1rem; margin-bottom: 1.5rem; }
+  .checkin-cta p { margin: 0; font-size: 0.92rem; }
+  .checkin-cta.done { border-color: var(--line); }
+  .checkin-cta.done p { color: var(--text-mute); }
+  a.btn { text-decoration: none; display: inline-block; }
+  .code-hint { color: var(--text-mute); font-size: 0.88rem; line-height: 1.5; }
+  .code-hint b { color: var(--text); font-weight: 600; }
+  .code-input { font-family: 'Space Mono', monospace; font-size: 1.4rem !important; letter-spacing: 0.35em; text-align: center; }
+  .code-links { display: flex; gap: 1.2rem; flex-wrap: wrap; }
+  .reset-zone { margin-top: 3rem; padding-top: 1.5rem; border-top: 1px solid var(--line); }
+  .reset-zone p { color: var(--text-mute); font-size: 0.85rem; margin-bottom: 0.75rem; }
+  .btn-outline { background: transparent; color: var(--text-mute); border: 1px solid var(--line); }
+  .btn-outline:hover { border-color: var(--rust); color: var(--rust); }
+  .btn-danger { background: var(--rust); color: #1b0d07; }
+  .btn-danger:disabled, .btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+  .modal-backdrop { position: fixed; inset: 0; background: rgba(5, 12, 13, 0.78); z-index: 50;
+    display: flex; align-items: center; justify-content: center; padding: 1.25rem; }
+  .modal { width: 100%; max-width: 440px; background: var(--surface); border: 1px solid var(--line);
+    border-radius: 18px; padding: 1.5rem; max-height: 90vh; overflow-y: auto; }
+  .modal h2 { font-family: 'Fraunces', serif; font-weight: 500; font-size: 1.3rem; margin-bottom: 0.4rem; }
+  .modal > p { color: var(--text-mute); font-size: 0.9rem; margin-bottom: 1.1rem; }
+  .reset-option { border: 1px solid var(--line); border-radius: 14px; padding: 1rem; margin-bottom: 0.75rem; }
+  .reset-option h3 { font-size: 1rem; font-weight: 600; margin-bottom: 0.3rem; }
+  .reset-option p { color: var(--text-mute); font-size: 0.85rem; margin-bottom: 0.8rem; line-height: 1.5; }
+  .reset-option.danger { border-color: #C9836855; }
+  .reset-option input { width: 100%; background: var(--ink); border: 1px solid var(--line); border-radius: 10px;
+    color: var(--text); font-family: 'Space Mono', monospace; font-size: 0.95rem; padding: 0.7rem 0.9rem; margin-bottom: 0.7rem; }
+  .modal-cancel { width: 100%; margin-top: 0.25rem; }
 </style>
 <!-- Microsoft Clarity -->
 <script type="text/javascript">
@@ -450,237 +483,217 @@ src="https://www.facebook.com/tr?id=1119044180571388&ev=PageView&noscript=1"
   <div class="wrap">
 
     <div id="loginView">
-      <h1>Log in to see your reports</h1>
-      <p class="sub">Enter the email and password you used when you saved a check-in.</p>
+      <h1>Continue your game</h1>
+      <p class="sub">Enter the email you play with. We'll send you a 6-digit code — no password needed.</p>
       <div class="login-box">
-        <div class="login-form">
-          <input type="email" id="email" placeholder="you@email.com" autocomplete="email">
-          <input type="password" id="password" placeholder="Password">
-          <button class="btn" onclick="doLogin()">Log in</button>
-          <p class="auth-msg" id="loginMsg"></p>
-          <button class="link-btn" onclick="doForgotPassword()">Forgot your password?</button>
+        <div class="login-form" id="emailStep">
+          <input type="email" id="email" placeholder="you@email.com" autocomplete="email" inputmode="email">
+          <button class="btn" id="sendCodeBtn" onclick="requestCode()">Email me a code</button>
         </div>
+        <div class="login-form hidden" id="codeStep">
+          <p class="code-hint">We sent a code to <b id="codeEmail"></b>. It can take a minute — check spam too.</p>
+          <input type="text" id="code" class="code-input" placeholder="123456" inputmode="numeric" autocomplete="one-time-code" maxlength="8">
+          <button class="btn" id="verifyBtn" onclick="confirmCode()">Log in</button>
+          <div class="code-links">
+            <button class="link-btn" onclick="requestCode(true)">Send a new code</button>
+            <button class="link-btn" onclick="changeEmail()">Use a different email</button>
+          </div>
+        </div>
+        <p class="auth-msg" id="loginMsg"></p>
       </div>
     </div>
 
     <div id="reportsView" class="hidden">
-      <h1>Your trend</h1>
-      <p class="how-it-works">
-        <b>How the numbers work:</b> each habit has its own 21-day clean streak. Mark it and it jumps
-        straight to 21; skip it and it counts down by 1 for every day that passes, checked in or not.
-        A category's score is just the sum of its habits — so more habits, or more relapses, means a bigger number.
-      </p>
-      <div id="trendBox"></div>
-      <div id="reportList"></div>
+      <h1>Your levels</h1>
+      <p class="levels-intro">Each freedom climbs on its own. Every day it stays unmarked moves it up — even days you don't check in. Mark one of its habits again and it drops one level.</p>
+
+      <div id="checkinCta"></div>
+
+      <div class="levels-section">
+        <div class="lv-grid" id="levelGrid"></div>
+        <div id="levelLadder"></div>
+      </div>
+
+      <div id="matrixBox"></div>
+
+      <div class="reset-zone">
+        <p>Want a fresh start?</p>
+        <button class="btn btn-outline" onclick="openResetModal()">Reset…</button>
+      </div>
     </div>
 
+  </div>
+
+  <div class="modal-backdrop hidden" id="resetModal" onclick="if (event.target === this) closeResetModal()">
+    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="resetTitle">
+      <h2 id="resetTitle">Reset</h2>
+      <p>Pick what you want to reset.</p>
+
+      <div class="reset-option">
+        <h3>🔁 Restart the game</h3>
+        <p>All four freedoms go back to Level 0 and your game starts again today. Your past check-ins stay, and the day-by-day table keeps showing them.</p>
+        <button class="btn" id="restartBtn" onclick="restartGame()">Restart from today</button>
+      </div>
+
+      <div class="reset-option danger">
+        <h3>🗑️ Delete all my data</h3>
+        <p>Permanently deletes every check-in and all your levels. Your login email stays so you can start over. <b>This can't be undone.</b> Type <b>DELETE</b> to confirm.</p>
+        <input type="text" id="deleteConfirm" placeholder="DELETE" autocomplete="off" oninput="document.getElementById('deleteBtn').disabled = this.value.trim().toUpperCase() !== 'DELETE'">
+        <button class="btn btn-danger" id="deleteBtn" onclick="deleteAllData()" disabled>Delete everything</button>
+      </div>
+
+      <p class="auth-msg" id="resetMsg"></p>
+      <button class="btn btn-outline modal-cancel" onclick="closeResetModal()">Cancel</button>
+    </div>
   </div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="config.js"></script>
 <script src="lifescore.js"></script>
 <script>
-  async function doLogin() {
-    const email = document.getElementById('email').value.trim().toLowerCase();
-    const password = document.getElementById('password').value;
-    const msgEl = document.getElementById('loginMsg');
-    const loginBtn = document.querySelector('.login-form .btn');
+  let currentUser = null;
+  let pendingEmail = '';
 
-    if (!email || !password) {
-      msgEl.textContent = 'Enter your email and password.';
-      msgEl.className = 'auth-msg';
-      return;
-    }
-
-    loginBtn.disabled = true;
-    msgEl.textContent = 'Logging in...';
-    msgEl.className = 'auth-msg';
-
-    try {
-      if (typeof supabase === 'undefined' || !supabaseClient) {
-        throw new Error('Supabase library did not load — check your internet connection and reload the page.');
-      }
-
-      const { data, error } = await supabaseClient.auth.signInWithPassword({ email, password });
-
-      if (error) throw new Error("That email and password don't match an account.");
-
-      await loadAndShowReports(data.user.email, data.user.id);
-    } catch (err) {
-      msgEl.textContent = err.message;
-      msgEl.className = 'auth-msg';
-      loginBtn.disabled = false;
-    }
+  function setLoginMsg(text, kind) {
+    const el = document.getElementById('loginMsg');
+    el.textContent = text;
+    el.className = 'auth-msg' + (kind ? ' ' + kind : '');
   }
 
-  async function doForgotPassword() {
-    const email = document.getElementById('email').value.trim().toLowerCase();
-    const msgEl = document.getElementById('loginMsg');
-
+  async function requestCode(isResend) {
+    const email = isResend ? pendingEmail : document.getElementById('email').value.trim().toLowerCase();
     if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-      msgEl.textContent = 'Enter your email above first, then tap this again.';
-      msgEl.className = 'auth-msg';
+      setLoginMsg('Enter a valid email address.');
       return;
     }
-
-    msgEl.textContent = 'Sending reset link...';
-    msgEl.className = 'auth-msg';
-
+    const btn = document.getElementById('sendCodeBtn');
+    btn.disabled = true;
+    setLoginMsg('Sending your code...', 'success');
     try {
-      const { error } = await supabaseClient.auth.resetPasswordForEmail(email, {
-        redirectTo: window.location.origin + '/reset-password.html'
-      });
-      if (error) throw new Error(error.message);
-      msgEl.textContent = 'Check your email for a link to reset your password.';
-      msgEl.className = 'auth-msg success';
+      await sendEmailCode(email);
+      pendingEmail = email;
+      document.getElementById('codeEmail').textContent = email;
+      document.getElementById('emailStep').classList.add('hidden');
+      document.getElementById('codeStep').classList.remove('hidden');
+      setLoginMsg(isResend ? 'New code sent.' : '', 'success');
+      document.getElementById('code').focus();
     } catch (err) {
-      msgEl.textContent = err.message;
-      msgEl.className = 'auth-msg';
+      setLoginMsg(err.message);
+    } finally {
+      btn.disabled = false;
     }
   }
 
-  async function loadAndShowReports(email, userId) {
-    const { data: reports, error } = await supabaseClient
-      .from('reports')
-      .select('*')
-      .eq('user_id', userId)
-      .order('created_at', { ascending: false });
+  function changeEmail() {
+    document.getElementById('codeStep').classList.add('hidden');
+    document.getElementById('emailStep').classList.remove('hidden');
+    document.getElementById('code').value = '';
+    setLoginMsg('');
+  }
 
-    if (error) {
-      document.getElementById('loginMsg').textContent = 'Could not load reports: ' + error.message;
-      return;
+  async function confirmCode() {
+    const btn = document.getElementById('verifyBtn');
+    btn.disabled = true;
+    setLoginMsg('Checking your code...', 'success');
+    try {
+      const { user, isNewAccount } = await verifyEmailCode(pendingEmail, document.getElementById('code').value);
+      if (isNewAccount) {
+        if (typeof fbq !== 'undefined') fbq('track', 'CompleteRegistration');
+        if (typeof ttq !== 'undefined') ttq.track('CompleteRegistration');
+      }
+      setLoginMsg('');
+      await loadAndShow(user);
+    } catch (err) {
+      setLoginMsg(err.message);
+      btn.disabled = false;
     }
+  }
 
-    showReports(email, reports);
+  document.getElementById('email').addEventListener('keydown', e => { if (e.key === 'Enter') requestCode(); });
+  document.getElementById('code').addEventListener('keydown', e => { if (e.key === 'Enter') confirmCode(); });
+
+  async function fetchReports(userId) {
+    const { data, error } = await supabaseClient
+      .from('reports')
+      .select('habits, created_at')
+      .eq('user_id', userId)
+      .order('created_at', { ascending: true });
+    if (error) throw new Error('Could not load your check-ins: ' + error.message);
+    return data || [];
+  }
+
+  async function loadAndShow(user) {
+    currentUser = user;
+    try {
+      const rows = await fetchReports(user.id);
+      render(rows);
+    } catch (err) {
+      setLoginMsg(err.message);
+    }
   }
 
   // Safety net: if this account has old rows from before check-ins were
   // capped at one per day, only keep the most recent row per calendar date.
-  function dedupeByDay(reports) {
+  function dedupeByDay(rows) {
     const byDay = new Map();
-    reports.forEach(r => {
-      const dayKey = new Date(r.created_at).toLocaleDateString('en-CA'); // YYYY-MM-DD, local time
+    rows.forEach(r => {
+      const dayKey = localDateStr(new Date(r.created_at));
       const existing = byDay.get(dayKey);
-      if (!existing || new Date(r.created_at) > new Date(existing.created_at)) {
-        byDay.set(dayKey, r);
-      }
+      if (!existing || new Date(r.created_at) > new Date(existing.created_at)) byDay.set(dayKey, r);
     });
-    return [...byDay.values()];
+    return [...byDay.values()].sort((a, b) => new Date(a.created_at) - new Date(b.created_at));
   }
 
-  function showReports(email, reports) {
+  function render(rows) {
     document.getElementById('loginView').classList.add('hidden');
     document.getElementById('reportsView').classList.remove('hidden');
     setHeaderAuth(true);
 
-    const sorted = dedupeByDay(reports).sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
-    renderTrend(sorted);
-    renderList(sorted);
-  }
+    const today = localDateStr();
+    const restart = restartDateOf(currentUser);
+    const chronological = dedupeByDay(rows);
 
-  function setHeaderAuth(loggedIn) {
-    const btn = document.getElementById('headerAuthBtn');
-    if (loggedIn) {
-      btn.textContent = 'Log out';
-      btn.className = 'header-auth-btn logout';
-    } else {
-      btn.textContent = 'Log in';
-      btn.className = 'header-auth-btn';
-    }
-  }
+    // Levels
+    const dayMarks = buildDayMarks(chronological, restart, null);
+    const start = gameStartDate(dayMarks, restart, today);
+    const levels = computeLevels(dayMarks, start, today);
+    renderLevelCards(document.getElementById('levelGrid'), levels);
+    document.getElementById('levelLadder').innerHTML = levelLadderHtml();
 
-  async function headerAuthAction() {
-    const btn = document.getElementById('headerAuthBtn');
-    if (btn.classList.contains('logout')) {
-      await supabaseClient.auth.signOut();
-      document.getElementById('reportsView').classList.add('hidden');
-      document.getElementById('loginView').classList.remove('hidden');
-      setHeaderAuth(false);
-    } else {
-      document.getElementById('email')?.focus();
+    // Today's check-in prompt
+    const checkedInToday = chronological.some(r => localDateStr(new Date(r.created_at)) === today);
+    document.getElementById('checkinCta').innerHTML = checkedInToday
+      ? `<div class="checkin-cta done"><p>✓ You've checked in today. Come back tomorrow.</p></div>`
+      : `<div class="checkin-cta"><p>You haven't checked in today.</p><a class="btn" href="index.html#pickerSection">🎰 Spin today's reels</a></div>`;
+
+    // Habit pattern by day (unchanged — shows every saved check-in, last 14)
+    const box = document.getElementById('matrixBox');
+    if (!chronological.length) {
+      box.innerHTML = `
+        <div class="trend-box">
+          <p class="trend-headline">Habit pattern by day</p>
+          <p class="trend-sub" style="margin-bottom:0;">No check-ins yet. Spin your reels and your days will show up here.</p>
+        </div>`;
+      return;
     }
+    box.innerHTML = `
+      <div class="trend-box">
+        <p class="trend-headline">Habit pattern by day</p>
+        <p class="trend-sub">Each row is a habit. 🔴 red = marked that day, 🟢 green = a clean day.</p>
+        <div class="habit-matrix-wrap" id="habitMatrix"></div>
+      </div>`;
+    renderHabitMatrix(
+      document.getElementById('habitMatrix'),
+      chronological.slice(-14),
+      r => new Date(r.created_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })
+    );
   }
 
   function habitNamesOf(report) {
     return (report.habits || []).map(h => h.name);
   }
 
-  function totalDaysOf(r) {
-    const vals = [r.mental_days, r.physical_days, r.financial_days, r.temporal_days];
-    if (vals.some(v => v === null || v === undefined)) return null;
-    return vals.reduce((a, b) => a + b, 0);
-  }
-
-  function renderTrend(sorted) {
-    const box = document.getElementById('trendBox');
-
-    if (sorted.length < 2) {
-      box.innerHTML = `
-        <div class="trend-box">
-          <p class="trend-headline">Check in again to see your trend</p>
-          <p class="trend-sub" style="margin-bottom:0;">Once you have a second check-in, we'll show you a chart here — hover or tap any day to see what it looked like.</p>
-        </div>`;
-      return;
-    }
-
-    const latest = sorted[0];
-    const prev = sorted[1];
-    const latestTotal = totalDaysOf(latest);
-    const prevTotal = totalDaysOf(prev);
-    const haveDelta = latestTotal !== null && prevTotal !== null;
-
-    const FREEDOM_KEYS = [
-      { key: 'mental_days', emoji: '🧠', label: 'Mental', color: '#7DA3D6' },
-      { key: 'physical_days', emoji: '💪', label: 'Physical', color: '#5FAFA4' },
-      { key: 'financial_days', emoji: '💰', label: 'Financial', color: '#E8B04B' },
-      { key: 'temporal_days', emoji: '⏳', label: 'Time', color: '#B98AE0' }
-    ];
-
-    const deltaChips = haveDelta ? FREEDOM_KEYS.map(f => {
-      const d = prev[f.key] - latest[f.key];
-      const text = d > 0 ? `−${d}d` : d < 0 ? `+${Math.abs(d)}d` : '±0';
-      return `<span class="trend-chip" style="--chip-color:${f.color}">${f.emoji} <b>${text}</b></span>`;
-    }).join('') : '';
-
-    box.innerHTML = `
-      <div class="trend-box">
-        <p class="trend-headline">Since your last check-in</p>
-        ${haveDelta
-          ? `<div class="trend-chips">${deltaChips}</div>`
-          : `<p class="trend-sub" style="margin-bottom:0.5rem;">Not enough data yet to compare.</p>`}
-        <p class="trend-sub">Hover or tap a day below to see what was marked that day.</p>
-        <div class="chart" id="historyChart"></div>
-        <div class="day-detail" id="historyDayDetail"></div>
-      </div>
-      <div class="trend-box">
-        <p class="trend-headline">Habit pattern by day</p>
-        <p class="trend-sub">Each row is a habit. 🔴 red = marked that day, 🟢 green = a clean day.</p>
-        <div class="habit-matrix-wrap" id="habitMatrix"></div>
-      </div>`;
-
-    // Chart reads left-to-right chronologically (oldest to newest); cap at the
-    // most recent 14 check-ins so the chart stays readable.
-    const chronological = [...sorted].reverse().slice(-14);
-
-    renderBarChart(
-      document.getElementById('historyChart'),
-      chronological,
-      document.getElementById('historyDayDetail'),
-      r => new Date(r.created_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })
-    );
-
-    renderHabitMatrix(
-      document.getElementById('habitMatrix'),
-      chronological,
-      r => new Date(r.created_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })
-    );
-  }
-
-  // Builds the day × habit heatmap: rows grouped by freedom category (with
-  // each category's own habits underneath), columns are check-in days.
-  // A habit's cell heats toward red the more it keeps getting marked, and
-  // cools back toward blue the longer it goes unmarked — a rising/falling
-  // gradient rather than a flat yes/no.
+  // Day × habit table: rows grouped by freedom, columns are check-in days.
   function renderHabitMatrix(containerEl, chronological, dateLabelFn) {
     const dayHeaders = chronological.map(r => `<th>${dateLabelFn(r)}</th>`).join('');
     const markedSets = chronological.map(r => new Set(habitNamesOf(r)));
@@ -688,7 +701,6 @@ src="https://www.facebook.com/tr?id=1119044180571388&ev=PageView&noscript=1"
     let bodyRows = '';
     Object.values(FREEDOM_CATEGORIES).forEach(cat => {
       bodyRows += `<tr class="matrix-cat-row"><td colspan="${chronological.length + 1}" style="--cat-color:${cat.color}">${cat.emoji} ${cat.label}</td></tr>`;
-
       cat.items.forEach(habitName => {
         const cells = markedSets.map(set => {
           const marked = set.has(habitName);
@@ -707,161 +719,100 @@ src="https://www.facebook.com/tr?id=1119044180571388&ev=PageView&noscript=1"
       </table>`;
   }
 
-  function renderBarChart(containerEl, data, detailEl, dateLabelFn) {
-    containerEl.innerHTML = '';
-    const maxTotal = TOTAL_MAX_DAYS;
+  // ---------- Reset ----------
+  function setResetMsg(text, kind) {
+    const el = document.getElementById('resetMsg');
+    el.textContent = text;
+    el.className = 'auth-msg' + (kind ? ' ' + kind : '');
+  }
 
-    data.forEach((r, i) => {
-      const total = totalDaysOf(r);
-      const col = document.createElement('div');
-      col.className = 'bar-col' + (i === data.length - 1 ? ' active' : '');
+  function openResetModal() {
+    setResetMsg('');
+    document.getElementById('deleteConfirm').value = '';
+    document.getElementById('deleteBtn').disabled = true;
+    document.getElementById('resetModal').classList.remove('hidden');
+  }
 
-      const tooltip = document.createElement('div');
-      tooltip.className = 'bar-tooltip';
-      tooltip.innerHTML = total === null
-        ? `${dateLabelFn(r)}<br>no freedom data`
-        : `${dateLabelFn(r)}<br><b>${total}</b> days total`;
+  function closeResetModal() {
+    document.getElementById('resetModal').classList.add('hidden');
+  }
 
-      const value = document.createElement('span');
-      value.className = 'bar-value';
-      value.textContent = total === null ? '—' : total;
-
-      const bar = document.createElement('div');
-      bar.className = 'bar-fill';
-      const heightPct = total === null ? 6 : Math.max(6, 100 - Math.round((total / maxTotal) * 100));
-      bar.style.height = heightPct + '%';
-      if (total !== null) {
-        const barColor = freedomColorScale(total, maxTotal);
-        bar.style.background = `linear-gradient(to top, ${barColor}, ${barColor}99)`;
-        value.style.color = barColor;
-      }
-
-      const dayLbl = document.createElement('span');
-      dayLbl.className = 'bar-day';
-      dayLbl.textContent = new Date(r.created_at || Date.now()).toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
-
-      col.appendChild(tooltip);
-      col.appendChild(value);
-      col.appendChild(bar);
-      col.appendChild(dayLbl);
-
-      col.onclick = () => {
-        [...containerEl.children].forEach(c => c.classList.remove('active'));
-        col.classList.add('active');
-        showDayDetail(detailEl, r, dateLabelFn(r));
-      };
-
-      containerEl.appendChild(col);
-    });
-
-    // Show the most recent day's detail by default.
-    if (data.length) {
-      showDayDetail(detailEl, data[data.length - 1], dateLabelFn(data[data.length - 1]));
+  // Soft reset: stores today's date as the game start on the account.
+  // Check-ins are untouched; levels only count from this day on.
+  async function restartGame() {
+    const btn = document.getElementById('restartBtn');
+    btn.disabled = true;
+    setResetMsg('Restarting...', 'success');
+    try {
+      const { data, error } = await supabaseClient.auth.updateUser({ data: { game_start: localDateStr() } });
+      if (error) throw new Error(error.message);
+      currentUser = data.user;
+      render(await fetchReports(currentUser.id));
+      closeResetModal();
+    } catch (err) {
+      setResetMsg('Could not restart: ' + err.message);
+    } finally {
+      btn.disabled = false;
     }
   }
 
-  function showDayDetail(detailEl, r, dateLabel) {
-    const items = habitNamesOf(r);
-    const total = totalDaysOf(r);
+  // Hard reset: deletes every check-in row for this account.
+  async function deleteAllData() {
+    const btn = document.getElementById('deleteBtn');
+    btn.disabled = true;
+    setResetMsg('Deleting...', 'success');
+    try {
+      const { error } = await supabaseClient.from('reports').delete().eq('user_id', currentUser.id);
+      if (error) throw new Error(error.message);
 
-    // Legacy check-ins saved before freedom tracking existed — no
-    // meaningful numbers to show, so say that plainly instead of a
-    // confusing row of dashes.
-    if (total === null) {
-      detailEl.className = 'day-detail show';
-      detailEl.innerHTML = `
-        <p class="day-detail-date">${dateLabel}</p>
-        <p class="day-detail-empty">This check-in was saved before freedom tracking started — no numbers for this day.</p>
-      `;
-      return;
+      // Supabase silently deletes nothing if the database doesn't allow it,
+      // so double-check that the rows are really gone.
+      const remaining = await fetchReports(currentUser.id);
+      if (remaining.length) throw new Error('the database did not allow it. Please contact support.');
+
+      const { data } = await supabaseClient.auth.updateUser({ data: { game_start: null } });
+      if (data && data.user) currentUser = data.user;
+      render([]);
+      closeResetModal();
+    } catch (err) {
+      setResetMsg('Could not delete: ' + err.message);
+      btn.disabled = false;
     }
-
-    if (total === 0) {
-      // Nothing marked at all — a full win, so make it feel like one.
-      detailEl.className = 'day-detail show win';
-      detailEl.innerHTML = `
-        <p class="day-detail-date">${dateLabel}</p>
-        <p class="day-detail-win">🎉 Completely free — nothing was holding you back.</p>
-      `;
-      return;
-    }
-
-    const itemsHtml = items.length
-      ? `<div class="day-detail-items">${items.map(name => `<span class="day-detail-tag">${name}</span>`).join('')}</div>`
-      : '';
-    const freedomHtml = `
-      <div class="day-detail-freedoms">
-        <div class="freedom-stat"><span class="freedom-stat-emoji">🧠</span><span class="freedom-stat-lbl">Mental</span><span class="freedom-stat-val" style="color:${freedomColorScale(r.mental_days, CATEGORY_MAX_DAYS.mental)}">${r.mental_days}d</span></div>
-        <div class="freedom-stat"><span class="freedom-stat-emoji">💪</span><span class="freedom-stat-lbl">Physical</span><span class="freedom-stat-val" style="color:${freedomColorScale(r.physical_days, CATEGORY_MAX_DAYS.physical)}">${r.physical_days}d</span></div>
-        <div class="freedom-stat"><span class="freedom-stat-emoji">💰</span><span class="freedom-stat-lbl">Financial</span><span class="freedom-stat-val" style="color:${freedomColorScale(r.financial_days, CATEGORY_MAX_DAYS.financial)}">${r.financial_days}d</span></div>
-        <div class="freedom-stat"><span class="freedom-stat-emoji">⏳</span><span class="freedom-stat-lbl">Time</span><span class="freedom-stat-val" style="color:${freedomColorScale(r.temporal_days, CATEGORY_MAX_DAYS.temporal)}">${r.temporal_days}d</span></div>
-      </div>`;
-
-    detailEl.className = 'day-detail show';
-    detailEl.innerHTML = `
-      <p class="day-detail-date">${dateLabel}</p>
-      ${freedomHtml}
-      ${itemsHtml}
-    `;
   }
 
-  function renderList(sorted) {
-    const listEl = document.getElementById('reportList');
-    listEl.innerHTML = '';
+  document.addEventListener('keydown', e => { if (e.key === 'Escape') closeResetModal(); });
 
-    if (sorted.length === 0) {
-      listEl.innerHTML = '<p style="color:var(--text-mute);">No check-ins saved yet.</p>';
-      return;
+  // ---------- Header ----------
+  function setHeaderAuth(loggedIn) {
+    const btn = document.getElementById('headerAuthBtn');
+    if (loggedIn) {
+      btn.textContent = 'Log out';
+      btn.className = 'header-auth-btn logout';
+    } else {
+      btn.textContent = 'Log in';
+      btn.className = 'header-auth-btn';
     }
-
-    sorted.forEach(r => {
-      const card = document.createElement('div');
-      const dateStr = new Date(r.created_at).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' });
-      const total = totalDaysOf(r);
-
-      if (total === null) {
-        card.className = 'report-card';
-        card.innerHTML = `
-          <div class="report-top"><span class="report-date">${dateStr}</span></div>
-          <p class="day-detail-empty" style="margin:0;">Saved before freedom tracking started.</p>
-        `;
-        listEl.appendChild(card);
-        return;
-      }
-
-      if (total === 0) {
-        card.className = 'report-card win';
-        card.innerHTML = `
-          <div class="report-top"><span class="report-date">${dateStr}</span></div>
-          <p class="day-detail-win" style="margin:0;">🎉 Completely free that day.</p>
-        `;
-        listEl.appendChild(card);
-        return;
-      }
-
-      card.className = 'report-card';
-      card.innerHTML = `
-        <div class="report-top">
-          <span class="report-date">${dateStr}</span>
-        </div>
-        <div class="report-nums">
-          <div><div class="num" style="color:${freedomColorScale(r.mental_days, CATEGORY_MAX_DAYS.mental)}">${r.mental_days}</div><div class="lbl">🧠 mental</div></div>
-          <div><div class="num" style="color:${freedomColorScale(r.physical_days, CATEGORY_MAX_DAYS.physical)}">${r.physical_days}</div><div class="lbl">💪 physical</div></div>
-          <div><div class="num" style="color:${freedomColorScale(r.financial_days, CATEGORY_MAX_DAYS.financial)}">${r.financial_days}</div><div class="lbl">💰 financial</div></div>
-          <div><div class="num" style="color:${freedomColorScale(r.temporal_days, CATEGORY_MAX_DAYS.temporal)}">${r.temporal_days}</div><div class="lbl">⏳ time</div></div>
-        </div>
-      `;
-      listEl.appendChild(card);
-    });
   }
 
-  // If a session already exists (e.g. just came from saving a check-in), skip straight to it.
+  async function headerAuthAction() {
+    const btn = document.getElementById('headerAuthBtn');
+    if (btn.classList.contains('logout')) {
+      await supabaseClient.auth.signOut();
+      currentUser = null;
+      document.getElementById('reportsView').classList.add('hidden');
+      document.getElementById('loginView').classList.remove('hidden');
+      changeEmail();
+      setHeaderAuth(false);
+    } else {
+      document.getElementById('email')?.focus();
+    }
+  }
+
+  // Already logged in (e.g. just joined from the home page)? Go straight to the levels.
   setHeaderAuth(false);
   (async () => {
     const { data } = await supabaseClient.auth.getSession();
-    if (data.session) {
-      await loadAndShowReports(data.session.user.email, data.session.user.id);
-    }
+    if (data.session) await loadAndShow(data.session.user);
   })();
 </script>
 
