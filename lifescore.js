@@ -360,37 +360,61 @@ function levelLadderHtml() {
     </details>`;
 }
 
-/* ---------- Email code (no password) sign-in ----------
-   Same flow for new and returning people: we email a one-time code,
-   they type it in, they're in. Supabase creates the account the first
-   time an email is used. */
-async function sendEmailCode(email) {
-  const { error } = await supabaseClient.auth.signInWithOtp({
-    email,
-    options: { shouldCreateUser: true }
-  });
+/* ---------- Accounts: email + password, with an email code if forgotten ----------
+   Joining and logging in use the same form. If the email + password match
+   an account, they're logged in; if the email is new, an account is
+   created. Forgot the password? We email a 6-digit code, they type it in
+   with a new password, and they're back in. */
+
+function isValidEmail(email) {
+  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email || '');
+}
+
+// Returns { user, isNewAccount }.
+async function signInOrSignUp(email, password) {
+  if (!isValidEmail(email)) throw new Error('Enter a valid email address.');
+  if (!password || password.length < 6) throw new Error('Password needs at least 6 characters.');
+
+  const { data: signInData, error: signInError } = await supabaseClient.auth.signInWithPassword({ email, password });
+  if (!signInError && signInData && signInData.user) return { user: signInData.user, isNewAccount: false };
+
+  const { data: signUpData, error: signUpError } = await supabaseClient.auth.signUp({ email, password });
+  const alreadyRegistered = (signUpError && /already|registered|exists/i.test(signUpError.message || ''))
+    || (signUpData && signUpData.user && Array.isArray(signUpData.user.identities) && signUpData.user.identities.length === 0);
+  if (alreadyRegistered) {
+    throw new Error('That email already has an account and the password doesn\'t match. Tap "Forgot password?" below.');
+  }
+  if (signUpError) throw new Error(signUpError.message);
+  if (!signUpData || !signUpData.session) {
+    throw new Error('Account created — check your email to confirm it, then log in.');
+  }
+  return { user: signUpData.user, isNewAccount: true };
+}
+
+// Step 1 of "Forgot password?": email a 6-digit code to an existing account.
+async function sendResetCode(email) {
+  if (!isValidEmail(email)) throw new Error('Enter your email above first.');
+  const { error } = await supabaseClient.auth.signInWithOtp({ email, options: { shouldCreateUser: false } });
   if (error) {
     const m = (error.message || '').toLowerCase();
-    if (m.includes('rate') || m.includes('seconds')) {
-      throw new Error('Too many codes requested — wait a minute and try again.');
+    if (m.includes('signup') || m.includes('not found') || m.includes('not allowed')) {
+      throw new Error('There is no account with that email yet — just pick a password to join.');
     }
+    if (m.includes('rate') || m.includes('seconds')) throw new Error('Too many codes requested — wait a minute and try again.');
     throw new Error(error.message);
   }
 }
 
-// Returns { user, isNewAccount }.
-async function verifyEmailCode(email, code) {
+// Step 2: check the code, set the new password. Returns the user.
+async function resetWithCode(email, code, newPassword) {
   const token = String(code || '').replace(/\D/g, '');
-  if (token.length < 6) throw new Error('Enter the code from the email.');
+  if (token.length < 6) throw new Error('Enter the 6-digit code from the email.');
+  if (!newPassword || newPassword.length < 6) throw new Error('New password needs at least 6 characters.');
   const { data, error } = await supabaseClient.auth.verifyOtp({ email, token, type: 'email' });
-  if (error || !data || !data.user) {
-    throw new Error("That code didn't work — check it or request a new one.");
-  }
-  const user = data.user;
-  // An account created in the last 15 minutes is brand new (created when
-  // the code was requested); anyone older is a returning player.
-  const isNewAccount = (Date.now() - new Date(user.created_at).getTime()) < 15 * 60 * 1000;
-  return { user, isNewAccount };
+  if (error || !data || !data.user) throw new Error("That code didn't work — check it or request a new one.");
+  const { data: upd, error: updError } = await supabaseClient.auth.updateUser({ password: newPassword });
+  if (updError) throw new Error(updError.message);
+  return (upd && upd.user) || data.user;
 }
 
 // Date the person last pressed "Restart game", if ever.

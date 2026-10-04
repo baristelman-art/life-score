@@ -484,19 +484,22 @@ src="https://www.facebook.com/tr?id=1119044180571388&ev=PageView&noscript=1"
 
     <div id="loginView">
       <h1>Back to your garden</h1>
-      <p class="sub">Enter the email you play with. We'll send you a 6-digit code — no password needed.</p>
+      <p class="sub">Log in with your email and password. New here? The same form creates your account.</p>
       <div class="login-box">
-        <div class="login-form" id="emailStep">
+        <div class="login-form" id="loginStep">
           <input type="email" id="email" placeholder="you@email.com" autocomplete="email" inputmode="email">
-          <button class="btn" id="sendCodeBtn" onclick="requestCode()">Email me a code</button>
+          <input type="password" id="password" placeholder="Password" autocomplete="current-password">
+          <button class="btn" id="loginBtn" onclick="doLogin()">Log in</button>
+          <button class="link-btn" onclick="startForgot()">Forgot password?</button>
         </div>
-        <div class="login-form hidden" id="codeStep">
-          <p class="code-hint">We sent a code to <b id="codeEmail"></b>. It can take a minute — check spam too.</p>
-          <input type="text" id="code" class="code-input" placeholder="123456" inputmode="numeric" autocomplete="one-time-code" maxlength="8">
-          <button class="btn" id="verifyBtn" onclick="confirmCode()">Log in</button>
+        <div class="login-form hidden" id="resetStep">
+          <p class="code-hint">We sent a 6-digit code to <b id="codeEmail"></b>. It can take a minute — check spam too.</p>
+          <input type="text" id="code" class="code-input" placeholder="123456" inputmode="numeric" autocomplete="one-time-code" maxlength="6">
+          <input type="password" id="newPassword" placeholder="New password (6+ characters)" autocomplete="new-password">
+          <button class="btn" id="resetBtn" onclick="finishReset()">Save password &amp; log in</button>
           <div class="code-links">
-            <button class="link-btn" onclick="requestCode(true)">Send a new code</button>
-            <button class="link-btn" onclick="changeEmail()">Use a different email</button>
+            <button class="link-btn" onclick="startForgot(true)">Send a new code</button>
+            <button class="link-btn" onclick="backToLogin()">Back</button>
           </div>
         </div>
         <p class="auth-msg" id="loginMsg"></p>
@@ -560,43 +563,14 @@ src="https://www.facebook.com/tr?id=1119044180571388&ev=PageView&noscript=1"
     el.className = 'auth-msg' + (kind ? ' ' + kind : '');
   }
 
-  async function requestCode(isResend) {
-    const email = isResend ? pendingEmail : document.getElementById('email').value.trim().toLowerCase();
-    if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-      setLoginMsg('Enter a valid email address.');
-      return;
-    }
-    const btn = document.getElementById('sendCodeBtn');
+  async function doLogin() {
+    const email = document.getElementById('email').value.trim().toLowerCase();
+    const password = document.getElementById('password').value;
+    const btn = document.getElementById('loginBtn');
     btn.disabled = true;
-    setLoginMsg('Sending your code...', 'success');
+    setLoginMsg('Logging in...', 'success');
     try {
-      await sendEmailCode(email);
-      pendingEmail = email;
-      document.getElementById('codeEmail').textContent = email;
-      document.getElementById('emailStep').classList.add('hidden');
-      document.getElementById('codeStep').classList.remove('hidden');
-      setLoginMsg(isResend ? 'New code sent.' : '', 'success');
-      document.getElementById('code').focus();
-    } catch (err) {
-      setLoginMsg(err.message);
-    } finally {
-      btn.disabled = false;
-    }
-  }
-
-  function changeEmail() {
-    document.getElementById('codeStep').classList.add('hidden');
-    document.getElementById('emailStep').classList.remove('hidden');
-    document.getElementById('code').value = '';
-    setLoginMsg('');
-  }
-
-  async function confirmCode() {
-    const btn = document.getElementById('verifyBtn');
-    btn.disabled = true;
-    setLoginMsg('Checking your code...', 'success');
-    try {
-      const { user, isNewAccount } = await verifyEmailCode(pendingEmail, document.getElementById('code').value);
+      const { user, isNewAccount } = await signInOrSignUp(email, password);
       if (isNewAccount) {
         if (typeof fbq !== 'undefined') fbq('track', 'CompleteRegistration');
         if (typeof ttq !== 'undefined') ttq.track('CompleteRegistration');
@@ -605,12 +579,52 @@ src="https://www.facebook.com/tr?id=1119044180571388&ev=PageView&noscript=1"
       await loadAndShow(user);
     } catch (err) {
       setLoginMsg(err.message);
+    } finally {
       btn.disabled = false;
     }
   }
 
-  document.getElementById('email').addEventListener('keydown', e => { if (e.key === 'Enter') requestCode(); });
-  document.getElementById('code').addEventListener('keydown', e => { if (e.key === 'Enter') confirmCode(); });
+  async function startForgot(isResend) {
+    const email = isResend ? pendingEmail : document.getElementById('email').value.trim().toLowerCase();
+    setLoginMsg('Sending your code...', 'success');
+    try {
+      await sendResetCode(email);
+      pendingEmail = email;
+      document.getElementById('codeEmail').textContent = email;
+      document.getElementById('loginStep').classList.add('hidden');
+      document.getElementById('resetStep').classList.remove('hidden');
+      setLoginMsg(isResend ? 'New code sent.' : '', 'success');
+      document.getElementById('code').focus();
+    } catch (err) {
+      setLoginMsg(err.message);
+    }
+  }
+
+  function backToLogin() {
+    document.getElementById('resetStep').classList.add('hidden');
+    document.getElementById('loginStep').classList.remove('hidden');
+    document.getElementById('code').value = '';
+    document.getElementById('newPassword').value = '';
+    setLoginMsg('');
+  }
+
+  async function finishReset() {
+    const btn = document.getElementById('resetBtn');
+    btn.disabled = true;
+    setLoginMsg('Checking your code...', 'success');
+    try {
+      const user = await resetWithCode(pendingEmail, document.getElementById('code').value, document.getElementById('newPassword').value);
+      setLoginMsg('');
+      await loadAndShow(user);
+    } catch (err) {
+      setLoginMsg(err.message);
+    } finally {
+      btn.disabled = false;
+    }
+  }
+
+  document.getElementById('password').addEventListener('keydown', e => { if (e.key === 'Enter') doLogin(); });
+  document.getElementById('newPassword').addEventListener('keydown', e => { if (e.key === 'Enter') finishReset(); });
 
   async function fetchReports(userId) {
     const { data, error } = await supabaseClient
@@ -801,7 +815,7 @@ src="https://www.facebook.com/tr?id=1119044180571388&ev=PageView&noscript=1"
       currentUser = null;
       document.getElementById('reportsView').classList.add('hidden');
       document.getElementById('loginView').classList.remove('hidden');
-      changeEmail();
+      backToLogin();
       setHeaderAuth(false);
     } else {
       document.getElementById('email')?.focus();

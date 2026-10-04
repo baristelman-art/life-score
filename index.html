@@ -1088,26 +1088,29 @@ src="https://www.facebook.com/tr?id=1119044180571388&ev=PageView&noscript=1"
           <p>Your garden only grows if it's saved. Join free and tomorrow your seeds can sprout. Skip it and today's spin is gone.</p>
           <div class="anon-note">
             <span>🔒</span>
-            <span>No password. We email you a 6-digit code to join or log back in. Your email is never shared or shown to anyone.</span>
+            <span>Your email is only used for your account and password resets — never shared or shown to anyone.</span>
           </div>
 
-          <div class="auth-form" id="emailStep">
+          <div class="auth-form" id="loginStep">
             <input type="email" id="email" placeholder="you@email.com" autocomplete="email" inputmode="email">
+            <input type="password" id="password" placeholder="Password (6+ characters)" autocomplete="current-password">
             <div class="auth-actions">
-              <button class="btn" id="sendCodeBtn" onclick="requestCode()">Email me a code</button>
+              <button class="btn" id="joinBtn" onclick="joinOrLogin()">Join &amp; save today</button>
               <button class="btn btn-ghost" onclick="skipSave()">Not now</button>
             </div>
+            <button class="link-btn" onclick="startForgot()">Forgot password?</button>
           </div>
 
-          <div class="auth-form hidden" id="codeStep">
-            <p class="code-hint">We sent a code to <b id="codeEmail"></b>. It can take a minute — check spam too.</p>
-            <input type="text" id="code" class="code-input" placeholder="123456" inputmode="numeric" autocomplete="one-time-code" maxlength="8">
+          <div class="auth-form hidden" id="resetStep">
+            <p class="code-hint">We sent a 6-digit code to <b id="codeEmail"></b>. It can take a minute — check spam too.</p>
+            <input type="text" id="code" class="code-input" placeholder="123456" inputmode="numeric" autocomplete="one-time-code" maxlength="6">
+            <input type="password" id="newPassword" placeholder="New password (6+ characters)" autocomplete="new-password">
             <div class="auth-actions">
-              <button class="btn" id="verifyBtn" onclick="confirmCode()">Join &amp; save today</button>
+              <button class="btn" id="resetBtn" onclick="finishReset()">Save password &amp; continue</button>
             </div>
             <div class="code-links">
-              <button class="link-btn" onclick="requestCode(true)">Send a new code</button>
-              <button class="link-btn" onclick="changeEmail()">Use a different email</button>
+              <button class="link-btn" onclick="startForgot(true)">Send a new code</button>
+              <button class="link-btn" onclick="backToLogin()">Back</button>
             </div>
           </div>
 
@@ -1619,69 +1622,81 @@ src="https://www.facebook.com/tr?id=1119044180571388&ev=PageView&noscript=1"
 
   let pendingEmail = '';
 
-  async function requestCode(isResend) {
-    const email = isResend ? pendingEmail : document.getElementById('email').value.trim().toLowerCase();
-    if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-      setAuthMsg('Enter a valid email address.', 'error');
-      return;
+  // After a successful join / login / reset: save today and show the done state.
+  async function finishAuth(user, email, isNewAccount) {
+    const { error: saveError } = await saveReportForUser(user.id);
+    if (saveError) throw new Error(saveError.message);
+
+    document.getElementById('pitchView').style.display = 'none';
+    document.getElementById('savedView').classList.add('show');
+    document.getElementById('savedEmail').textContent = email;
+
+    // Only brand-new accounts count as a registration — returning players logging in don't.
+    if (isNewAccount) {
+      if (typeof fbq !== 'undefined') fbq('track', 'CompleteRegistration');
+      if (typeof ttq !== 'undefined') ttq.track('CompleteRegistration');
     }
-    const btn = document.getElementById('sendCodeBtn');
+    setHeaderAuth(true);
+  }
+
+  async function joinOrLogin() {
+    const email = document.getElementById('email').value.trim().toLowerCase();
+    const password = document.getElementById('password').value;
+    const btn = document.getElementById('joinBtn');
     btn.disabled = true;
+    setAuthMsg('Saving...');
+    try {
+      await sbReady();
+      const { user, isNewAccount } = await signInOrSignUp(email, password);
+      await finishAuth(user, email, isNewAccount);
+    } catch (err) {
+      setAuthMsg(err.message, 'error');
+      btn.disabled = false;
+    }
+  }
+
+  async function startForgot(isResend) {
+    const email = isResend ? pendingEmail : document.getElementById('email').value.trim().toLowerCase();
     setAuthMsg('Sending your code...');
     try {
       await sbReady();
-      await sendEmailCode(email);
+      await sendResetCode(email);
       pendingEmail = email;
       document.getElementById('codeEmail').textContent = email;
-      document.getElementById('emailStep').classList.add('hidden');
-      document.getElementById('codeStep').classList.remove('hidden');
+      document.getElementById('loginStep').classList.add('hidden');
+      document.getElementById('resetStep').classList.remove('hidden');
       setAuthMsg(isResend ? 'New code sent.' : '', isResend ? 'success' : '');
       document.getElementById('code').focus();
     } catch (err) {
       setAuthMsg(err.message, 'error');
-    } finally {
-      btn.disabled = false;
     }
   }
 
-  function changeEmail() {
-    document.getElementById('codeStep').classList.add('hidden');
-    document.getElementById('emailStep').classList.remove('hidden');
+  function backToLogin() {
+    document.getElementById('resetStep').classList.add('hidden');
+    document.getElementById('loginStep').classList.remove('hidden');
     document.getElementById('code').value = '';
+    document.getElementById('newPassword').value = '';
     setAuthMsg('');
-    document.getElementById('email').focus();
   }
 
-  async function confirmCode() {
-    const btn = document.getElementById('verifyBtn');
+  async function finishReset() {
+    const btn = document.getElementById('resetBtn');
     btn.disabled = true;
     setAuthMsg('Checking your code...');
     try {
       await sbReady();
-      const { user, isNewAccount } = await verifyEmailCode(pendingEmail, document.getElementById('code').value);
-
-      const { error: saveError } = await saveReportForUser(user.id);
-      if (saveError) throw new Error(saveError.message);
-
-      document.getElementById('pitchView').style.display = 'none';
-      document.getElementById('savedView').classList.add('show');
-      document.getElementById('savedEmail').textContent = pendingEmail;
-
-      // Only brand-new accounts count as a registration — returning players logging in don't.
-      if (isNewAccount) {
-        if (typeof fbq !== 'undefined') fbq('track', 'CompleteRegistration');
-        if (typeof ttq !== 'undefined') ttq.track('CompleteRegistration');
-      }
-      setHeaderAuth(true);
+      const user = await resetWithCode(pendingEmail, document.getElementById('code').value, document.getElementById('newPassword').value);
+      await finishAuth(user, pendingEmail, false);
     } catch (err) {
       setAuthMsg(err.message, 'error');
       btn.disabled = false;
     }
   }
 
-  // Let people press Enter in either field.
-  document.getElementById('email').addEventListener('keydown', e => { if (e.key === 'Enter') requestCode(); });
-  document.getElementById('code').addEventListener('keydown', e => { if (e.key === 'Enter') confirmCode(); });
+  // Let people press Enter to submit.
+  document.getElementById('password').addEventListener('keydown', e => { if (e.key === 'Enter') joinOrLogin(); });
+  document.getElementById('newPassword').addEventListener('keydown', e => { if (e.key === 'Enter') finishReset(); });
 
   function skipSave() {
     document.querySelector('.auth-box').innerHTML =
