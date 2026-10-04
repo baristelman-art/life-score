@@ -38,14 +38,18 @@ src="https://www.facebook.com/tr?id=1119044180571388&ev=PageView&noscript=1"
 <!-- TikTok Pixel Code End -->
 <style>
   :root {
-    --ink: #FFFFFF;
-    --surface: #F6F7F6;
-    --line: #0E1A1C1a;
-    --teal: #2E8B7F;
-    --teal-dim: #2E8B7F33;
-    --rust: #B4613F;
-    --text: #0E1A1C;
-    --text-mute: #55625F;
+    --ink: #0E1A1C;
+    --surface: #16292B;
+    --surface-2: #1C3134;
+    --line: #ffffff14;
+    --teal: #5FAFA4;
+    --teal-dim: #5FAFA433;
+    --rust: #C98368;
+    --text: #EEF3F1;
+    --text-mute: #93A6A2;
+    --page: #FFFFFF;
+    --page-text: #0E1A1C;
+    --page-mute: #5B6865;
   }
 
   * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -79,7 +83,7 @@ src="https://www.facebook.com/tr?id=1119044180571388&ev=PageView&noscript=1"
 
   .header-auth-btn:hover { border-color: var(--teal); color: var(--teal); }
   .header-auth-btn.logout { border-color: var(--rust); color: var(--rust); }
-  .header-auth-btn.logout:hover { background: #B4613F22; }
+  .header-auth-btn.logout:hover { background: #C9836822; }
   .brand { font-family: 'Fraunces', serif; font-weight: 500; font-size: 1.05rem; text-decoration: none; color: var(--text); }
 
   .wrap { max-width: 640px; margin: 0 auto; padding: 4rem 1.5rem 5rem; }
@@ -139,7 +143,7 @@ src="https://www.facebook.com/tr?id=1119044180571388&ev=PageView&noscript=1"
     border: none;
     cursor: pointer;
     background: var(--teal);
-    color: #FFFFFF;
+    color: #082220;
     align-self: flex-start;
     transition: transform 0.2s ease;
   }
@@ -195,7 +199,7 @@ src="https://www.facebook.com/tr?id=1119044180571388&ev=PageView&noscript=1"
     border-radius: 16px;
     padding: 1.75rem;
     margin-bottom: 2rem;
-    box-shadow: 0 0 40px -20px var(--teal-dim, rgba(46,139,127,0.25));
+    box-shadow: 0 0 40px -20px var(--teal-dim, rgba(95,175,164,0.4));
   }
 
   .trend-headline {
@@ -204,7 +208,7 @@ src="https://www.facebook.com/tr?id=1119044180571388&ev=PageView&noscript=1"
     font-size: 1.3rem;
     margin-bottom: 0.5rem;
     color: var(--teal);
-    text-shadow: 0 0 18px rgba(46,139,127,0.22);
+    text-shadow: 0 0 18px rgba(95,175,164,0.35);
   }
 
   .trend-sub { color: var(--text-mute); font-size: 0.9rem; margin-bottom: 1.5rem; }
@@ -329,7 +333,7 @@ src="https://www.facebook.com/tr?id=1119044180571388&ev=PageView&noscript=1"
   .bar-fill {
     width: 100%;
     max-width: 28px;
-    background: linear-gradient(to top, var(--teal), #2E8B7F66);
+    background: linear-gradient(to top, var(--teal), #5FAFA466);
     border-radius: 6px 6px 2px 2px;
   }
 
@@ -443,9 +447,9 @@ src="https://www.facebook.com/tr?id=1119044180571388&ev=PageView&noscript=1"
   .reset-zone p { color: var(--text-mute); font-size: 0.85rem; margin-bottom: 0.75rem; }
   .btn-outline { background: transparent; color: var(--text-mute); border: 1px solid var(--line); }
   .btn-outline:hover { border-color: var(--rust); color: var(--rust); }
-  .btn-danger { background: var(--rust); color: #FFFFFF; }
+  .btn-danger { background: var(--rust); color: #1b0d07; }
   .btn-danger:disabled, .btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
-  .modal-backdrop { position: fixed; inset: 0; background: rgba(14, 26, 28, 0.45); z-index: 50;
+  .modal-backdrop { position: fixed; inset: 0; background: rgba(5, 12, 13, 0.78); z-index: 50;
     display: flex; align-items: center; justify-content: center; padding: 1.25rem; }
   .modal { width: 100%; max-width: 440px; background: var(--surface); border: 1px solid var(--line);
     border-radius: 18px; padding: 1.5rem; max-height: 90vh; overflow-y: auto; }
@@ -454,12 +458,26 @@ src="https://www.facebook.com/tr?id=1119044180571388&ev=PageView&noscript=1"
   .reset-option { border: 1px solid var(--line); border-radius: 14px; padding: 1rem; margin-bottom: 0.75rem; }
   .reset-option h3 { font-size: 1rem; font-weight: 600; margin-bottom: 0.3rem; }
   .reset-option p { color: var(--text-mute); font-size: 0.85rem; margin-bottom: 0.8rem; line-height: 1.5; }
-  .reset-option.danger { border-color: #B4613F55; }
+  .reset-option.danger { border-color: #C9836855; }
   .reset-option input { width: 100%; background: var(--ink); border: 1px solid var(--line); border-radius: 10px;
     color: var(--text); font-family: 'Space Mono', monospace; font-size: 0.95rem; padding: 0.7rem 0.9rem; margin-bottom: 0.7rem; }
   .modal-cancel { width: 100%; margin-top: 0.25rem; }
   .confirm-label { display: block; font-size: 0.82rem; color: var(--text-mute); margin-bottom: 0.45rem; }
   .confirm-label b { color: var(--text); word-break: break-all; }
+
+  /* ---- White page, original dark components ---- */
+  body { background: var(--page) !important; color: var(--page-text); }
+  .brand, .site-brand, header a { color: var(--page-text) !important; }
+  .header-auth-btn { color: var(--page-mute); border-color: #0E1A1C26; }
+  #loginView h1, #reportsView h1 { color: var(--page-text); }
+  .sub, .levels-intro, .reset-zone p { color: var(--page-mute) !important; }
+  .levels-section .grow-rule { color: var(--page-text); }
+  .levels-section .grow-more summary, .levels-section .grow-note, .levels-section .grow-step { color: var(--page-mute); }
+  .levels-section .grow-step { border-color: #0E1A1C26; }
+  .levels-section .grow-step b { color: var(--page-text); }
+  .reset-zone { border-top-color: #0E1A1C1a; }
+  .reset-zone .btn-outline { color: var(--page-mute); border-color: #0E1A1C26; }
+  .login-box, .trend-box, .checkin-cta, .modal, .lv-card { color: var(--text); }
 </style>
 <!-- Microsoft Clarity -->
 <script type="text/javascript">

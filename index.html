@@ -38,17 +38,20 @@ src="https://www.facebook.com/tr?id=1119044180571388&ev=PageView&noscript=1"
 <!-- TikTok Pixel Code End -->
 <style>
   :root {
-    --ink: #FFFFFF;
-    --surface: #F6F7F6;
-    --surface-2: #EDEFED;
-    --line: #0E1A1C1a;
-    --line-soft: #0E1A1C0f;
-    --teal: #2E8B7F;
-    --teal-dim: #2E8B7F33;
-    --rust: #B4613F;
-    --rust-dim: #B4613F22;
-    --text: #0E1A1C;
-    --text-mute: #55625F;
+    --ink: #0E1A1C;
+    --surface: #16292B;
+    --surface-2: #1C3134;
+    --line: #ffffff14;
+    --line-soft: #ffffff0a;
+    --teal: #5FAFA4;
+    --teal-dim: #5FAFA433;
+    --rust: #C98368;
+    --rust-dim: #C9836822;
+    --text: #EEF3F1;
+    --text-mute: #93A6A2;
+    --page: #FFFFFF;
+    --page-text: #0E1A1C;
+    --page-mute: #5B6865;
   }
 
   * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -135,8 +138,8 @@ src="https://www.facebook.com/tr?id=1119044180571388&ev=PageView&noscript=1"
   }
 
   .header-auth-btn:hover { border-color: var(--teal); color: var(--teal); }
-  .header-auth-btn.logout { border-color: #B4613F; color: #B4613F; }
-  .header-auth-btn.logout:hover { background: #B4613F22; }
+  .header-auth-btn.logout { border-color: #C98368; color: #C98368; }
+  .header-auth-btn.logout:hover { background: #C9836822; }
 
   .hero::before {
     content: '';
@@ -216,7 +219,7 @@ src="https://www.facebook.com/tr?id=1119044180571388&ev=PageView&noscript=1"
 
   .teaser-reel.landed .teaser-tile .t-num {
     color: var(--cat-color);
-    text-shadow: 0 0 14px color-mix(in srgb, var(--cat-color) 30%, transparent);
+    text-shadow: 0 0 18px var(--cat-color);
   }
 
   .teaser-tile .t-label {
@@ -278,7 +281,7 @@ src="https://www.facebook.com/tr?id=1119044180571388&ev=PageView&noscript=1"
     align-items: center;
     gap: 0.6rem;
     background: var(--teal);
-    color: #FFFFFF;
+    color: #082220;
     font-family: 'Inter', sans-serif;
     font-weight: 600;
     font-size: 1.05rem;
@@ -359,7 +362,7 @@ src="https://www.facebook.com/tr?id=1119044180571388&ev=PageView&noscript=1"
   .habit-btn.active {
     background: var(--teal);
     border-color: var(--teal);
-    color: #FFFFFF;
+    color: #082220;
     font-weight: 600;
     box-shadow: 0 4px 18px -4px var(--teal-dim);
   }
@@ -489,7 +492,7 @@ src="https://www.facebook.com/tr?id=1119044180571388&ev=PageView&noscript=1"
     border: none;
     cursor: pointer;
     background: var(--teal);
-    color: #FFFFFF;
+    color: #082220;
     transition: transform 0.2s ease, box-shadow 0.2s ease;
     box-shadow: 0 0 0 0 var(--teal-dim);
   }
@@ -568,7 +571,7 @@ src="https://www.facebook.com/tr?id=1119044180571388&ev=PageView&noscript=1"
 
   .reel.landed .reel-tile .r-value {
     color: var(--cat-color);
-    text-shadow: 0 0 14px color-mix(in srgb, var(--cat-color) 30%, transparent);
+    text-shadow: 0 0 18px var(--cat-color);
   }
 
   .reel-tile .r-label {
@@ -607,7 +610,7 @@ src="https://www.facebook.com/tr?id=1119044180571388&ev=PageView&noscript=1"
 
   .reel.landed .reel-value {
     color: var(--cat-color);
-    text-shadow: 0 0 14px color-mix(in srgb, var(--cat-color) 30%, transparent);
+    text-shadow: 0 0 18px var(--cat-color);
   }
 
   .reel-sub { font-size: 0.68rem; color: var(--text-mute); }
@@ -656,7 +659,7 @@ src="https://www.facebook.com/tr?id=1119044180571388&ev=PageView&noscript=1"
     font-size: 1.3rem;
     margin-bottom: 0.4rem;
     color: var(--teal);
-    text-shadow: 0 0 18px rgba(46,139,127,0.22);
+    text-shadow: 0 0 18px rgba(95,175,164,0.35);
   }
 
   .sample-sub {
@@ -727,7 +730,7 @@ src="https://www.facebook.com/tr?id=1119044180571388&ev=PageView&noscript=1"
   .sample-bar {
     width: 100%;
     max-width: 30px;
-    background: linear-gradient(to top, var(--teal), #2E8B7F66);
+    background: linear-gradient(to top, var(--teal), #5FAFA466);
     border-radius: 6px 6px 2px 2px;
   }
 
@@ -929,7 +932,7 @@ src="https://www.facebook.com/tr?id=1119044180571388&ev=PageView&noscript=1"
     border: none;
     cursor: pointer;
     background: var(--teal);
-    color: #FFFFFF;
+    color: #082220;
     transition: transform 0.2s ease;
     text-decoration: none;
     display: inline-block;
@@ -989,7 +992,7 @@ src="https://www.facebook.com/tr?id=1119044180571388&ev=PageView&noscript=1"
     display: block; width: 100%;
     font-family: 'Inter', sans-serif; font-weight: 600; font-size: 1.1rem;
     padding: 1.15rem 1.3rem; border-radius: 14px; cursor: pointer;
-    background: linear-gradient(135deg, #2E8B7F, #247267); color: #FFFFFF; border: none;
+    background: linear-gradient(135deg, #5FAFA4, #4C9A90); color: #082220; border: none;
     box-shadow: 0 8px 26px -10px var(--teal); transition: transform 0.15s ease;
     margin-top: 1.25rem;
   }
@@ -1003,16 +1006,28 @@ src="https://www.facebook.com/tr?id=1119044180571388&ev=PageView&noscript=1"
   }
   .t-grow, .r-grow { font-size: clamp(1.9rem, 8.5vw, 2.5rem) !important; line-height: 1; text-shadow: none !important; }
   .reel-tile .r-sub { font-size: clamp(0.55rem, 2.4vw, 0.66rem); font-weight: 700; letter-spacing: 0.04em; }
-  .reel-tile .r-sub.ok { color: #2E9E64; }
+  .reel-tile .r-sub.ok { color: #4CAF7D; }
   .reel-tile .r-sub.bad { color: #D9534F; }
   .reel.landed.marked { border-color: #D9534F88; box-shadow: 0 0 26px -8px #D9534F; }
-  .slot-machine.jackpot .reel { border-color: #B9831A; box-shadow: 0 0 34px -4px #B9831A; animation: jackpotPulse 0.9s ease 3; }
+  .slot-machine.jackpot .reel { border-color: #E8B04B; box-shadow: 0 0 34px -4px #E8B04B; animation: jackpotPulse 0.9s ease 3; }
   @keyframes jackpotPulse { 0%,100% { transform: scale(1); } 50% { transform: scale(1.06); } }
   .result-banner { text-align: center; margin: 0.25rem 0 1.75rem; }
   .result-banner .rb-big { font-family: 'Fraunces', serif; font-weight: 600; font-size: clamp(1.4rem, 5vw, 1.9rem); color: var(--text); }
   .result-banner .rb-small { color: var(--text-mute); font-size: 0.9rem; margin-top: 0.3rem; }
-  .result-banner.jackpot .rb-big { color: #B9831A; text-shadow: 0 0 24px #B9831A55; letter-spacing: 0.06em; animation: jackpotPulse 0.9s ease 3; }
+  .result-banner.jackpot .rb-big { color: #E8B04B; text-shadow: 0 0 24px #E8B04B88; letter-spacing: 0.06em; animation: jackpotPulse 0.9s ease 3; }
   .hero-sub b { color: var(--text); font-weight: 600; }
+
+  /* ---- White page, original dark components ---- */
+  body { background: var(--page) !important; color: var(--page-text); }
+  .brand, .site-brand, header a { color: var(--page-text) !important; }
+  .header-auth-btn { color: var(--page-mute); border-color: #0E1A1C26; }
+  .kicker { text-shadow: none; }
+  .score-caption, .hero-sub, .cta-note, .cta-note a, footer, .or-divider { color: var(--page-mute) !important; }
+  .hero h1, .list-preview-label, .result-banner .rb-big, .hero-sub b { color: var(--page-text) !important; }
+  .result-banner .rb-small { color: var(--page-mute); }
+  .result-banner.jackpot .rb-big { color: #C99526 !important; }
+  .or-divider::before, .or-divider::after { background: #0E1A1C1a; }
+  .levels-box, .auth-box, .habit-btn, .reel, .teaser-reel { color: var(--text); }
 </style>
 <!-- Microsoft Clarity -->
 <script type="text/javascript">
@@ -1136,10 +1151,10 @@ src="https://www.facebook.com/tr?id=1119044180571388&ev=PageView&noscript=1"
   // block audio autoplay before any user gesture — this is unavoidable).
 
   const TEASER_SYMBOLS = [
-    { emoji: '🧠', label: 'Mental', color: '#3F72B8' },
-    { emoji: '💪', label: 'Physical', color: '#2E8B7F' },
-    { emoji: '💰', label: 'Financial', color: '#B9831A' },
-    { emoji: '⏳', label: 'Time', color: '#8455BE' }
+    { emoji: '🧠', label: 'Mental', color: '#7DA3D6' },
+    { emoji: '💪', label: 'Physical', color: '#5FAFA4' },
+    { emoji: '💰', label: 'Financial', color: '#E8B04B' },
+    { emoji: '⏳', label: 'Time', color: '#B98AE0' }
   ];
 
   function randomTeaserSymbol() {

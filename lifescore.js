@@ -12,25 +12,25 @@ const FREEDOM_CATEGORIES = {
   mental: {
     label: 'Mental Freedom',
     emoji: '🧠',
-    color: '#3F72B8',
+    color: '#7DA3D6',
     items: ['Overthinking & worrying', 'Obsessing over someone', 'Dwelling on the past']
   },
   physical: {
     label: 'Physical Freedom',
     emoji: '💪',
-    color: '#2E8B7F',
+    color: '#5FAFA4',
     items: ['Overeating', 'Junk food & sugary drinks', 'Alcohol, smoking or drugs']
   },
   financial: {
     label: 'Financial Freedom',
     emoji: '💰',
-    color: '#B9831A',
+    color: '#E8B04B',
     items: ['Unnecessary spending', 'Gambling or betting', 'Buying on credit']
   },
   temporal: {
     label: 'Time Freedom',
     emoji: '⏳',
-    color: '#8455BE',
+    color: '#B98AE0',
     items: ['Procrastinating', 'Doomscrolling & gaming', 'Binge-watching']
   }
 };
@@ -360,7 +360,7 @@ function renderLevelCards(containerEl, levels) {
   .lv-emoji { font-size:1rem; line-height:1; }
   .lv-name { font-size:0.7rem; font-weight:600; letter-spacing:0.08em; text-transform:uppercase; color:var(--cat-color); }
   .lv-tag { margin-left:auto; font-family:'Space Mono',monospace; font-size:0.62rem; padding:0.1rem 0.4rem; border-radius:999px; white-space:nowrap; }
-  .lv-tag.up { color:#2E9E64; background:#2E9E6422; }
+  .lv-tag.up { color:#4CAF7D; background:#4CAF7D22; }
   .lv-tag.down { color:#D9534F; background:#D9534F22; }
   .lv-stage { display:flex; align-items:center; gap:0.5rem; margin-bottom:0.6rem; }
   .lv-plant { font-size:2rem; line-height:1; }
