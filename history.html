@@ -2,6 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
+<meta name="theme-color" content="#F6F3EC">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>My garden — Life Score</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -37,14 +38,14 @@ src="https://www.facebook.com/tr?id=1119044180571388&ev=PageView&noscript=1"
 <!-- TikTok Pixel Code End -->
 <style>
   :root {
-    --ink: #0E1A1C;
-    --surface: #16292B;
-    --line: #ffffff14;
-    --teal: #5FAFA4;
-    --teal-dim: #5FAFA422;
-    --rust: #C98368;
-    --text: #EEF3F1;
-    --text-mute: #93A6A2;
+    --ink: #F6F3EC;
+    --surface: #FFFFFF;
+    --line: #0E1A1C1f;
+    --teal: #2E8B7F;
+    --teal-dim: #2E8B7F33;
+    --rust: #B4613F;
+    --text: #0E1A1C;
+    --text-mute: #55625F;
   }
 
   * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -78,7 +79,7 @@ src="https://www.facebook.com/tr?id=1119044180571388&ev=PageView&noscript=1"
 
   .header-auth-btn:hover { border-color: var(--teal); color: var(--teal); }
   .header-auth-btn.logout { border-color: var(--rust); color: var(--rust); }
-  .header-auth-btn.logout:hover { background: #C9836822; }
+  .header-auth-btn.logout:hover { background: #B4613F22; }
   .brand { font-family: 'Fraunces', serif; font-weight: 500; font-size: 1.05rem; text-decoration: none; color: var(--text); }
 
   .wrap { max-width: 640px; margin: 0 auto; padding: 4rem 1.5rem 5rem; }
@@ -138,7 +139,7 @@ src="https://www.facebook.com/tr?id=1119044180571388&ev=PageView&noscript=1"
     border: none;
     cursor: pointer;
     background: var(--teal);
-    color: #082220;
+    color: #FFFFFF;
     align-self: flex-start;
     transition: transform 0.2s ease;
   }
@@ -189,12 +190,12 @@ src="https://www.facebook.com/tr?id=1119044180571388&ev=PageView&noscript=1"
   .report-bottleneck b { color: var(--text); font-weight: 500; }
 
   .trend-box {
-    background: linear-gradient(160deg, var(--surface), #1a2f31);
+    background: linear-gradient(160deg, var(--surface), var(--surface-2));
     border: 1px solid var(--line);
     border-radius: 16px;
     padding: 1.75rem;
     margin-bottom: 2rem;
-    box-shadow: 0 0 40px -20px var(--teal-dim, rgba(95,175,164,0.4));
+    box-shadow: 0 0 40px -20px var(--teal-dim, rgba(46,139,127,0.25));
   }
 
   .trend-headline {
@@ -203,7 +204,7 @@ src="https://www.facebook.com/tr?id=1119044180571388&ev=PageView&noscript=1"
     font-size: 1.3rem;
     margin-bottom: 0.5rem;
     color: var(--teal);
-    text-shadow: 0 0 18px rgba(95,175,164,0.35);
+    text-shadow: 0 0 18px rgba(46,139,127,0.22);
   }
 
   .trend-sub { color: var(--text-mute); font-size: 0.9rem; margin-bottom: 1.5rem; }
@@ -296,7 +297,7 @@ src="https://www.facebook.com/tr?id=1119044180571388&ev=PageView&noscript=1"
     transition: background 0.15s ease;
   }
 
-  .bar-col:hover, .bar-col.active { background: #1C3134; }
+  .bar-col:hover, .bar-col.active { background: var(--surface-2); }
 
   .bar-tooltip {
     position: absolute;
@@ -328,7 +329,7 @@ src="https://www.facebook.com/tr?id=1119044180571388&ev=PageView&noscript=1"
   .bar-fill {
     width: 100%;
     max-width: 28px;
-    background: linear-gradient(to top, var(--teal), #5FAFA466);
+    background: linear-gradient(to top, var(--teal), #2E8B7F66);
     border-radius: 6px 6px 2px 2px;
   }
 
@@ -418,8 +419,8 @@ src="https://www.facebook.com/tr?id=1119044180571388&ev=PageView&noscript=1"
     position: fixed;
     inset: 0;
     z-index: 0;
-    background-image: url('bg-pattern.png');
-    background-image: image-set(url('bg-pattern.webp') type('image/webp'), url('bg-pattern.png') type('image/png'));
+    background-image: url('bg-pattern-light.png');
+    background-image: image-set(url('bg-pattern-light.webp') type('image/webp'), url('bg-pattern-light.png') type('image/png'));
     background-repeat: repeat;
     background-size: 420px 420px;
     opacity: 0.5;
@@ -444,9 +445,9 @@ src="https://www.facebook.com/tr?id=1119044180571388&ev=PageView&noscript=1"
   .reset-zone p { color: var(--text-mute); font-size: 0.85rem; margin-bottom: 0.75rem; }
   .btn-outline { background: transparent; color: var(--text-mute); border: 1px solid var(--line); }
   .btn-outline:hover { border-color: var(--rust); color: var(--rust); }
-  .btn-danger { background: var(--rust); color: #1b0d07; }
+  .btn-danger { background: var(--rust); color: #FFFFFF; }
   .btn-danger:disabled, .btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
-  .modal-backdrop { position: fixed; inset: 0; background: rgba(5, 12, 13, 0.78); z-index: 50;
+  .modal-backdrop { position: fixed; inset: 0; background: rgba(14, 26, 28, 0.45); z-index: 50;
     display: flex; align-items: center; justify-content: center; padding: 1.25rem; }
   .modal { width: 100%; max-width: 440px; background: var(--surface); border: 1px solid var(--line);
     border-radius: 18px; padding: 1.5rem; max-height: 90vh; overflow-y: auto; }
@@ -455,10 +456,12 @@ src="https://www.facebook.com/tr?id=1119044180571388&ev=PageView&noscript=1"
   .reset-option { border: 1px solid var(--line); border-radius: 14px; padding: 1rem; margin-bottom: 0.75rem; }
   .reset-option h3 { font-size: 1rem; font-weight: 600; margin-bottom: 0.3rem; }
   .reset-option p { color: var(--text-mute); font-size: 0.85rem; margin-bottom: 0.8rem; line-height: 1.5; }
-  .reset-option.danger { border-color: #C9836855; }
+  .reset-option.danger { border-color: #B4613F55; }
   .reset-option input { width: 100%; background: var(--ink); border: 1px solid var(--line); border-radius: 10px;
     color: var(--text); font-family: 'Space Mono', monospace; font-size: 0.95rem; padding: 0.7rem 0.9rem; margin-bottom: 0.7rem; }
   .modal-cancel { width: 100%; margin-top: 0.25rem; }
+  .confirm-label { display: block; font-size: 0.82rem; color: var(--text-mute); margin-bottom: 0.45rem; }
+  .confirm-label b { color: var(--text); word-break: break-all; }
 </style>
 <!-- Microsoft Clarity -->
 <script type="text/javascript">
@@ -540,9 +543,10 @@ src="https://www.facebook.com/tr?id=1119044180571388&ev=PageView&noscript=1"
 
       <div class="reset-option danger">
         <h3>🗑️ Delete all my data</h3>
-        <p>Permanently deletes every check-in and your whole garden. Your login email stays so you can start over. <b>This can't be undone.</b> Type <b>DELETE</b> to confirm.</p>
-        <input type="text" id="deleteConfirm" placeholder="DELETE" autocomplete="off" oninput="document.getElementById('deleteBtn').disabled = this.value.trim().toUpperCase() !== 'DELETE'">
-        <button class="btn btn-danger" id="deleteBtn" onclick="deleteAllData()" disabled>Delete everything</button>
+        <p>Permanently deletes every check-in and your whole garden. Your account stays so you can start over. <b>This can't be undone.</b></p>
+        <label class="confirm-label" for="deleteConfirm">To confirm, type your email: <b id="deleteEmailHint"></b></label>
+        <input type="email" id="deleteConfirm" placeholder="Type your email" autocomplete="off" autocapitalize="off" spellcheck="false">
+        <button class="btn btn-danger" id="deleteBtn" onclick="deleteAllData()">Delete everything</button>
       </div>
 
       <p class="auth-msg" id="resetMsg"></p>
@@ -743,7 +747,8 @@ src="https://www.facebook.com/tr?id=1119044180571388&ev=PageView&noscript=1"
   function openResetModal() {
     setResetMsg('');
     document.getElementById('deleteConfirm').value = '';
-    document.getElementById('deleteBtn').disabled = true;
+    document.getElementById('deleteBtn').disabled = false;
+    document.getElementById('deleteEmailHint').textContent = (currentUser && currentUser.email) || '';
     document.getElementById('resetModal').classList.remove('hidden');
   }
 
@@ -772,6 +777,13 @@ src="https://www.facebook.com/tr?id=1119044180571388&ev=PageView&noscript=1"
 
   // Hard reset: deletes every check-in row for this account.
   async function deleteAllData() {
+    const typed = document.getElementById('deleteConfirm').value.trim().toLowerCase();
+    const email = ((currentUser && currentUser.email) || '').toLowerCase();
+    if (!typed || typed !== email) {
+      setResetMsg('Type your email exactly as shown to confirm.');
+      document.getElementById('deleteConfirm').focus();
+      return;
+    }
     const btn = document.getElementById('deleteBtn');
     btn.disabled = true;
     setResetMsg('Deleting...', 'success');
