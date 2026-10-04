@@ -13,27 +13,62 @@ const FREEDOM_CATEGORIES = {
     label: 'Mental Freedom',
     emoji: '🧠',
     color: '#7DA3D6',
-    items: ['Overthinking', 'Obsessing Over Others', 'Dwelling on the Past', 'Worrying About the Future', 'Negative Feelings', 'Pornography']
+    items: ['Overthinking & worrying', 'Obsessing over someone', 'Dwelling on the past']
   },
   physical: {
     label: 'Physical Freedom',
     emoji: '💪',
     color: '#5FAFA4',
-    items: ['Overeating', 'Unhealthy Eating & Drinking', 'Alcohol, Smoking & Drugs']
+    items: ['Overeating', 'Junk food & sugary drinks', 'Alcohol, smoking or drugs']
   },
   financial: {
     label: 'Financial Freedom',
     emoji: '💰',
     color: '#E8B04B',
-    items: ['Attachment to Possessions', 'Gambling', 'Unnecessary Spending']
+    items: ['Unnecessary spending', 'Gambling or betting', 'Buying on credit']
   },
   temporal: {
     label: 'Time Freedom',
     emoji: '⏳',
     color: '#B98AE0',
-    items: ['Impulsive Behavior', 'Laziness & Procrastination', 'Social Media & Gaming Addiction']
+    items: ['Procrastinating', 'Doomscrolling & gaming', 'Watching porn']
   }
 };
+
+// Habit names used before the October 2026 list. Old check-ins are read
+// through this map so everyone's history and garden carry over. Habits
+// that were retired map to null and are simply ignored.
+const LEGACY_HABIT_NAMES = {
+  'Overthinking': 'Overthinking & worrying',
+  'Worrying About the Future': 'Overthinking & worrying',
+  'Obsessing Over Others': 'Obsessing over someone',
+  'Dwelling on the Past': 'Dwelling on the past',
+  'Negative Feelings': null,
+  'Pornography': 'Watching porn',
+  'Unhealthy Eating & Drinking': 'Junk food & sugary drinks',
+  'Alcohol, Smoking & Drugs': 'Alcohol, smoking or drugs',
+  'Attachment to Possessions': null,
+  'Gambling': 'Gambling or betting',
+  'Unnecessary Spending': 'Unnecessary spending',
+  'Impulsive Behavior': null,
+  'Laziness & Procrastination': 'Procrastinating',
+  'Social Media & Gaming Addiction': 'Doomscrolling & gaming'
+};
+
+// Current name for any saved habit name (null if the habit was retired).
+function normalizeHabitName(name) {
+  return Object.prototype.hasOwnProperty.call(LEGACY_HABIT_NAMES, name) ? LEGACY_HABIT_NAMES[name] : name;
+}
+
+// Current habit names from one saved check-in row.
+function habitNamesFromRow(row) {
+  const out = new Set();
+  (row && row.habits || []).forEach(h => {
+    const n = normalizeHabitName(h && h.name);
+    if (n) out.add(n);
+  });
+  return [...out];
+}
 
 // Each individual habit has its own independent 21-day quitting streak —
 // this is the only "days" number the app tracks per habit. A freedom
@@ -187,7 +222,7 @@ function buildDayMarks(rows, sinceDateStr, skipDateStr) {
     if (sinceDateStr && day < sinceDateStr) return;
     if (skipDateStr && day === skipDateStr) return;
     if (!marks[day]) marks[day] = new Set();
-    (row.habits || []).forEach(h => marks[day].add(h.name));
+    habitNamesFromRow(row).forEach(n => marks[day].add(n));
   });
   return marks;
 }

@@ -1058,7 +1058,7 @@ src="https://www.facebook.com/tr?id=1119044180571388&ev=PageView&noscript=1"
       <div id="habitSection"></div>
 
       <div class="picker-footer">
-        <span class="picker-count"><b id="selCount">0</b> / 15 marked</span>
+        <span class="picker-count"><b id="selCount">0</b> / 12 marked</span>
         <button class="cta" id="revealBtn" onclick="startSpin()">🎰 Spin my reels</button>
       </div>
       <p class="cta-note">Free · No sign-up to spin · <a href="history.html" style="color:var(--text-mute);">Already playing? Log in</a></p>
@@ -1486,7 +1486,7 @@ src="https://www.facebook.com/tr?id=1119044180571388&ev=PageView&noscript=1"
     (rows || []).forEach(row => {
       const day = localDateStr(new Date(row.created_at));
       if (day >= todayStr) return;
-      (row.habits || []).forEach(h => { map[h.name] = day; });
+      habitNamesFromRow(row).forEach(n => { map[n] = day; });
     });
     return map;
   }

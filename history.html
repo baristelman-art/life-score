@@ -704,7 +704,7 @@ src="https://www.facebook.com/tr?id=1119044180571388&ev=PageView&noscript=1"
   }
 
   function habitNamesOf(report) {
-    return (report.habits || []).map(h => h.name);
+    return habitNamesFromRow(report);
   }
 
   // Day × habit table: rows grouped by freedom, columns are check-in days.
