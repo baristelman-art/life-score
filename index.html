@@ -985,6 +985,35 @@ src="https://www.facebook.com/tr?id=1119044180571388&ev=PageView&noscript=1"
   .code-hint b { color: var(--text); font-weight: 600; }
   .code-input { font-family: 'Space Mono', monospace; font-size: 1.4rem !important; letter-spacing: 0.35em; text-align: center; }
   .code-links { display: flex; gap: 1.2rem; flex-wrap: wrap; }
+
+  .nothing-btn {
+    display: block; width: 100%;
+    font-family: 'Inter', sans-serif; font-weight: 600; font-size: 1.1rem;
+    padding: 1.15rem 1.3rem; border-radius: 14px; cursor: pointer;
+    background: linear-gradient(135deg, #5FAFA4, #4C9A90); color: #082220; border: none;
+    box-shadow: 0 8px 26px -10px var(--teal); transition: transform 0.15s ease;
+    margin-top: 1.25rem;
+  }
+  .nothing-btn:hover { transform: translateY(-2px); }
+  .or-divider { display: flex; align-items: center; gap: 0.75rem; color: var(--text-mute); font-size: 0.85rem; margin: 1.6rem 0 1.4rem; }
+  .or-divider::before, .or-divider::after { content: ''; flex: 1; height: 1px; background: var(--line); }
+  .category-title { color: var(--cat-color) !important; }
+  .habit-btn.active {
+    background: var(--cat-color) !important; border-color: var(--cat-color) !important;
+    box-shadow: 0 4px 18px -6px var(--cat-color) !important;
+  }
+  .t-grow, .r-grow { font-size: clamp(1.9rem, 8.5vw, 2.5rem) !important; line-height: 1; text-shadow: none !important; }
+  .reel-tile .r-sub { font-size: clamp(0.55rem, 2.4vw, 0.66rem); font-weight: 700; letter-spacing: 0.04em; }
+  .reel-tile .r-sub.ok { color: #4CAF7D; }
+  .reel-tile .r-sub.bad { color: #D9534F; }
+  .reel.landed.marked { border-color: #D9534F88; box-shadow: 0 0 26px -8px #D9534F; }
+  .slot-machine.jackpot .reel { border-color: #E8B04B; box-shadow: 0 0 34px -4px #E8B04B; animation: jackpotPulse 0.9s ease 3; }
+  @keyframes jackpotPulse { 0%,100% { transform: scale(1); } 50% { transform: scale(1.06); } }
+  .result-banner { text-align: center; margin: 0.25rem 0 1.75rem; }
+  .result-banner .rb-big { font-family: 'Fraunces', serif; font-weight: 600; font-size: clamp(1.4rem, 5vw, 1.9rem); color: var(--text); }
+  .result-banner .rb-small { color: var(--text-mute); font-size: 0.9rem; margin-top: 0.3rem; }
+  .result-banner.jackpot .rb-big { color: #E8B04B; text-shadow: 0 0 24px #E8B04B88; letter-spacing: 0.06em; animation: jackpotPulse 0.9s ease 3; }
+  .hero-sub b { color: var(--text); font-weight: 600; }
 </style>
 <!-- Microsoft Clarity -->
 <script type="text/javascript">
@@ -1015,16 +1044,17 @@ src="https://www.facebook.com/tr?id=1119044180571388&ev=PageView&noscript=1"
       <div class="teaser-reel" id="teaserReel2"><div class="teaser-window"><div class="teaser-strip" id="teaserStrip2"></div></div></div>
       <div class="teaser-reel" id="teaserReel3"><div class="teaser-window"><div class="teaser-strip" id="teaserStrip3"></div></div></div>
     </div>
-    <p class="score-caption reveal reveal-2">not your reels yet — spin your own below</p>
+    <p class="score-caption reveal reveal-2">not your garden yet — spin your own below</p>
 
     <h1 class="reveal reveal-3">What we don't quit,<br>we choose.</h1>
-    <p class="hero-sub reveal reveal-3">Mark what showed up in the last 24 hours. Then keep it from showing up tomorrow — every clean day levels up your mental, physical, financial and time freedom.</p>
+    <p class="hero-sub reveal reveal-3">Four freedoms — mind, body, money, time — planted like seeds.<br><b>Don't mark it tomorrow, it grows. Mark it, it shrinks.</b></p>
   </section>
 
   <section class="list-preview" id="pickerSection">
     <div id="pickerIntro">
-      <p class="list-preview-label">Today's check-in</p>
-      <p class="list-preview-sub">Mark anything below that showed up for you in the last 24 hours. Be honest — it's only for you.</p>
+      <p class="list-preview-label">What showed up in the last 24 hours?</p>
+      <button class="nothing-btn" onclick="spinClean()">✨ Nothing today — spin</button>
+      <p class="or-divider"><span>or mark what showed up</span></p>
       <div id="habitSection"></div>
 
       <div class="picker-footer">
@@ -1036,26 +1066,26 @@ src="https://www.facebook.com/tr?id=1119044180571388&ev=PageView&noscript=1"
 
     <p class="today-label hidden" id="todayLabel">Today's reels</p>
     <div class="slot-machine hidden" id="slotMachine"></div>
+    <div class="result-banner hidden" id="resultBanner"></div>
 
     <div class="post-reveal hidden" id="postReveal">
       <div class="levels-box">
-        <p class="levels-head">Your levels</p>
+        <p class="levels-head">Your garden</p>
         <p class="levels-sub" id="levelsSub"></p>
         <div class="lv-grid" id="levelGrid"></div>
         <div id="levelLadder"></div>
-        <p class="lv-rule">Every day a freedom stays unmarked moves it up — even days you don't check in. Mark one of its habits again and it drops one level.</p>
       </div>
 
       <div class="auth-box">
         <div id="autoSavedView" class="hidden">
           <h2>Today's check-in saved ✓</h2>
-          <p>Logged in as <span class="nickname" id="autoSavedEmail"></span>. Your levels are up to date — come back tomorrow and spin again.</p>
-          <a class="btn" href="history.html">See my levels</a>
+          <p>Logged in as <span class="nickname" id="autoSavedEmail"></span>. Your garden is up to date — come back tomorrow and spin again.</p>
+          <a class="btn" href="history.html">See my garden</a>
         </div>
 
         <div id="pitchView">
           <h2>Join the game</h2>
-          <p>Your levels only count if they're saved. Join free, come back tomorrow, and every freedom you keep clean moves up a level. Skip it and today's spin is gone.</p>
+          <p>Your garden only grows if it's saved. Join free and tomorrow your seeds can sprout. Skip it and today's spin is gone.</p>
           <div class="anon-note">
             <span>🔒</span>
             <span>No password. We email you a 6-digit code to join or log back in. Your email is never shared or shown to anyone.</span>
@@ -1086,65 +1116,17 @@ src="https://www.facebook.com/tr?id=1119044180571388&ev=PageView&noscript=1"
 
         <div id="savedView" class="saved-view">
           <h2>You're in ✓</h2>
-          <p>Today is saved under <span class="nickname" id="savedEmail"></span>. Come back tomorrow and spin again — your levels update on their own.</p>
-          <a class="btn" href="history.html">See my levels</a>
+          <p>Today is saved under <span class="nickname" id="savedEmail"></span>. Come back tomorrow and spin again — watch your seeds sprout.</p>
+          <a class="btn" href="history.html">See my garden</a>
         </div>
       </div>
 
-      <div class="sample-table">
-        <p class="sample-label">📊 Example</p>
-        <p class="sample-headline">Your pattern, day by day</p>
-        <p class="sample-sub">Not your data — a sample of what you'll see after a week of playing. 🔴 red = marked that day, 🟢 green = a clean day.</p>
-        <div class="sample-matrix-wrap">
-          <table class="sample-matrix">
-            <thead><tr><th></th><th>Mon</th><th>Tue</th><th>Wed</th><th>Thu</th><th>Fri</th><th>Sat</th><th>Sun</th></tr></thead>
-            <tbody id="sampleMatrixBody"></tbody>
-          </table>
-        </div>
-      </div>
     </div>
   </section>
 
-  <section class="steps">
-    <p class="steps-head">How the game works</p>
-    <div class="step-list">
-      <div class="step">
-        <span class="step-index">01</span>
-        <div>
-          <p class="step-title">Mark what showed up today</p>
-          <p class="step-desc">15 habits across your mind, body, money and time. Mark the ones that showed up in the last 24 hours.</p>
-        </div>
-      </div>
-      <div class="step">
-        <span class="step-index">02</span>
-        <div>
-          <p class="step-title">Spin your four reels</p>
-          <p class="step-desc">Mental, physical, financial and time — four reels spin and land on where you stand today.</p>
-        </div>
-      </div>
-      <div class="step">
-        <span class="step-index">03</span>
-        <div>
-          <p class="step-title">Climb five levels</p>
-          <p class="step-desc">Each freedom levels up on its own: Level 1 after 1 clean day, then 3, 7, 13 — and Level 5 at 21 days. Slip up and that freedom drops one level, not back to zero.</p>
-        </div>
-      </div>
-    </div>
-  </section>
+  <footer>Life Score — what we don't quit, we choose</footer>
 
-  <section class="trust">
-    <div class="trust-item"><b>~1 min a day</b>Mark, spin, done</div>
-    <div class="trust-item"><b>No password</b>Join with a one-time email code</div>
-    <div class="trust-item"><b>No guilt</b>A slip costs one level, never everything</div>
-  </section>
-
-  <section class="closing">
-    <h2>Your game can start today.</h2>
-    <a class="cta" href="#pickerSection">🎰 Spin my reels</a>
-  </section>
-
-  <footer>Life Score — the 21-day freedom game</footer>
-
+<script src="lifescore.js"></script>
 <script>
   // Casino-style teaser reels — spin-and-land in bursts (not continuously),
   // pausing between bursts, then spinning again. While spinning, the emoji,
@@ -1211,21 +1193,23 @@ src="https://www.facebook.com/tr?id=1119044180571388&ev=PageView&noscript=1"
   const TILE_HEIGHT_REM = 9.6;
   const TILES_PER_SPIN = 10;
 
-  function buildTile(sym, num) {
-    return `<div class="teaser-tile"><span class="t-emoji">${sym.emoji}</span><span class="t-num">${num}</span><span class="t-label">${sym.label}</span></div>`;
+  function randomStage() { return STAGES[Math.floor(Math.random() * STAGES.length)]; }
+
+  function buildTile(sym, stage) {
+    return `<div class="teaser-tile"><span class="t-emoji">${sym.emoji}</span><span class="t-num t-grow">${stage.emoji}</span><span class="t-label">${stage.name}</span></div>`;
   }
 
   function spinOneTeaserReel(i, startDelay) {
     const reelEl = document.getElementById('teaserReel' + i);
     const stripEl = document.getElementById('teaserStrip' + i);
     const finalSym = randomTeaserSymbol();
-    const finalNum = Math.floor(Math.random() * 90);
+    const finalNum = randomStage();
     const spinMs = 950;
 
     setTimeout(() => {
       let html = '';
       for (let t = 0; t < TILES_PER_SPIN; t++) {
-        html += buildTile(randomTeaserSymbol(), Math.floor(Math.random() * 90));
+        html += buildTile(randomTeaserSymbol(), randomStage());
       }
       html += buildTile(finalSym, finalNum);
       stripEl.innerHTML = html;
@@ -1286,35 +1270,13 @@ src="https://www.facebook.com/tr?id=1119044180571388&ev=PageView&noscript=1"
 </script>
 
 <script>
-  const categories = [
-    {
-      name: "Mental Obsessions",
-      emoji: "🧠",
-      habits: [
-        "Overthinking",
-        "Obsessing Over Others",
-        "Attachment to Possessions",
-        "Dwelling on the Past",
-        "Worrying About the Future",
-        "Negative Feelings"
-      ]
-    },
-    {
-      name: "Uncontrolled Behaviors",
-      emoji: "🔴",
-      habits: [
-        "Impulsive Behavior",
-        "Laziness & Procrastination",
-        "Overeating",
-        "Unhealthy Eating & Drinking",
-        "Alcohol, Smoking & Drugs",
-        "Pornography",
-        "Social Media & Gaming Addiction",
-        "Gambling",
-        "Unnecessary Spending"
-      ]
-    }
-  ];
+  const categories = FREEDOM_KEYS.map(key => ({
+    key,
+    name: FREEDOM_SHORT_LABELS[key],
+    emoji: FREEDOM_CATEGORIES[key].emoji,
+    color: FREEDOM_CATEGORIES[key].color,
+    habits: FREEDOM_CATEGORIES[key].items
+  }));
 
   const TOTAL_HABITS = categories.reduce((sum, c) => sum + c.habits.length, 0);
   const state = new Set();
@@ -1323,6 +1285,7 @@ src="https://www.facebook.com/tr?id=1119044180571388&ev=PageView&noscript=1"
   categories.forEach(cat => {
     const catDiv = document.createElement('div');
     catDiv.className = 'category';
+    catDiv.style.setProperty('--cat-color', cat.color);
     const title = document.createElement('p');
     title.className = 'category-title';
     title.innerHTML = `<span>${cat.emoji}</span><span>${cat.name}</span>`;
@@ -1354,7 +1317,6 @@ src="https://www.facebook.com/tr?id=1119044180571388&ev=PageView&noscript=1"
   }
 </script>
 
-<script src="lifescore.js"></script>
 <script>
   // Supabase (~190 KB) isn't needed to show the page or spin the reels, so
   // it loads after the first paint instead of blocking it. Anything that
@@ -1380,36 +1342,6 @@ src="https://www.facebook.com/tr?id=1119044180571388&ev=PageView&noscript=1"
 </script>
 
 <script>
-  // ---------- Example chart (illustrative, not the person's real data) ----------
-  const sampleData = [
-    { day: 'Mon', date: 'Sep 1', total: 65, items: ['Overthinking', 'Laziness & Procrastination', 'Unhealthy Eating & Drinking'] },
-    { day: 'Tue', date: 'Sep 2', total: 55, items: ['Overthinking', 'Social Media & Gaming Addiction'] },
-    { day: 'Wed', date: 'Sep 3', total: 47, items: ['Laziness & Procrastination', 'Negative Feelings'] },
-    { day: 'Thu', date: 'Sep 4', total: 32, items: ['Overthinking'] },
-    { day: 'Fri', date: 'Sep 5', total: 21, items: ['Social Media & Gaming Addiction'] },
-    { day: 'Sat', date: 'Sep 6', total: 10, items: [] },
-    { day: 'Sun', date: 'Sep 7', total: 0, items: [] }
-  ];
-
-  // Same illustrative week, shown as the day × habit heatmap so people can
-  // see what that feature looks like before they've checked in even once.
-  (function renderSampleMatrix() {
-    const body = document.getElementById('sampleMatrixBody');
-    let rows = '';
-    Object.values(FREEDOM_CATEGORIES).forEach(cat => {
-      rows += `<tr class="matrix-cat-row"><td colspan="${sampleData.length + 1}" style="--cat-color:${cat.color}">${cat.emoji} ${cat.label}</td></tr>`;
-      cat.items.forEach(habitName => {
-        const cells = sampleData.map(d => {
-          const marked = d.items.includes(habitName);
-          const color = marked ? '#D9534F' : '#4CAF7D';
-          return `<td><span class="matrix-dot" style="background:${color}" title="${marked ? 'marked' : 'clean day'}"></span></td>`;
-        }).join('');
-        rows += `<tr><td class="matrix-habit-name">${habitName}</td>${cells}</tr>`;
-      });
-    });
-    body.innerHTML = rows;
-  })();
-
   // ---------- The real reveal: slot machine ----------
   let audioCtx = null;
   function ensureAudio() {
@@ -1459,8 +1391,9 @@ src="https://www.facebook.com/tr?id=1119044180571388&ev=PageView&noscript=1"
   const REEL_TILE_HEIGHT_REM = 9.6;
   const REEL_TILES_PER_SPIN = 10;
 
-  function buildReelTile(sym, num) {
-    return `<div class="reel-tile"><span class="r-emoji">${sym.emoji}</span><span class="r-value">${num}</span><span class="r-label">${sym.label}</span></div>`;
+  function buildReelTile(sym, stage, status) {
+    const sub = status ? `<span class="r-sub ${status === 'clean' ? 'ok' : 'bad'}">${status === 'clean' ? '✓ clean' : '✗ marked'}</span>` : '';
+    return `<div class="reel-tile"><span class="r-emoji">${sym.emoji}</span><span class="r-value r-grow">${stage.emoji}</span><span class="r-label">${stage.name}</span>${sub}</div>`;
   }
 
   function buildReels() {
@@ -1471,7 +1404,7 @@ src="https://www.facebook.com/tr?id=1119044180571388&ev=PageView&noscript=1"
       reel.className = 'reel';
       reel.id = 'reel-' + key;
       reel.style.setProperty('--cat-color', FREEDOM_CATEGORIES[key].color);
-      reel.innerHTML = `<div class="reel-window"><div class="reel-strip" id="reel-strip-${key}">${buildReelTile({ emoji: FREEDOM_CATEGORIES[key].emoji, label: FREEDOM_SHORT_LABELS[key] }, '··')}</div></div>`;
+      reel.innerHTML = `<div class="reel-window"><div class="reel-strip" id="reel-strip-${key}">${buildReelTile(FREEDOM_CATEGORIES[key], { emoji: '·', name: FREEDOM_SHORT_LABELS[key] })}</div></div>`;
       container.appendChild(reel);
     });
   }
@@ -1479,16 +1412,16 @@ src="https://www.facebook.com/tr?id=1119044180571388&ev=PageView&noscript=1"
   function spinReel(key, finalValue, startDelay) {
     const reelEl = document.getElementById('reel-' + key);
     const stripEl = document.getElementById('reel-strip-' + key);
-    const cat = freedomResult[key];
     const spinMs = 1100;
 
     setTimeout(() => {
       let html = '';
       for (let t = 0; t < REEL_TILES_PER_SPIN; t++) {
         const randomSym = TEASER_SYMBOLS[Math.floor(Math.random() * TEASER_SYMBOLS.length)];
-        html += buildReelTile(randomSym, Math.floor(Math.random() * 90));
+        html += buildReelTile(randomSym, STAGES[Math.floor(Math.random() * STAGES.length)]);
       }
-      html += buildReelTile({ emoji: cat.emoji, label: FREEDOM_SHORT_LABELS[key] }, finalValue);
+      const f = levels[key];
+      html += buildReelTile(FREEDOM_CATEGORIES[key], stageOf(f.level), f.markedToday ? 'marked' : 'clean');
       stripEl.innerHTML = html;
 
       stripEl.style.transition = 'none';
@@ -1509,7 +1442,7 @@ src="https://www.facebook.com/tr?id=1119044180571388&ev=PageView&noscript=1"
       }, spinMs / tickTotal);
 
       setTimeout(() => {
-        reelEl.classList.add('landed');
+        reelEl.classList.add('landed', levels[key].markedToday ? 'marked' : 'clean');
         playLand(LAND_FREQS[key]);
         landedCount++;
         if (landedCount === FREEDOM_ORDER.length) onAllReelsLanded();
@@ -1587,16 +1520,43 @@ src="https://www.facebook.com/tr?id=1119044180571388&ev=PageView&noscript=1"
     FREEDOM_ORDER.forEach((key, i) => spinReel(key, freedomResult[key].days, i * 280));
   }
 
+  function spinClean() {
+    state.clear();
+    document.querySelectorAll('.habit-btn.active').forEach(b => b.classList.remove('active'));
+    startSpin();
+  }
+
   function renderLevels(loggedIn) {
     renderLevelCards(document.getElementById('levelGrid'), levels);
     document.getElementById('levelLadder').innerHTML = levelLadderHtml();
     const anyUp = FREEDOM_KEYS.some(k => levels[k].level > 0);
     document.getElementById('levelsSub').textContent = loggedIn
-      ? (anyUp ? 'Here is where each freedom stands today.' : 'Your game is running. Stay clean tomorrow and your first levels unlock.')
-      : 'Your game starts today. Join to keep it — tomorrow, every freedom you didn\'t mark becomes Level 1.';
+      ? (anyUp ? 'How your four freedoms are growing.' : 'Your seeds are planted. Leave them tomorrow and they sprout.')
+      : 'Your seeds are planted. Join to keep them — tomorrow they sprout.';
+  }
+
+  function playJackpot() {
+    if (!audioCtx) return;
+    [523, 659, 784, 1047, 1319].forEach((f, i) => setTimeout(() => playLand(f), i * 110));
+  }
+
+  function showResultBanner() {
+    const clean = FREEDOM_KEYS.filter(k => !levels[k].markedToday).length;
+    const banner = document.getElementById('resultBanner');
+    if (clean === FREEDOM_KEYS.length) {
+      document.getElementById('slotMachine').classList.add('jackpot');
+      banner.className = 'result-banner jackpot';
+      banner.innerHTML = '<p class="rb-big">🎰 JACKPOT</p><p class="rb-small">A free day — all four freedoms stayed clean.</p>';
+      playJackpot();
+    } else {
+      const shrinkWord = clean === 0 ? 'A rough day' : `${clean} of 4 clean today`;
+      banner.className = 'result-banner';
+      banner.innerHTML = `<p class="rb-big">${shrinkWord}</p><p class="rb-small">Marked ones shrink one stage — never back to zero. Tomorrow is a new spin.</p>`;
+    }
   }
 
   function onAllReelsLanded() {
+    showResultBanner();
     renderLevels(!!session);
     document.getElementById('postReveal').classList.remove('hidden');
     autoSaveIfLoggedIn();
@@ -1725,7 +1685,7 @@ src="https://www.facebook.com/tr?id=1119044180571388&ev=PageView&noscript=1"
 
   function skipSave() {
     document.querySelector('.auth-box').innerHTML =
-      '<h2>No problem</h2><p style="margin-bottom:0;">Nothing was saved. Your levels only count once you join — next time you spin, your game starts from day 0 again.</p>';
+      '<h2>No problem</h2><p style="margin-bottom:0;">Nothing was saved. Your garden only grows once you join — next time you spin, you start from seeds again.</p>';
   }
 </script>
 

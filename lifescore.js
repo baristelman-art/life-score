@@ -261,17 +261,33 @@ function computeLevels(dayMarks, startDateStr, todayStr) {
   return result;
 }
 
-// One short status line for a freedom's level card.
+// Each level is a growth stage — a freedom grows like a tree while it's
+// left unmarked, and shrinks back one stage when it's marked again.
+const STAGES = [
+  { emoji: '🌰', name: 'Seed' },        // Level 0 — planted, game started
+  { emoji: '🌱', name: 'Sprout' },      // Level 1 — 1 clean day
+  { emoji: '🌿', name: 'Sapling' },     // Level 2 — 3 clean days
+  { emoji: '🪴', name: 'Young tree' },  // Level 3 — 7 clean days
+  { emoji: '🌳', name: 'Tree' },        // Level 4 — 13 clean days
+  { emoji: '🌲', name: 'Forest' }       // Level 5 — 21 clean days
+];
+
+const GROW_RULE = "Don't mark it tomorrow, it grows. Mark it, it shrinks.";
+
+function stageOf(level) { return STAGES[Math.max(0, Math.min(MAX_LEVEL, level))]; }
+
+// One short status line for a freedom's card.
 function levelStatusText(f) {
-  if (f.level === MAX_LEVEL) return f.markedToday ? 'Marked today' : `${f.cleanDays} clean days · Free`;
-  if (f.markedToday && f.level < f.levelBefore) return `Marked today · dropped to Level ${f.level}`;
-  if (f.markedToday) return `Marked today · stay clean tomorrow for Level ${f.level + 1}`;
-  if (f.cleanDays === 0) return `Day 0 · stay clean tomorrow for Level 1`;
-  const dayWord = f.toNext === 1 ? 'day' : 'days';
-  return `${f.cleanDays} clean · ${f.toNext} more ${dayWord} to Level ${f.level + 1}`;
+  const next = f.level < MAX_LEVEL ? stageOf(f.level + 1).name.toLowerCase() : null;
+  if (f.level === MAX_LEVEL) return f.markedToday ? 'Marked today' : 'Fully grown 🎉';
+  if (f.markedToday && f.level < f.levelBefore) return `Marked today · shrank to ${stageOf(f.level).name.toLowerCase()}`;
+  if (f.markedToday) return `Marked today · leave it tomorrow to ${f.level === 0 ? 'sprout' : 'grow'}`;
+  if (f.cleanDays === 0) return 'Planted · sprouts tomorrow';
+  if (f.level > f.levelBefore) return `Grew today! ${f.toNext} more ${f.toNext === 1 ? 'day' : 'days'} to ${next}`;
+  return `${f.toNext} more ${f.toNext === 1 ? 'day' : 'days'} to ${next}`;
 }
 
-// Progress (0–1) through the current level toward the next one.
+// Progress (0–1) through the current stage toward the next one.
 function levelProgress(f) {
   if (f.level === MAX_LEVEL) return 1;
   const from = f.level > 0 ? LEVEL_THRESHOLDS[f.level - 1] : 0;
@@ -279,62 +295,69 @@ function levelProgress(f) {
   return Math.max(0, Math.min(1, (f.cleanDays - from) / (to - from)));
 }
 
-// Renders the four level cards into a container element.
+// Renders the four growth cards into a container element.
 function renderLevelCards(containerEl, levels) {
   containerEl.innerHTML = FREEDOM_KEYS.map(key => {
     const f = levels[key];
+    const st = stageOf(f.level);
     const pct = Math.round(levelProgress(f) * 100);
-    const pips = LEVEL_THRESHOLDS.map((_, i) =>
-      `<span class="lv-pip${i < f.level ? ' on' : ''}"></span>`).join('');
-    const tag = f.level > f.levelBefore ? '<span class="lv-tag up">▲ up</span>'
-              : f.level < f.levelBefore ? '<span class="lv-tag down">▼ down</span>' : '';
+    const tag = f.level > f.levelBefore ? '<span class="lv-tag up">▲ grew</span>'
+              : f.level < f.levelBefore ? '<span class="lv-tag down">▼ shrank</span>' : '';
     return `
-      <div class="lv-card" style="--cat-color:${f.color}">
+      <div class="lv-card${f.markedToday ? ' marked' : ''}" style="--cat-color:${f.color}">
         <div class="lv-top"><span class="lv-emoji">${f.emoji}</span><span class="lv-name">${f.label}</span>${tag}</div>
-        <div class="lv-level">Level <b>${f.level}</b><span class="lv-of">/${MAX_LEVEL}</span></div>
-        <div class="lv-pips">${pips}</div>
+        <div class="lv-stage"><span class="lv-plant">${st.emoji}</span><span class="lv-stage-name">${st.name}</span></div>
         <div class="lv-bar"><span style="width:${pct}%"></span></div>
         <p class="lv-status">${levelStatusText(f)}</p>
       </div>`;
   }).join('');
 }
 
-// Shared styles for the level cards (injected once by whichever page uses them).
+// Shared styles for the growth cards (injected once by whichever page uses them).
 (function injectLevelStyles() {
   if (typeof document === 'undefined' || document.getElementById('lv-styles')) return;
   const css = `
   .lv-grid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:0.6rem; }
-  .lv-card { --cat-color: var(--teal); background: var(--surface); border:1px solid var(--line); border-radius:16px; padding:0.95rem 0.95rem 0.85rem; text-align:left; }
-  .lv-top { display:flex; align-items:center; gap:0.4rem; margin-bottom:0.45rem; }
-  .lv-emoji { font-size:1.05rem; line-height:1; }
-  .lv-name { font-size:0.72rem; font-weight:600; letter-spacing:0.08em; text-transform:uppercase; color:var(--text-mute); }
-  .lv-tag { margin-left:auto; font-family:'Space Mono',monospace; font-size:0.66rem; padding:0.1rem 0.45rem; border-radius:999px; }
+  .lv-card { --cat-color: var(--teal); background: var(--surface); border:1px solid var(--line); border-radius:16px; padding:0.9rem 0.9rem 0.8rem; text-align:left; }
+  .lv-card.marked { border-color:#D9534F55; }
+  .lv-top { display:flex; align-items:center; gap:0.4rem; margin-bottom:0.5rem; }
+  .lv-emoji { font-size:1rem; line-height:1; }
+  .lv-name { font-size:0.7rem; font-weight:600; letter-spacing:0.08em; text-transform:uppercase; color:var(--cat-color); }
+  .lv-tag { margin-left:auto; font-family:'Space Mono',monospace; font-size:0.62rem; padding:0.1rem 0.4rem; border-radius:999px; white-space:nowrap; }
   .lv-tag.up { color:#4CAF7D; background:#4CAF7D22; }
   .lv-tag.down { color:#D9534F; background:#D9534F22; }
-  .lv-level { font-family:'Space Mono',monospace; font-size:0.85rem; color:var(--text-mute); margin-bottom:0.5rem; }
-  .lv-level b { font-size:1.7rem; color:var(--cat-color); font-weight:700; margin-left:0.15rem; text-shadow:0 0 16px var(--cat-color); }
-  .lv-of { font-size:0.8rem; opacity:0.7; }
-  .lv-pips { display:flex; gap:0.25rem; margin-bottom:0.45rem; }
-  .lv-pip { flex:1; height:5px; border-radius:3px; background:var(--line); }
-  .lv-pip.on { background:var(--cat-color); }
-  .lv-bar { height:3px; border-radius:2px; background:var(--line); overflow:hidden; margin-bottom:0.55rem; }
-  .lv-bar span { display:block; height:100%; background:var(--cat-color); opacity:0.55; }
+  .lv-stage { display:flex; align-items:center; gap:0.5rem; margin-bottom:0.6rem; }
+  .lv-plant { font-size:2rem; line-height:1; }
+  .lv-stage-name { font-family:'Fraunces',serif; font-size:1.1rem; color:var(--text); }
+  .lv-bar { height:4px; border-radius:2px; background:var(--line); overflow:hidden; margin-bottom:0.55rem; }
+  .lv-bar span { display:block; height:100%; background:var(--cat-color); }
   .lv-status { font-size:0.76rem; color:var(--text-mute); line-height:1.35; margin:0; }
-  .lv-ladder { display:flex; gap:0.3rem; flex-wrap:wrap; justify-content:center; margin-top:0.9rem; }
-  .lv-step { font-family:'Space Mono',monospace; font-size:0.68rem; color:var(--text-mute); border:1px solid var(--line); border-radius:999px; padding:0.22rem 0.5rem; white-space:nowrap; }
-  .lv-step b { color:var(--text); font-weight:700; }
-  .lv-rule { font-size:0.82rem; color:var(--text-mute); margin-top:0.7rem; line-height:1.5; }
-  @media (max-width:360px) { .lv-level b { font-size:1.4rem; } }`;
+  .grow-rule { font-size:0.9rem; color:var(--text); margin-top:0.9rem; text-align:center; }
+  .grow-more { margin-top:0.6rem; text-align:center; }
+  .grow-more summary { cursor:pointer; font-size:0.8rem; color:var(--text-mute); list-style:none; display:inline-block; }
+  .grow-more summary::-webkit-details-marker { display:none; }
+  .grow-more summary:hover { color:var(--teal); }
+  .grow-ladder { display:flex; justify-content:center; flex-wrap:wrap; gap:0.3rem; margin-top:0.7rem; }
+  .grow-step { font-size:0.72rem; color:var(--text-mute); border:1px solid var(--line); border-radius:999px; padding:0.25rem 0.55rem; white-space:nowrap; }
+  .grow-step b { color:var(--text); font-weight:600; }
+  .grow-note { font-size:0.78rem; color:var(--text-mute); margin-top:0.6rem; line-height:1.5; }`;
   const el = document.createElement('style');
   el.id = 'lv-styles';
   el.textContent = css;
   (document.head || document.documentElement).appendChild(el);
 })();
 
-// The ladder legend (Level 1 = 1 day … Level 5 = 21 days).
+// The one-line rule plus a tap-to-open "how fast" ladder.
 function levelLadderHtml() {
-  return `<div class="lv-ladder">${LEVEL_THRESHOLDS.map((d, i) =>
-    `<span class="lv-step">L${i + 1} <b>${d}</b>d</span>`).join('')}</div>`;
+  const steps = STAGES.slice(1).map((st, i) =>
+    `<span class="grow-step">${st.emoji} ${st.name} <b>${LEVEL_THRESHOLDS[i]}d</b></span>`).join('');
+  return `
+    <p class="grow-rule">${GROW_RULE}</p>
+    <details class="grow-more">
+      <summary>How fast do they grow? ⓘ</summary>
+      <div class="grow-ladder">${steps}</div>
+      <p class="grow-note">Clean days in a row. Days you don't visit count as clean. A slip only shrinks it one stage — never back to zero.</p>
+    </details>`;
 }
 
 /* ---------- Email code (no password) sign-in ----------

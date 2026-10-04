@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>My levels — Life Score</title>
+<title>My garden — Life Score</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Space+Mono:wght@400;700&family=Inter:wght@400;500;600&display=optional" onload="this.onload=null;this.rel='stylesheet'">
@@ -483,7 +483,7 @@ src="https://www.facebook.com/tr?id=1119044180571388&ev=PageView&noscript=1"
   <div class="wrap">
 
     <div id="loginView">
-      <h1>Continue your game</h1>
+      <h1>Back to your garden</h1>
       <p class="sub">Enter the email you play with. We'll send you a 6-digit code — no password needed.</p>
       <div class="login-box">
         <div class="login-form" id="emailStep">
@@ -504,8 +504,8 @@ src="https://www.facebook.com/tr?id=1119044180571388&ev=PageView&noscript=1"
     </div>
 
     <div id="reportsView" class="hidden">
-      <h1>Your levels</h1>
-      <p class="levels-intro">Each freedom climbs on its own. Every day it stays unmarked moves it up — even days you don't check in. Mark one of its habits again and it drops one level.</p>
+      <h1>Your garden</h1>
+      <p class="levels-intro">Four freedoms, growing on their own.</p>
 
       <div id="checkinCta"></div>
 
@@ -531,13 +531,13 @@ src="https://www.facebook.com/tr?id=1119044180571388&ev=PageView&noscript=1"
 
       <div class="reset-option">
         <h3>🔁 Restart the game</h3>
-        <p>All four freedoms go back to Level 0 and your game starts again today. Your past check-ins stay, and the day-by-day table keeps showing them.</p>
+        <p>All four freedoms go back to seeds and your game starts again today. Your past check-ins stay, and the day-by-day table keeps showing them.</p>
         <button class="btn" id="restartBtn" onclick="restartGame()">Restart from today</button>
       </div>
 
       <div class="reset-option danger">
         <h3>🗑️ Delete all my data</h3>
-        <p>Permanently deletes every check-in and all your levels. Your login email stays so you can start over. <b>This can't be undone.</b> Type <b>DELETE</b> to confirm.</p>
+        <p>Permanently deletes every check-in and your whole garden. Your login email stays so you can start over. <b>This can't be undone.</b> Type <b>DELETE</b> to confirm.</p>
         <input type="text" id="deleteConfirm" placeholder="DELETE" autocomplete="off" oninput="document.getElementById('deleteBtn').disabled = this.value.trim().toUpperCase() !== 'DELETE'">
         <button class="btn btn-danger" id="deleteBtn" onclick="deleteAllData()" disabled>Delete everything</button>
       </div>
@@ -664,7 +664,7 @@ src="https://www.facebook.com/tr?id=1119044180571388&ev=PageView&noscript=1"
     const checkedInToday = chronological.some(r => localDateStr(new Date(r.created_at)) === today);
     document.getElementById('checkinCta').innerHTML = checkedInToday
       ? `<div class="checkin-cta done"><p>✓ You've checked in today. Come back tomorrow.</p></div>`
-      : `<div class="checkin-cta"><p>You haven't checked in today.</p><a class="btn" href="index.html#pickerSection">🎰 Spin today's reels</a></div>`;
+      : `<div class="checkin-cta"><p>You haven't spun today.</p><a class="btn" href="index.html#pickerSection">🎰 Spin today's reels</a></div>`;
 
     // Habit pattern by day (unchanged — shows every saved check-in, last 14)
     const box = document.getElementById('matrixBox');
