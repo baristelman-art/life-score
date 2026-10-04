@@ -31,7 +31,7 @@ const FREEDOM_CATEGORIES = {
     label: 'Time Freedom',
     emoji: '⏳',
     color: '#8455BE',
-    items: ['Procrastinating', 'Doomscrolling & gaming', 'Watching porn']
+    items: ['Procrastinating', 'Doomscrolling & gaming', 'Binge-watching']
   }
 };
 
@@ -44,7 +44,8 @@ const LEGACY_HABIT_NAMES = {
   'Obsessing Over Others': 'Obsessing over someone',
   'Dwelling on the Past': 'Dwelling on the past',
   'Negative Feelings': null,
-  'Pornography': 'Watching porn',
+  'Pornography': null,
+  'Watching porn': null,
   'Unhealthy Eating & Drinking': 'Junk food & sugary drinks',
   'Alcohol, Smoking & Drugs': 'Alcohol, smoking or drugs',
   'Attachment to Possessions': null,
